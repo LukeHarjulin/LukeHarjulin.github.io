@@ -1,14 +1,19 @@
 @import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap");
-
+:root {
+	--col1: #010101;
+	--col2: #ffffff;
+	--col3: #ffb81c;
+	--col4: #cfc493;
+}
 @keyframes pulseBlurRadius {
 	0% {
-		box-shadow: 0px 0px 10px 0px #fff;
+		box-shadow: 0px 0px 10px 0px col2;
 	}
 	50% {
-		box-shadow: 0px 0px 15px 2px #fff;
+		box-shadow: 0px 0px 15px 2px col2;
 	}
 	100% {
-		box-shadow: 0px 0px 10px 0px #fff;
+		box-shadow: 0px 0px 10px 0px col2;
 	}
 }
 @keyframes fadeInHello {
@@ -25,33 +30,33 @@
 }
 @keyframes navItemHoverOn {
 	0% {
-		background: linear-gradient(0deg, #fff 0%, #fff 2%, transparent 2%);
+		background: linear-gradient(0deg, col2 0%, col2 2%, transparent 2%);
 	}
 	20% {
-		background: linear-gradient(0deg, #fff 0%, #fff 2%, transparent 10%);
+		background: linear-gradient(0deg, col2 0%, col2 2%, transparent 10%);
 	}
 	40% {
-		background: linear-gradient(0deg, #fff 0%, #fff 2%, transparent 15%);
+		background: linear-gradient(0deg, col2 0%, col2 2%, transparent 15%);
 	}
 	60% {
-		background: linear-gradient(0deg, #fff 0%, #fff 2%, transparent 20%);
+		background: linear-gradient(0deg, col2 0%, col2 2%, transparent 20%);
 	}
 	80% {
-		background: linear-gradient(0deg, #fff 0%, #fff 2%, transparent 25%);
+		background: linear-gradient(0deg, col2 0%, col2 2%, transparent 25%);
 	}
 	100% {
-		background: linear-gradient(0deg, #fff 0%, #fff 2%, transparent 30%);
+		background: linear-gradient(0deg, col2 0%, col2 2%, transparent 30%);
 	}
 }
 * {
 	margin: 0;
 	padding: 0;
 	font-family: "Quicksand", sans-serif;
-	color: #ffb81c;
+	color: col3;
 	scroll-behavior: smooth;
 }
 html {
-	background-color: #010101;
+	background-color: col1;
 }
 
 header {
@@ -69,10 +74,10 @@ header {
 	padding-bottom: 20px;
 	border-bottom: 2px solid #8c8c8c;
 	transition: 0.3s;
-	background-color: #010101;
+	background-color: col1;
 }
 header .logo {
-	color: #ffffff;
+	color: col2;
 	font-size: 24px;
 	font-weight: 700;
 	letter-spacing: 2px;
@@ -98,7 +103,7 @@ header .logo {
 	position: relative;
 	width: 33px;
 	height: 5px;
-	background-color: #ffb81c;
+	background-color: col3;
 	margin: 9px 7.5px;
 	transition: 0.4s;
 	border-radius: 3px;
@@ -122,17 +127,17 @@ header ul a {
 	text-decoration: none;
 }
 header ul a li {
-	color: #ffffff;
+	color: col2;
 	list-style: none;
 	font-size: 1.2em;
 	transition: ease;
-	background: linear-gradient(180deg, #ffffff 0%, #ffffff 0%, transparent 0%);
+	background: linear-gradient(180deg, col2 0%, col2 0%, transparent 0%);
 	padding-bottom: 5px;
 }
 .banner {
 	position: relative;
 	min-height: 100vh;
-	background-color: #010101;
+	background-color: col1;
 	background-size: cover;
 	background-position: right;
 }
@@ -143,13 +148,13 @@ header ul a li {
 	position: relative;
 	width: 100%;
 	margin-top: 10%;
-	background-color: #010101;
+	background-color: col1;
 	display: flex;
 	justify-content: center;
 }
 .banner #navigationPanel div {
 	width: 200px;
-	background-color: #ffb81c;
+	background-color: col3;
 	height: 200px;
 	margin: 5px;
 }
@@ -158,7 +163,7 @@ header ul a li {
 	padding-top: 110px;
 	padding-bottom: 50px;
 	font-size: 8em;
-	color: #ffb81c;
+	color: col3;
 	font-weight: 500;
 	animation: fadeInHello 1.5s forwards;
 	text-shadow: 3px 2px 0px #948f84;
@@ -166,11 +171,11 @@ header ul a li {
 .banner div .strip {
 	position: relative;
 	padding: 3% 10%;
-	color: #010101;
-	background-color: #ffb81c;
-	border-top: 3px solid #ffffff;
-	border-bottom: 3px solid #ffffff;
-	border-right: 3px solid #ffffff;
+	color: col1;
+	background-color: col3;
+	border-top: 3px solid col2;
+	border-bottom: 3px solid col2;
+	border-right: 3px solid col2;
 }
 .banner div #intro h2 {
 	color: inherit;
@@ -185,9 +190,9 @@ header ul a li {
 }
 .banner .btn a {
 	position: relative;
-	background-color: #010101;
+	background-color: col1;
 	display: inline;
-	color: #ffffff;
+	color: col2;
 	top: -12px;
 	font-size: 18px;
 	text-transform: uppercase;
@@ -196,24 +201,24 @@ header ul a li {
 	font-weight: 500;
 	padding: 5px;
 	border-radius: 0px;
-	border-color: #ffffff;
+	border-color: col2;
 	border-width: 2px;
 	border-style: solid;
 	transition: 0.5s;
 	margin-inline-start: 55%;
-	box-shadow: 0px 0px 20px 0px #fff;
+	box-shadow: 0px 0px 20px 0px col2;
 	animation: pulseBlurRadius 4s infinite;
 }
 .banner .btn :hover {
-	background-color: #ffffff;
-	border-color: #010101;
-	color: #010101;
+	background-color: col2;
+	border-color: col1;
+	color: col1;
 	transition: 0.5s;
 }
 .aboutSection {
 	position: relative;
 	min-height: 100vh;
-	background-color: #ffffff;
+	background-color: col2;
 	background-size: cover;
 	background-position: right;
 	display: flex;
@@ -279,11 +284,11 @@ header ul a li {
 	}
 	.banner div .strip {
 		padding: 3% 10%;
-		color: #010101;
-		background-color: #ffb81c;
-		border-top: 3px solid #ffffff;
-		border-right: 3px solid #ffffff;
-		border-bottom: 3px solid #ffffff;
+		color: col1;
+		background-color: col3;
+		border-top: 3px solid col2;
+		border-right: 3px solid col2;
+		border-bottom: 3px solid col2;
 		margin-bottom: 2%;
 	}
 	.navMenu {
@@ -319,12 +324,12 @@ header ul a li {
 		display: none;
 		z-index: 996;
 		line-height: 2em;
-		background-color: #010101;
+		background-color: col1;
 	}
 	#menuList a {
 		display: none;
 		text-decoration: none;
-		color: #ffffff;
+		color: col2;
 	}
 	#menuList a li {
 		padding-bottom: 3px;
@@ -332,8 +337,8 @@ header ul a li {
 	}
 	.openMenu #menuList {
 		padding-right: 15px;
-		border-bottom: #ffffff solid 2px;
-		border-left: #ffffff solid 2px;
+		border-bottom: col2 solid 2px;
+		border-left: col2 solid 2px;
 		animation: menuMove 0.5s forwards;
 		display: block;
 	}
