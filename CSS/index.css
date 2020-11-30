@@ -2,8 +2,8 @@
 :root {
 	--col1: #010101;
 	--col2: #ffffff;
-	--col3: #ffb81c;
-	--col4: #cfc493;
+	--col3: #cfc493;
+	--col4: #ffb81c;
 }
 @keyframes pulseBlurRadius {
 	0% {
