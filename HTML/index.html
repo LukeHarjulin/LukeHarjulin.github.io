@@ -8,35 +8,68 @@
 		<script src="../JS/index.js"></script>
 	</head>
 	<body>
-		<header id="headerTop">
-			<a href="#" class="logo"> Portfolio</a>
+		<header id="headerTop" class="">
+			<div id="logoSection">
+				<a href="#home-section" id="logoText-first" class="logoText"
+					>Luke</a
+				>
+				<a href="#home-section" id="logoAnchor" class=""></a>
+
+				<div id="logo" class="">
+					<div id="topLine" class="logoComponent lines"></div>
+					<div id="bottomLine" class="logoComponent lines"></div>
+					<div id="L-left" class="logoComponent"></div>
+					<div id="L-bottom" class="logoComponent"></div>
+					<div id="H-left" class="logoComponent H"></div>
+					<div id="H-middle" class="logoComponent"></div>
+					<div id="H-right" class="logoComponent H"></div>
+					<div id="splitter" class="logoComponent"></div>
+				</div>
+				<a href="#home-section" id="logoText-first" class="logoText"
+					>Harjulin</a
+				>
+			</div>
 			<container class="navMenu">
 				<div class="navButton" onclick="navMenuClick()"></div>
 				<span id="bar1" class="menuBar"></span>
 				<span id="bar2" class="menuBar"></span>
 				<span id="bar3" class="menuBar"></span>
 				<ul id="menuList">
-					<a href="#"><li class="navItem">Home</li></a>
-					<a href="#"><li class="navItem">About Me</li></a>
-					<a href="#"><li class="navItem">Projects</li></a>
-					<a href="#"><li class="navItem">Contact</li></a>
+					<a href="#home-section"><li class="navItem">Home</li></a>
+					<a href="#about-section"
+						><li class="navItem">About Me</li></a
+					>
+					<a href="#projects-section"
+						><li class="navItem">Projects</li></a
+					>
+					<a href="#contact-section"
+						><li class="navItem">Contact</li></a
+					>
 				</ul>
 			</container>
 		</header>
-		<section class="banner">
+		<section id="home-section" class="banner">
 			<div id="div1">
 				<h1>Hello</h1>
 				<div id="intro" class="strip">
 					<h2>I'm Luke Harjulin.</h2>
-					<h3>I'm a Computer Science graduate.</h3>
+					<h3>BSc. (Hons) Computer Science graduate.</h3>
 				</div>
 			</div>
 			<div id="navigationPanel">
-				<div></div>
-				<div></div>
-				<div></div>
+				<a href="#about-section"><div>About Me (Placeholder)</div></a>
+				<a href="#projects-section"
+					><div>Projects (Placeholder)</div></a
+				>
+				<a href="#contact-section"><div>Contact (Placeholder)</div></a>
 			</div>
 		</section>
-		<section class="aboutSection"></section>
+		<div class="divider"></div>
+		<section id="about-section" class="aboutSection"></section>
+		<div class="divider"></div>
+		<section id="projects-section" class="projectsSection"></section>
+		<div class="divider"></div>
+		<section id="contact-section" class="contactSection"></section>
+		<footer></footer>
 	</body>
 </html>

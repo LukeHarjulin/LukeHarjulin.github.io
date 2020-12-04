@@ -6,43 +6,60 @@ window.onscroll = function () {
 	scrollFunction();
 };
 function scrollFunction() {
-	if (document.body.scrollTop > 2 || document.documentElement.scrollTop > 2) {
-		document.getElementById("headerTop").style.backgroundColor = "#ffb81c";
-		if (document.body.clientWidth < 600) {
-			document.getElementById("menuList").style.backgroundColor =
-				"#ffb81c";
-		} else {
-			document.getElementById("menuList").style.backgroundColor =
-				"transparent";
-		}
-		var bars = document.getElementsByClassName("menuBar");
-		var i = 0;
-		for (i = 0; i < 3; i++) {
-			bars[i].style.backgroundColor = "#010101";
-		}
-		document.getElementsByClassName("logo")[0].style.color = "#010101";
-		var items = document.getElementsByClassName("navItem");
-		for (i = 0; i < items.length; i++) {
-			navItemColourChange(items[i]);
-		}
-	} else {
-		document.getElementById("headerTop").style.backgroundColor = "#010101";
-		if (document.body.clientWidth < 600) {
-			document.getElementById("menuList").style.backgroundColor =
-				"#010101";
-		} else {
-			document.getElementById("menuList").style.backgroundColor =
-				"transparent";
-		}
-		var bars = document.getElementsByClassName("menuBar");
-		var i = 0;
-		for (i = 0; i < 3; i++) {
-			bars[i].style.backgroundColor = "#ffb81c";
-		}
-		document.getElementsByClassName("logo")[0].style.color = "#ffffff";
-		var items = document.getElementsByClassName("navItem");
-		for (i = 0; i < items.length; i++) {
-			navItemColourRevert(items[i]);
+	if (
+		document.documentElement.scrollTop > 50 &&
+		!document
+			.getElementById("headerTop")
+			.classList.contains("headerScrolled")
+	) {
+		document.getElementById("headerTop").classList.add("headerScrolled");
+	} else if (
+		document.documentElement.scrollTop <= 50 &&
+		document
+			.getElementById("headerTop")
+			.classList.contains("headerScrolled")
+	) {
+		document.getElementById("headerTop").classList.remove("headerScrolled");
+	}
+	if (
+		document.documentElement.scrollTop >=
+		document.getElementById("home-section").offsetTop
+	) {
+		//home
+		toggleNavItemUnderline(0);
+	}
+	if (
+		document.documentElement.scrollTop >
+		document.getElementById("about-section").offsetTop -
+			window.innerHeight * 0.15
+	) {
+		//about me
+		toggleNavItemUnderline(1);
+	}
+	if (
+		document.documentElement.scrollTop >
+		document.getElementById("projects-section").offsetTop -
+			window.innerHeight * 0.15
+	) {
+		// projects
+		toggleNavItemUnderline(2);
+	}
+	if (
+		document.documentElement.scrollTop >
+		document.getElementById("contact-section").offsetTop -
+			window.innerHeight * 0.15
+	) {
+		// contact me
+		toggleNavItemUnderline(3);
+	}
+}
+function toggleNavItemUnderline(index) {
+	var navItems = document.getElementsByClassName("navItem");
+	for (var i = 0; i < navItems.length; i++) {
+		if (i == index && !navItems[i].classList.contains("current")) {
+			navItems[i].classList.add("current");
+		} else if (i != index && navItems[i].classList.contains("current")) {
+			navItems[i].classList.remove("current");
 		}
 	}
 }
