@@ -3,7 +3,7 @@
 	--col1: #010101;
 	--col2: #ffffff;
 	--col3: #ffb81c; /*alt colour is #1A62FF / Ultramarine blue*/
-	--col4: #ffffff; 
+	--col4: #ffffff;
 	--col5: #ffffff; /*underline*/
 }
 @keyframes pulseBlurRadius {
@@ -312,7 +312,7 @@ header ul a li {
 }
 .banner div .strip {
 	position: relative;
-	padding: 3% 10%;
+	padding: 50px 190px;
 	color: var(--col1);
 	background-color: var(--col3);
 	border-top: 3px solid var(--col2);
@@ -391,6 +391,9 @@ header ul a li {
 	background-color: var(--col2);
 }
 @media (max-width: 1100px) {
+	.banner div .strip {
+		padding: 40px 160px;
+	}
 	.banner div h1 {
 		font-size: 7em;
 		padding-top: 130px;
@@ -414,6 +417,9 @@ header ul a li {
 @media (max-width: 900px) {
 	header #logoSection .logoText {
 		display: none;
+	}
+	.banner div .strip {
+		padding: 30px 115px;
 	}
 	.banner div #intro h2 {
 		font-size: 2em;
@@ -524,6 +530,7 @@ header ul a li {
 	}
 	.banner div .strip {
 		margin-bottom: 1%;
+		padding: 20px 80px;
 	}
 	.banner div #intro h2 {
 		font-size: 1.8em;
