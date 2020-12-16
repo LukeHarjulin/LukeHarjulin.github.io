@@ -107,8 +107,8 @@ header {
 	z-index: 1000;
 	display: flex;
 	justify-content: space-between;
-	border-bottom: 2px solid var(--col4);
-	transition: 0.2s;
+	border-bottom: 2px solid var(--col1);
+	transition: 0.3s;
 	background-color: var(--col1);
 	--col5: var(--col2);
 }
@@ -117,6 +117,7 @@ header #logoSection {
 	margin-left: 60px;
 	height: 70px;
 	display: flex;
+	transition: 0.3s;
 }
 header #logoSection #logoAnchor {
 	position: absolute;
@@ -129,16 +130,17 @@ header #logoSection #logo {
 	position: relative;
 	height: 80px;
 	padding-right: 150px;
+	transition: 0.3s;
 }
 header #logoSection #logo .logoComponent {
 	position: absolute;
 	background-color: var(--col2);
-	transition: 0.4s;
+	transition: 0.3s;
 }
 header #logoSection #logo .lines {
 	width: 100px;
 	height: 2px;
-	transition: 0.4s;
+	transition: 0.3s;
 }
 header #logoSection #logo #topLine {
 	left: 50px;
@@ -191,14 +193,17 @@ header #logoSection .logoText {
 	color: var(--col2);
 	font-size: 2em;
 	font-weight: 700;
-	letter-spacing: 2px;
+	letter-spacing: 5px;
 	text-decoration: none;
 	text-transform: uppercase;
 	margin-top: 18px;
+	transition: 0.3s;
+	opacity: 1;
+	font-weight: normal;
 }
 .navMenu {
 	position: relative;
-	transition: 0.2s;
+	transition: 0.3s;
 	margin-right: 5%;
 	margin-top: 25px;
 }
@@ -245,30 +250,83 @@ header ul a li {
 	transition: 0.5s;
 	background: linear-gradient(
 		0deg,
-		var(--col5) 2%,
-		var(--col5) 2%,
-		transparent 2%
+		var(--col5) 3%,
+		var(--col5) 3%,
+		transparent 3%
 	);
 	padding-bottom: 5px;
 }
 .headerScrolled {
 	background-color: var(--col3);
-	transition: 0.2s;
-	padding-top: 10px;
-	padding-bottom: 10px;
+	transition: 0.3s;
+	padding-top: 3px;
+	padding-bottom: 3px;
 	--col5: var(--col1);
 }
-.headerScrolled #logoSection #logo #topLine {
-	left: 0px;
+.headerScrolled #logoSection {
+	margin-left: 30px;
+	height: auto;
 }
-.headerScrolled #logoSection #logo #bottomLine {
-	left: 50px;
+.headerScrolled #logoSection #logoAnchor {
+	left: 0px;
+	width: 100px;
+	height: 55px;
+}
+
+.headerScrolled #logoSection #logo {
+	padding-right: 30px;
+	height: 55px;
 }
 .headerScrolled #logoSection #logo .logoComponent {
 	background-color: var(--col1);
 }
+.headerScrolled #logoSection #logo #topLine {
+	left: -100px;
+	opacity: 0;
+}
+.headerScrolled #logoSection #logo #bottomLine {
+	left: 200px;
+	opacity: 0;
+}
+.headerScrolled #logoSection #logo #L-left {
+	height: 41.25px;
+	width: 6px;
+	top: 6.75px;
+	left: 0px;
+}
+.headerScrolled #logoSection #logo #L-bottom {
+	height: 6px;
+	width: 30px;
+	top: 42px;
+	left: 0px;
+}
+.headerScrolled #logoSection #logo .H {
+	width: 5.25px;
+	height: 28.5px;
+}
+.headerScrolled #logoSection #logo #H-left {
+	top: 6.75px;
+	left: 15px;
+}
+.headerScrolled #logoSection #logo #H-right {
+	top: 6.75px;
+	left: 32.25px;
+}
+.headerScrolled #logoSection #logo #H-middle {
+	height: 4px;
+	width: 12px;
+	top: 18px;
+	left: 20.25px;
+}
 .headerScrolled #logoSection #logo #splitter {
+	height: 4px;
+	width: 56.25px;
+	top: 18.75px;
+	left: -12px;
 	background-color: var(--col3);
+}
+.headerScrolled .navMenu {
+	margin-top: 20px;
 }
 .headerScrolled #menuList .navItem {
 	color: var(--col1);
@@ -277,7 +335,9 @@ header ul a li {
 	background-color: var(--col1);
 }
 .headerScrolled #logoSection .logoText {
-	color: var(--col1);
+	opacity: 0;
+	font-size: 0.5em;
+	margin-top: 0px;
 }
 .banner {
 	position: relative;
@@ -285,76 +345,6 @@ header ul a li {
 	background-color: var(--col1);
 	background-size: cover;
 	background-position: right;
-}
-.banner #navigationPanel {
-	position: relative;
-	width: 100%;
-	margin-top: 10%;
-	background-color: var(--col1);
-	display: flex;
-	justify-content: center;
-}
-.banner #navigationPanel div {
-	width: 200px;
-	background-color: var(--col3);
-	height: 100px;
-	margin: 5px;
-}
-.banner div h1 {
-	position: relative;
-	padding-top: 130px;
-	padding-bottom: 20px;
-	font-size: 8em;
-	color: var(--col3);
-	font-weight: 500;
-	animation: fadeInHello 1.5s forwards;
-	text-shadow: 3px 2px 0px var(--col4);
-}
-.banner div .strip {
-	position: relative;
-	padding: 50px 190px;
-	color: var(--col1);
-	background-color: var(--col3);
-	border-top: 3px solid var(--col2);
-	border-bottom: 3px solid var(--col2);
-}
-.banner div #intro h2 {
-	color: inherit;
-	font-size: 3em;
-	font-weight: 500;
-	line-height: 1.5em;
-}
-.banner div #intro h3 {
-	color: inherit;
-	font-weight: 500;
-	line-height: 1.5em;
-}
-.banner .btn a {
-	position: relative;
-	background-color: var(--col1);
-	display: inline;
-	color: var(--col2);
-	top: -12px;
-	font-size: 18px;
-	text-transform: uppercase;
-	text-decoration: none;
-	letter-spacing: 2px;
-	font-weight: 500;
-	padding: 5px;
-	border-radius: 0px;
-	border-color: var(--col2);
-	border-width: 2px;
-	border-style: solid;
-	transition: 0.5s;
-	margin-inline-start: 55%;
-	box-shadow: 0px 0px 20px 0px var(--col2);
-	animation: pulseBlurRadius 4s infinite;
-}
-.banner .btn :hover {
-	background-color: var(--col2);
-	border-color: var(--col1);
-	color: var(--col1);
-	transition: 0.5s;
 }
 .aboutSection {
 	position: relative;
@@ -391,49 +381,16 @@ header ul a li {
 	background-color: var(--col2);
 }
 @media (max-width: 1100px) {
-	.banner div .strip {
-		padding: 40px 160px;
-	}
-	.banner div h1 {
-		font-size: 7em;
-		padding-top: 130px;
-		padding-bottom: 20px;
-	}
-	.banner div #intro h2 {
-		font-size: 2.5em;
-	}
-	.banner #navigationPanel {
-		margin-top: 15%;
-	}
-	.banner #navigationPanel div {
-		width: 180px;
-		height: 90px;
-		margin: 4px;
-	}
-	header ul a li {
-		font-size: 1.1em;
-	}
 }
-@media (max-width: 900px) {
+@media (max-width: 950px) {
 	header #logoSection .logoText {
 		display: none;
 	}
-	.banner div .strip {
-		padding: 30px 115px;
-	}
-	.banner div #intro h2 {
-		font-size: 2em;
-	}
-	.banner #navigationPanel {
-		margin-top: 20%;
-	}
-	.banner #navigationPanel div {
-		width: 160px;
-		height: 80px;
-		margin: 3px;
-	}
 	header ul a li {
 		font-size: 1em;
+	}
+	header #logoSection #logoAnchor {
+		left: 0px;
 	}
 }
 @media (max-width: 600px) {
@@ -442,6 +399,9 @@ header ul a li {
 	}
 	header #logoSection .logoText {
 		display: none;
+	}
+	header #logoSection #logoAnchor {
+		left: 0px;
 	}
 	.navMenu {
 		position: relative;
@@ -474,17 +434,16 @@ header ul a li {
 		position: relative;
 		width: 1px;
 		height: 1px;
-		transition: 0.2s;
+		transition: 0.3s;
 		text-align: center;
 		display: none;
 		z-index: 996;
 		line-height: 2em;
 		background-color: var(--col1);
-		border-bottom: var(--col2) solid 2px;
-		border-left: var(--col2) solid 2px;
 		margin-top: 28px;
-		right: 50px;
+		right: 48px;
 		padding-bottom: 10px;
+		border-bottom-left-radius: 5px;
 	}
 	#menuList a {
 		display: none;
@@ -495,11 +454,13 @@ header ul a li {
 		padding-bottom: 3px;
 		margin-right: 15px;
 	}
-
+	.headerScrolled .navMenu {
+		margin-top: 5px;
+	}
 	.headerScrolled #menuList {
 		background-color: var(--col3);
-		transition: 0.2s;
-		margin-top: 18px;
+		transition: 0.3s;
+		margin-top: 11px;
 	}
 	.headerScrolled .menuBar {
 		background-color: var(--col1);
@@ -521,29 +482,5 @@ header ul a li {
 	}
 	.openMenu #bar3 {
 		transform: translate(-3px, -14px) rotate(-45deg);
-	}
-	.banner div h1 {
-		font-size: 5em;
-		animation: fadeInHelloSmall 1.5s forwards;
-		padding-top: 130px;
-		padding-bottom: 10px;
-	}
-	.banner div .strip {
-		margin-bottom: 1%;
-		padding: 20px 80px;
-	}
-	.banner div #intro h2 {
-		font-size: 1.8em;
-	}
-	.banner div #intro h3 {
-		font-size: 1em;
-	}
-	.banner #navigationPanel {
-		margin-top: 30%;
-	}
-	.banner #navigationPanel div {
-		width: 110px;
-		height: 55px;
-		margin: 2px;
 	}
 }

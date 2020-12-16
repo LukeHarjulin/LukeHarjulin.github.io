@@ -25,7 +25,7 @@
 					<div id="H-right" class="logoComponent H"></div>
 					<div id="splitter" class="logoComponent"></div>
 				</div>
-				<a href="#home-section" id="logoText-first" class="logoText"
+				<a href="#home-section" id="logoText-last" class="logoText"
 					>Harjulin</a
 				>
 			</div>
@@ -37,8 +37,8 @@
 				<ul id="menuList">
 					<a href="#home-section"><li class="navItem">Home</li></a>
 					<a href="#about-section"
-						><li class="navItem">About Me</li></a
-					>
+						><li class="navItem">About Me</li>
+					</a>
 					<a href="#projects-section"
 						><li class="navItem">Projects</li></a
 					>
@@ -49,27 +49,49 @@
 			</container>
 		</header>
 		<section id="home-section" class="banner">
-			<div id="div1">
-				<h1>Hello</h1>
-				<div id="intro" class="strip">
-					<h2>I'm Luke Harjulin.</h2>
-					<h3>BSc. (Hons) Computer Science graduate.</h3>
-				</div>
+			<div id="links">
+				<ul>
+					<a><li></li></a>
+					<span></span>
+					<a><li></li></a>
+					<span></span>
+					<a><li></li></a>
+				</ul>
 			</div>
-			<div id="navigationPanel">
-				<a href="#about-section"><div>About Me (Placeholder)</div></a>
-				<a href="#projects-section"
-					><div>Projects (Placeholder)</div></a
-				>
-				<a href="#contact-section"><div>Contact (Placeholder)</div></a>
+			<div id="main">
+				<h1>Hi</h1>
+				<h1>I'm <span>Luke</span>.</h1>
+				<h3>BSc. (Hons) Computer Science graduate (2020).</h3>
+				<h3>
+					Passion for problem solving, software development, and
+					music.
+				</h3>
+				<img />
+			</div>
+			<div id="recents">
+				<h2>Recents</h2>
+				<h3>Projects</h3>
+				<div id="recent-projects" class="recents-snippet"></div>
+				<h3>CodeWars</h3>
+				<div id="recent-codewars" class="recents-snippet"></div>
 			</div>
 		</section>
 		<div class="divider"></div>
 		<section id="about-section" class="aboutSection"></section>
 		<div class="divider"></div>
-		<section id="projects-section" class="projectsSection"></section>
+		<section id="projects-section" class="projectsSection">
+			<!--Add a section for display CodeWars Kata challenges
+				CodeWars API - https://dev.codewars.com/#get-user
+				- Pull in User Completed Challenges
+				- Extract ID from each challenge from JSON
+				- Get Challenge details by iterating through IDs
+				- Extract specific details from JSON
+				- Display details
+			-->
+		</section>
 		<div class="divider"></div>
 		<section id="contact-section" class="contactSection"></section>
 		<footer></footer>
+		<script src="https://unpkg.com/ionicons@5.2.3/dist/ionicons.js"></script>
 	</body>
 </html>
