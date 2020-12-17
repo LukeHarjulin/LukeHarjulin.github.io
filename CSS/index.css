@@ -6,6 +6,8 @@
 	--col3: #ffb81c; /*alt colour is #1A62FF / Ultramarine blue*/
 	--col4: #ffffff;
 	--col5: #ffffff; /*underline*/
+	--col6: #ebebeb;
+	--col7: #262729;
 }
 @keyframes pulseBlurRadius {
 	0% {
@@ -90,13 +92,16 @@
 	margin: 0;
 	padding: 0;
 	font-family: "Noto Sans JP", sans-serif;
-	color: var(--col1);
+	color: var(--col6);
 	scroll-behavior: smooth;
 }
 html {
 	background-color: var(--col1);
+	scrollbar-color: var(--col6) var(--col7);
 }
-
+::-webkit-scrollbar-thumb {
+	background: var(--col1);
+}
 header {
 	position: fixed;
 	top: 0;
@@ -352,6 +357,7 @@ header ul a li {
 	width: 75%;
 	background-color: transparent;
 	padding-top: 112px;
+	padding-right: 3%;
 }
 #main #topOfContainer {
 	justify-content: space-between;
@@ -373,13 +379,14 @@ header ul a li {
 #main .main-section {
 	display: flex;
 	padding: 20px;
+	padding-right: 0px;
 }
 #mainPP {
 	margin-bottom: 0px;
 	margin-top: auto;
 	height: 350px;
 	width: 350px;
-	border-radius: 10px;
+	border-radius: 7px;
 }
 #main #botOfContainer #links {
 	width: 60px;
@@ -397,14 +404,72 @@ header ul a li {
 #main #botOfContainer div ul {
 	list-style: none;
 }
-
+#page-splitter {
+	width: 1px;
+	background-color: var(--col6);
+	margin-top: 250px;
+	margin-bottom: 100px;
+}
 #recents {
 	position: relative;
-	display: flex;
-	width: 20%;
+	display: grid;
+	width: 25%;
+	min-width: 350px;
 	right: 0px;
-	background-color: green;
-	min-height: 100vh;
+	background-color: transparent;
+	padding-top: 112px;
+	padding-left: 3%;
+}
+#recents div h2 {
+	margin-top: 200px;
+	font-size: 2.5em;
+	letter-spacing: 3px;
+	font-weight: 500;
+}
+#recents div h3 {
+	margin-top: 25px;
+	margin-bottom: 5px;
+	font-size: 1.3em;
+	letter-spacing: 2px;
+	font-weight: 500;
+}
+#recents div .recents-snippet {
+	background-color: var(--col7);
+	height: 95px;
+	width: 300px;
+	padding: 6px 12px;
+	border-radius: 4px;
+	margin: 6px 0px;
+}
+#recents div .recent-codewars {
+	display: flex;
+	justify-content: space-between;
+}
+#recents div .recent-codewars h5 {
+	font-size: 1em;
+	letter-spacing: 1px;
+	font-weight: 400;
+	margin-bottom: 0px;
+	margin-top: auto;
+}
+#recents div .recent-codewars div {
+	display: inline;
+}
+#recents div .recents-snippet h4 {
+	font-size: 1.1em;
+	letter-spacing: 1px;
+	font-weight: 400;
+	margin-bottom: 10px;
+}
+#recents div .recents-snippet h5 {
+	font-size: 1em;
+	letter-spacing: 1px;
+	font-weight: 400;
+}
+#recents div .recents-snippet p {
+	font-size: 0.8em;
+	letter-spacing: 1px;
+	font-weight: 400;
 }
 .aboutSection {
 	position: relative;

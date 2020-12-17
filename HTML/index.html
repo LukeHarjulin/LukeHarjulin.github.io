@@ -55,7 +55,7 @@
 						<h1>Hi,</h1>
 						<h1>I'm <span>Luke</span>.</h1>
 					</div>
-					<img id="mainPP" src="../profilePic.JPG" />
+					<img loading="lazy" id="mainPP" src="../profilePic.JPG" />
 				</div>
 				<div id="botOfContainer" class="main-section">
 					<div id="links">
@@ -76,13 +76,36 @@
 					</div>
 				</div>
 			</container>
-			<div id="recents">
-				<h2>Recents</h2>
-				<h3>Projects</h3>
-				<div id="recent-projects" class="recents-snippet"></div>
-				<h3>CodeWars</h3>
-				<div id="recent-codewars" class="recents-snippet"></div>
-			</div>
+			<div id="page-splitter"></div>
+			<container id="recents">
+				<div>
+					<h2>Recents</h2>
+					<h3>Projects</h3>
+					<div class="recents-snippet recent-projects">
+						<h4>&#60;Project Title&#62;</h4>
+						<p>Description...</p>
+					</div>
+				</div>
+				<div>
+					<h3>Code Wars Challenges</h3>
+					<div class="recents-snippet recent-codewars">
+						<div>
+							<h4>&#60;Challenge Title&#62;</h4>
+							<h5>Completed Lanugages:</h5>
+							<h5>Tags:</h5>
+						</div>
+						<h5>kyu</h5>
+					</div>
+					<div class="recents-snippet recent-codewars">
+						<div>
+							<h4>&#60;Challenge Title&#62;</h4>
+							<h5>Completed Lanugages:</h5>
+							<h5>Tags:</h5>
+						</div>
+						<h5>kyu</h5>
+					</div>
+				</div>
+			</container>
 		</section>
 		<div class="divider"></div>
 		<section id="about-section" class="aboutSection"></section>
