@@ -74,3 +74,26 @@ function toggleNavItemUnderline(index) {
 		}
 	}
 }
+
+window.onload = function () {
+	/*fetch(
+		"http://www.codewars.com/api/v1/users/LukeHarjulin/code-challenges/completed"
+	)
+		.then(function (response) {
+			console.log(response.json());
+		})
+		.catch(function (error) {
+			console.log("Error: " + error);
+		});*/
+	const Http = new XMLHttpRequest();
+	const url =
+		"http://www.codewars.com/api/v1/users/LukeHarjulin/code-challenges/completed";
+	Http.open("GET", url);
+	Http.send();
+
+	Http.onreadystatechange = (e) => {
+		if (this.readyState == 4 && this.status == 200) {
+			console.log(Http.responseText);
+		}
+	};
+};

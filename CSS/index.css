@@ -364,7 +364,6 @@ header ul a li {
 }
 #main #topOfContainer div {
 	margin-top: auto;
-	margin-left: 60px;
 	margin-bottom: 0px;
 }
 #main #topOfContainer div h1 {
@@ -380,16 +379,44 @@ header ul a li {
 	display: flex;
 	padding: 20px;
 	padding-right: 0px;
+	padding-left: 60px;
 }
 #mainPP {
 	margin-bottom: 0px;
 	margin-top: auto;
 	height: 350px;
 	width: 350px;
-	border-radius: 7px;
+	border-radius: 20px;
+}
+#main #botOfContainer {
+	display: block;
 }
 #main #botOfContainer #links {
+	margin-top: 40px;
+}
+#main #botOfContainer #links ul {
+	list-style: none;
+	display: flex;
+}
+#main #botOfContainer #links span {
+	width: 1px;
+	margin: 0px 15px;
+	background-color: var(--col6);
+}
+#main #botOfContainer #links li {
+	position: relative;
+	background-color: #fff;
+	width: 64px;
+	height: 64px;
+	border-radius: 6px;
+	display: flex;
+	justify-content: space-around;
+}
+#main #botOfContainer #links li img {
+	display: block;
+	margin: auto;
 	width: 60px;
+	height: 60px;
 }
 #main #botOfContainer #bottom-text-container {
 	display: inline;
@@ -400,9 +427,6 @@ header ul a li {
 	line-height: 2em;
 	font-weight: 400;
 	letter-spacing: 2px;
-}
-#main #botOfContainer div ul {
-	list-style: none;
 }
 #page-splitter {
 	width: 1px;
@@ -421,7 +445,7 @@ header ul a li {
 	padding-left: 3%;
 }
 #recents div h2 {
-	margin-top: 200px;
+	margin-top: 130px;
 	font-size: 2.5em;
 	letter-spacing: 3px;
 	font-weight: 500;
