@@ -205,6 +205,9 @@ header #logoSection .logoText {
 	opacity: 1;
 	font-weight: 300;
 }
+header .navMenu :hover {
+	color: var(--col3);
+}
 .navMenu {
 	position: relative;
 	transition: 0.3s;
@@ -275,7 +278,6 @@ header ul a li {
 	width: 100px;
 	height: 55px;
 }
-
 .headerScrolled #logoSection #logo {
 	padding-right: 30px;
 	height: 55px;
@@ -329,7 +331,7 @@ header ul a li {
 	background-color: var(--col3);
 }
 .headerScrolled .navMenu {
-	margin-top: 20px;
+	margin-top: 15px;
 }
 .headerScrolled #menuList .navItem {
 	color: var(--col1);
@@ -357,7 +359,8 @@ header ul a li {
 	width: 75%;
 	background-color: transparent;
 	padding-top: 112px;
-	padding-right: 3%;
+	padding-left: 60px;
+	padding-right: 60px;
 }
 #main #topOfContainer {
 	justify-content: space-between;
@@ -366,7 +369,7 @@ header ul a li {
 	margin-top: auto;
 	margin-bottom: 0px;
 }
-#main #topOfContainer div h1 {
+.intro-text {
 	color: var(--col2);
 	font-size: 7em;
 	font-weight: 500;
@@ -377,12 +380,9 @@ header ul a li {
 }
 #main .main-section {
 	display: flex;
-	padding: 20px;
-	padding-right: 0px;
-	padding-left: 60px;
 }
 #mainPP {
-	margin-bottom: 0px;
+	margin-bottom: 100px;
 	margin-top: auto;
 	height: 350px;
 	width: 350px;
@@ -391,19 +391,21 @@ header ul a li {
 #main #botOfContainer {
 	display: block;
 }
-#main #botOfContainer #links {
+#links {
 	margin-top: 40px;
+	width: 250px;
 }
-#main #botOfContainer #links ul {
+#links ul {
 	list-style: none;
 	display: flex;
+	justify-content: space-evenly;
 }
-#main #botOfContainer #links span {
+#links span {
 	width: 1px;
-	margin: 0px 15px;
+	margin: 0px auto;
 	background-color: var(--col6);
 }
-#main #botOfContainer #links li {
+#links li {
 	position: relative;
 	background-color: #fff;
 	width: 64px;
@@ -412,7 +414,10 @@ header ul a li {
 	display: flex;
 	justify-content: space-around;
 }
-#main #botOfContainer #links li img {
+#links li :hover {
+	background-color: var(--col3);
+}
+.social-icon {
 	display: block;
 	margin: auto;
 	width: 60px;
@@ -421,7 +426,7 @@ header ul a li {
 #main #botOfContainer #bottom-text-container {
 	display: inline;
 }
-#main #botOfContainer #bottom-text-container h3 {
+.subIntro-text {
 	color: var(--col2);
 	font-size: 1.5em;
 	line-height: 2em;
@@ -442,7 +447,7 @@ header ul a li {
 	right: 0px;
 	background-color: transparent;
 	padding-top: 112px;
-	padding-left: 3%;
+	padding-left: 30px;
 }
 #recents div h2 {
 	margin-top: 130px;
@@ -529,6 +534,29 @@ header ul a li {
 	height: 1px;
 	background-color: var(--col2);
 }
+@media (max-width: 1400px) {
+	.intro-text {
+		font-size: 6em;
+	}
+	.subIntro-text {
+		font-size: 1.3em;
+	}
+	#mainPP {
+		width: 300px;
+		height: 300px;
+	}
+}
+@media (max-width: 1300px) {
+	#main {
+		width: 100%;
+	}
+	#recents {
+		display: none;
+	}
+	#page-splitter {
+		display: none;
+	}
+}
 @media (max-width: 1100px) {
 }
 @media (max-width: 950px) {
@@ -540,6 +568,37 @@ header ul a li {
 	}
 	header #logoSection #logoAnchor {
 		left: 0px;
+	}
+	.intro-text {
+		font-size: 5em;
+	}
+	.subIntro-text {
+		font-size: 1.1em;
+	}
+	#mainPP {
+		width: 250px;
+		height: 250px;
+	}
+}
+@media (max-width: 770px) {
+	#main #topOfContainer {
+		flex-direction: column-reverse;
+	}
+	#main #topOfContainer div {
+		margin-top: 0px;
+	}
+	.intro-text {
+		font-size: 4.5em;
+	}
+	.subIntro-text {
+		font-size: 1em;
+	}
+	#mainPP {
+		position: relative;
+		margin-left: auto;
+		margin-bottom: 0px;
+		width: 200px;
+		height: 200px;
 	}
 }
 @media (max-width: 600px) {
@@ -631,5 +690,26 @@ header ul a li {
 	}
 	.openMenu #bar3 {
 		transform: translate(-3px, -14px) rotate(-45deg);
+	}
+	.intro-text {
+		font-size: 3.2em;
+	}
+	.subIntro-text {
+		font-size: 0.8em;
+	}
+	#mainPP {
+		width: 150px;
+		height: 150px;
+	}
+	#links {
+		width: 175px;
+	}
+	#links ul a li {
+		width: 40px;
+		height: 40px;
+	}
+	.social-icon {
+		width: 36px;
+		height: 36px;
 	}
 }
