@@ -1,0 +1,142 @@
+name: Deploy portfolio to GitHub Pages
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Branch, tag, or commit SHA to deploy. Leave blank for the selected ref."
+        required: false
+        type: string
+      version_label:
+        description: "Optional label for /version.json."
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout requested version
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+          fetch-depth: 0
+
+      - name: Detect site type
+        id: site
+        shell: bash
+        run: |
+          if [ -f package.json ] && [ -f pnpm-lock.yaml ] && [ -d src/pages ]; then
+            echo "mode=astro" >> "$GITHUB_OUTPUT"
+          else
+            echo "mode=legacy-static" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Collect version metadata
+        id: version
+        shell: bash
+        run: |
+          sha="$(git rev-parse HEAD)"
+          requested_ref="${{ inputs.ref }}"
+          if [ -z "$requested_ref" ]; then
+            requested_ref="${GITHUB_REF_NAME}"
+          fi
+
+          label="${{ inputs.version_label }}"
+          if [ -z "$label" ]; then
+            label="$(git describe --tags --always "$sha")"
+          fi
+
+          {
+            echo "sha=$sha"
+            echo "ref=$requested_ref"
+            echo "label=$label"
+            echo "deployed_at=$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Set up Node
+        if: steps.site.outputs.mode == 'astro'
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Enable pnpm
+        if: steps.site.outputs.mode == 'astro'
+        shell: bash
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.5.3 --activate
+
+      - name: Install dependencies
+        if: steps.site.outputs.mode == 'astro'
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Astro site
+        if: steps.site.outputs.mode == 'astro'
+        env:
+          PUBLIC_GIT_SHA: ${{ steps.version.outputs.sha }}
+          PUBLIC_GIT_REF: ${{ steps.version.outputs.ref }}
+          PUBLIC_VERSION_LABEL: ${{ steps.version.outputs.label }}
+          PUBLIC_DEPLOYED_AT: ${{ steps.version.outputs.deployed_at }}
+        run: pnpm run build
+
+      - name: Build legacy static site
+        if: steps.site.outputs.mode == 'legacy-static'
+        shell: bash
+        run: |
+          mkdir -p dist
+          shopt -s dotglob nullglob
+
+          for item in *; do
+            case "$item" in
+              .git|.github|dist)
+                continue
+                ;;
+              *)
+                cp -R "$item" dist/
+                ;;
+            esac
+          done
+
+          touch dist/.nojekyll
+          cat > dist/version.json <<JSON
+          {
+            "commit": "${{ steps.version.outputs.sha }}",
+            "ref": "${{ steps.version.outputs.ref }}",
+            "version": "${{ steps.version.outputs.label }}",
+            "deployedAt": "${{ steps.version.outputs.deployed_at }}",
+            "mode": "legacy-static"
+          }
+          JSON
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v6
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
