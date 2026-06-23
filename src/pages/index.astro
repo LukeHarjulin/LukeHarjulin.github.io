@@ -22,7 +22,9 @@ const iconByKind = {
 };
 
 const pageTitle = `${profile.name} | ${profile.role}`;
-const pageDescription = `${profile.role} specialising in platform engineering, cloud automation, CI/CD governance, and developer enablement.`;
+const pageDescription = `${profile.role} specialising in platform engineering, cloud automation, reusable CI/CD, and developer enablement.`;
+const skillId = (title: string) =>
+	`skill-${title.toLowerCase().replaceAll(" ", "-").replaceAll("&", "and").replaceAll("/", "-")}`;
 ---
 
 <!doctype html>
@@ -103,7 +105,7 @@ const pageDescription = `${profile.role} specialising in platform engineering, c
 					<img src={profilePic.src} alt="Portrait of Luke Harjulin" width="520" height="520" />
 					<div class="hero__fact">
 						<span>{profile.location}</span>
-						<strong>Cloud automation and platform delivery</strong>
+						<strong>Reusable cloud platforms and delivery tooling</strong>
 					</div>
 				</div>
 			</section>
@@ -120,7 +122,7 @@ const pageDescription = `${profile.role} specialising in platform engineering, c
 			<section id="about-section" class="section-band">
 				<div class="section-heading">
 					<div class="eyebrow">Profile</div>
-					<h2>DevOps engineer for reliable, governed delivery.</h2>
+					<h2>Platform engineer for reusable cloud delivery.</h2>
 				</div>
 				<div class="profile-grid">
 					<div class="summary-copy">
@@ -148,7 +150,7 @@ const pageDescription = `${profile.role} specialising in platform engineering, c
 				<div class="section-heading">
 					<div class="eyebrow">Experience</div>
 					<h2>{experience.role}</h2>
-					<p>{experience.company} · {experience.context}</p>
+					<p>{experience.company} - {experience.context}</p>
 				</div>
 				<div class="experience-layout">
 					<p class="experience-summary">{experience.summary}</p>
@@ -161,7 +163,7 @@ const pageDescription = `${profile.role} specialising in platform engineering, c
 			<section id="impact-section" class="section-band">
 				<div class="section-heading">
 					<div class="eyebrow">Selected impact</div>
-					<h2>Reusable platforms, auditable releases, and cloud delivery.</h2>
+					<h2>Reusable platforms, cloud migration, and developer enablement.</h2>
 				</div>
 				<div class="impact-grid">
 					{impactHighlights.map((highlight) => (
@@ -179,12 +181,12 @@ const pageDescription = `${profile.role} specialising in platform engineering, c
 			<section id="toolkit-section" class="section-band section-band--muted">
 				<div class="section-heading">
 					<div class="eyebrow">Toolkit</div>
-					<h2>Practical skills across cloud, automation, and governance.</h2>
+					<h2>Cloud platforms, delivery automation, and developer tooling.</h2>
 				</div>
 				<div class="skills-grid">
 					{skillGroups.map((group) => (
-						<section class="skill-card" aria-labelledby={`skill-${group.title.toLowerCase().replaceAll(" ", "-").replaceAll("&", "and")}`}>
-							<h3 id={`skill-${group.title.toLowerCase().replaceAll(" ", "-").replaceAll("&", "and")}`}>{group.title}</h3>
+						<section class="skill-card" aria-labelledby={skillId(group.title)}>
+							<h3 id={skillId(group.title)}>{group.title}</h3>
 							<ul>
 								{group.items.map((item) => <li>{item}</li>)}
 							</ul>
@@ -196,8 +198,8 @@ const pageDescription = `${profile.role} specialising in platform engineering, c
 			<section id="contact-section" class="contact-section section-band section-band--dark">
 				<div>
 					<div class="eyebrow">Contact</div>
-					<h2>Open to senior DevOps and platform engineering conversations in AI-forward teams.</h2>
-					<p>Best reached via LinkedIn for roles involving cloud automation, platform tooling, and helping teams adopt AI and agentic engineering practices.</p>
+					<h2>Open to senior DevOps and platform engineering conversations.</h2>
+					<p>Best reached via LinkedIn for roles involving cloud migration, reusable delivery platforms, infrastructure automation, and developer enablement.</p>
 				</div>
 				<div class="contact-actions">
 					<a class="button button--primary" href={profile.cv.href} download={profile.cv.filename}>{profile.cv.label}</a>

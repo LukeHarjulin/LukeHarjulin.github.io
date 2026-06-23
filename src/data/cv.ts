@@ -12,11 +12,11 @@ export const profile = {
 	role: "Senior DevOps Engineer",
 	location: "United Kingdom",
 	intro:
-		"I build cloud automation, deployment workflows, and platform tooling that help engineering teams ship reliably in regulated environments.",
+		"I build reusable cloud platforms, delivery tooling, and automation that help engineering teams move faster with cleaner engineering foundations.",
 	summary: [
-		"Senior DevOps Engineer with 5.5 years' experience building cloud automation, CI/CD workflows, and platform tooling for large engineering teams.",
-		"I have worked across AWS, Azure, Terraform, GitHub Actions, Azure DevOps, ServiceNow automation, and identity platform configuration, with a focus on reliable and traceable delivery.",
-		"I am looking for a forward-thinking engineering environment where I can help teams adopt AI and agentic engineering practices to accelerate delivery, while keeping platform reliability, governance, and developer experience at the centre."
+		"Senior DevOps Engineer with 5+ years building platform tooling, cloud automation, and delivery workflows across aviation and travel, utilities trading, and industrial cloud environments.",
+		"I focus on reusable engineering foundations: pipeline templates, infrastructure modules, application scaffolding, cloud migration support, environment automation, and developer enablement.",
+		"Recent work spans AWS migration enablement, GitHub Actions and TeamCity migration, Azure infrastructure for React and .NET 6 services, and tooling that generates APIs, pipelines, and Kubernetes manifests for AKS."
 	],
 	links: [
 		{
@@ -44,47 +44,47 @@ export const profile = {
 
 export const metrics = [
 	{ value: "5+ yrs", label: "DevOps and platform engineering experience" },
-	{ value: "Cloud + IaC", label: "AWS, Azure, Terraform, and serverless automation" },
-	{ value: "CI/CD + DevEx", label: "Reusable workflows, release tooling, and developer enablement" },
-	{ value: "Governance", label: "ServiceNow change automation, audit-ready releases, and access controls" }
+	{ value: "Cross-sector", label: "Aviation, travel, utilities trading, and industrial platforms" },
+	{ value: "AWS + Azure", label: "Cloud infrastructure, application hosting, and IaC" },
+	{ value: "DevEx", label: "Reusable workflows, templates, scaffolding, and CI/CD" }
 ];
 
 export const impactHighlights = [
 	{
-		title: "CI/CD Platform Engineering",
+		title: "Cloud Migration Enablement",
 		description:
-			"Designed and maintained reusable GitHub Actions workflows adopted across 50+ repositories, standardising delivery and reducing duplicated pipeline logic.",
-		tags: ["GitHub Actions", "Reusable workflows", "Semantic versioning"]
+			"Supported aviation and travel teams moving core applications from on-prem hosting toward AWS, while helping teams adopt GitHub and reusable delivery practices.",
+		tags: ["AWS", "GitHub", "Migration"]
+	},
+	{
+		title: "Reusable CI/CD Platform",
+		description:
+			"Built central GitHub workflows and actions for Terraform, npm, .NET, SFTP, and AWS role management, reducing duplicated pipeline logic across teams.",
+		tags: ["GitHub Actions", "TeamCity migration", "DevEx"]
+	},
+	{
+		title: "Azure Platform Engineering",
+		description:
+			"Delivered infrastructure for React, .NET 6 API, and JMeter performance testing apps, integrating Azure Batch, Service Bus, Event Grid, CDN, Media Services, and private networking.",
+		tags: ["Azure", ".NET 6", "Terraform"]
+	},
+	{
+		title: "Delivery Starter Kits",
+		description:
+			"Created tooling to generate .NET APIs, Azure DevOps pipelines, Kubernetes manifests, and repository content, with frontend templates wired to API services.",
+		tags: ["AKS", "PowerShell", "Templates"]
 	},
 	{
 		title: "Infrastructure as Code",
 		description:
-			"Built shared Terraform modules covering EC2, IAM, ECR, RDS, networking, and account-level AWS configuration for consistent cloud delivery.",
-		tags: ["Terraform", "AWS", "Policy compliance"]
+			"Built Terraform modules and layered cloud patterns across AWS and Azure, improving repeatability for infrastructure changes and environment-aware delivery.",
+		tags: ["Terraform", "Docker", "YAML"]
 	},
 	{
-		title: "Environment Lifecycle Automation",
+		title: "Governed Delivery Automation",
 		description:
-			"Contributed to a serverless lifecycle platform orchestrating 50+ non-production environments across 20 engineering teams.",
-		tags: ["Lambda", "Step Functions", "Self-service tooling"]
-	},
-	{
-		title: "Change Management Automation",
-		description:
-			"Built a GitHub Action to create and close ServiceNow change requests from CI/CD pipelines, improving traceability and audit readiness.",
-		tags: ["ServiceNow", "Release governance", "Audit trails"]
-	},
-	{
-		title: "Cloud Platform Delivery",
-		description:
-			"Delivered cross-account IAM roles, RDS upgrades, SQS/SNS policy improvements, blue/green deployment fixes, and environment-aware pipelines.",
-		tags: ["AWS", "IAM", "Production releases"]
-	},
-	{
-		title: "Identity & Access Automation",
-		description:
-			"Established GitOps-based CI/CD for identity platform configuration with sync, promote, rollback, versioning, and dry-run workflows.",
-		tags: ["ForgeRock CIAM", "GitOps", "Rollback tooling"]
+			"Automated ServiceNow change creation and closure from CI/CD, and supported GitOps identity workflows with promotion, rollback, and dry-run paths.",
+		tags: ["ServiceNow", "GitOps", "Rollback"]
 	}
 ];
 
@@ -95,15 +95,27 @@ export const skillGroups = [
 			"AWS",
 			"Azure",
 			"Terraform",
-			"Serverless architecture",
-			"IAM",
-			"EC2",
-			"ECR",
-			"RDS",
-			"SQS",
-			"SNS",
+			"Kubernetes",
+			"AKS",
+			"Docker",
 			"Networking",
-			"Multi-account environments"
+			"IAM",
+			"RDS",
+			"SQS/SNS",
+			"ECR",
+			"Private networking"
+		]
+	},
+	{
+		title: "Azure Platform Services",
+		items: [
+			"Azure Batch",
+			"Azure Service Bus",
+			"Azure Event Grid",
+			"Azure CDN",
+			"Azure Media Services",
+			"Azure Functions",
+			"Azure Web Apps"
 		]
 	},
 	{
@@ -111,22 +123,28 @@ export const skillGroups = [
 		items: [
 			"GitHub Actions",
 			"Azure DevOps",
+			"TeamCity",
+			"Octopus Deploy",
 			"Reusable workflows",
-			"Release engineering",
+			"YAML pipelines",
 			"Deployment automation",
 			"Semantic versioning",
 			"PR automation"
 		]
 	},
 	{
-		title: "Platform Engineering",
+		title: "Application Templates",
 		items: [
-			"Internal developer platforms",
-			"Self-service tooling",
-			"Environment lifecycle management",
-			"AI adoption enablement",
-			"Reusable infrastructure modules",
-			"Operational automation"
+			".NET 6",
+			"C#",
+			"React",
+			"Angular",
+			"JavaScript",
+			"TypeScript",
+			"Minimal APIs",
+			"JMeter",
+			"API scaffolding",
+			"Frontend/API templates"
 		]
 	},
 	{
@@ -135,29 +153,23 @@ export const skillGroups = [
 			"PowerShell",
 			"YAML",
 			"Bash",
-			"C#",
-			"JavaScript",
-			"TypeScript",
-			"API integrations"
+			"Terraform modules",
+			"Generator tooling",
+			"Repository automation",
+			"API integrations",
+			"Operational automation"
 		]
 	},
 	{
-		title: "Security, Governance & Change",
+		title: "Governance & Tooling",
 		items: [
 			"ServiceNow automation",
+			"GitHub Advanced Security",
+			"SonarQube",
+			"Artifactory",
 			"Audit-friendly delivery",
+			"Change controls",
 			"Access management",
-			"Production release controls",
-			"Policy-compliant infrastructure"
-		]
-	},
-	{
-		title: "Application & Identity Tooling",
-		items: [
-			".NET build pipelines",
-			"npm pipelines",
-			"ForgeRock CIAM",
-			"Configuration promotion",
 			"Rollback tooling"
 		]
 	}
@@ -194,16 +206,17 @@ export const certifications = [
 export const experience = {
 	company: "NTT DATA",
 	role: "Senior DevOps Engineer",
-	context: "Major UK travel organisation",
+	context: "Aviation, travel, utilities trading, and industrial platform delivery",
 	summary:
-		"Promoted from Junior Engineer to Senior DevOps Engineer while building platform engineering, release engineering, and DevOps tooling for large-scale engineering teams.",
+		"Platform and DevOps engineer delivering cloud infrastructure, reusable delivery workflows, templates, and migration enablement across AWS and Azure client environments.",
 	responsibilities: [
-		"Designed reusable CI/CD workflows to standardise delivery across dozens of repositories.",
-		"Developed Terraform modules and layered infrastructure patterns for AWS-based platforms.",
-		"Automated environment provisioning, maintenance, and teardown across non-production estates.",
-		"Integrated change management processes into deployment pipelines to reduce manual release work.",
-		"Supported identity and access tooling through GitOps-based configuration management.",
-		"Partnered with engineering teams to improve deployment reliability, operational visibility, and developer experience."
+		"Led platform infrastructure for industrial cloud apps including a React frontend, .NET 6 isolated API, and JMeter performance testing app.",
+		"Integrated Azure Batch, Service Bus, Event Grid, Media Services, CDN, and private networking into Terraform-managed delivery workflows.",
+		"Built a reusable utilities trading starter platform for .NET APIs, Azure DevOps pipelines, Kubernetes manifests, and AKS deployment.",
+		"Created object-oriented PowerShell generator tooling that scaffolds APIs, pipelines, manifests, and repository content from user inputs.",
+		"Established central GitHub reusable workflows/actions and supported TeamCity to GitHub Actions migration for aviation and travel engineering teams.",
+		"Supported on-prem to AWS migration work, GitHub Advanced Security trials, and reusable platform adoption across delivery teams.",
+		"Automated ServiceNow change management and GitOps-based identity configuration workflows for traceable releases."
 	]
 };
 
