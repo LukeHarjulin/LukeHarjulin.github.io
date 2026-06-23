@@ -16,7 +16,7 @@ on:
         type: string
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -91,6 +91,25 @@ jobs:
           PUBLIC_VERSION_LABEL: ${{ steps.version.outputs.label }}
           PUBLIC_DEPLOYED_AT: ${{ steps.version.outputs.deployed_at }}
         run: pnpm run build
+
+      - name: Publish built output for branch-based Pages
+        if: steps.site.outputs.mode == 'astro' && github.event_name == 'push' && github.ref == 'refs/heads/master' && github.actor != 'github-actions[bot]'
+        shell: bash
+        run: |
+          touch dist/.nojekyll
+          rm -rf _astro certifications
+          cp -R dist/. .
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html version.json CNAME .nojekyll _astro certifications
+
+          if git diff --cached --quiet; then
+            echo "No built output changes to publish."
+          else
+            git commit -m "Publish built portfolio output"
+            git push
+          fi
 
       - name: Build legacy static site
         if: steps.site.outputs.mode == 'legacy-static'
