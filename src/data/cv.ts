@@ -34,14 +34,19 @@ export const profile = {
 			href: "https://www.codewars.com/users/LukeHarjulin",
 			kind: "codewars"
 		}
-	]
+	],
+	cv: {
+		label: "Download CV",
+		href: "/cv/Luke-Harjulin-CV.pdf",
+		filename: "Luke-Harjulin-CV.pdf"
+	}
 };
 
 export const metrics = [
-	{ value: "5.5 yrs", label: "DevOps and platform engineering experience" },
-	{ value: "AWS + Azure", label: "Cloud automation across regulated delivery environments" },
-	{ value: "Terraform", label: "Reusable IaC modules and layered infrastructure patterns" },
-	{ value: "CI/CD", label: "GitHub Actions, Azure DevOps, release governance, and change automation" }
+	{ value: "5+ yrs", label: "DevOps and platform engineering experience" },
+	{ value: "Cloud + IaC", label: "AWS, Azure, Terraform, and serverless automation" },
+	{ value: "CI/CD + DevEx", label: "Reusable workflows, release tooling, and developer enablement" },
+	{ value: "Governance", label: "ServiceNow change automation, audit-ready releases, and access controls" }
 ];
 
 export const impactHighlights = [

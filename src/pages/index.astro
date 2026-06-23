@@ -84,7 +84,8 @@ const pageDescription = `${profile.role} specialising in platform engineering, c
 					<h1>{profile.name}</h1>
 					<p class="hero__intro">{profile.intro}</p>
 					<div class="hero__actions" aria-label="Primary actions">
-						<a class="button button--primary" href="#experience-section">View experience</a>
+						<a class="button button--primary" href={profile.cv.href} download={profile.cv.filename}>{profile.cv.label}</a>
+						<a class="button button--secondary" href="#experience-section">View experience</a>
 						<a class="button button--secondary" href={profile.links[1].href} target="_blank" rel="noreferrer">Connect on LinkedIn</a>
 					</div>
 					<ul class="social-list" aria-label="Social profiles">
@@ -199,7 +200,8 @@ const pageDescription = `${profile.role} specialising in platform engineering, c
 					<p>Best reached via LinkedIn for roles involving cloud automation, platform tooling, and helping teams adopt AI and agentic engineering practices.</p>
 				</div>
 				<div class="contact-actions">
-					<a class="button button--primary" href={profile.links[1].href} target="_blank" rel="noreferrer">LinkedIn</a>
+					<a class="button button--primary" href={profile.cv.href} download={profile.cv.filename}>{profile.cv.label}</a>
+					<a class="button button--secondary" href={profile.links[1].href} target="_blank" rel="noreferrer">LinkedIn</a>
 					<a class="button button--secondary" href={profile.links[0].href} target="_blank" rel="noreferrer">GitHub</a>
 				</div>
 			</section>
