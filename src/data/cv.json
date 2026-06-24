@@ -1,0 +1,241 @@
+{
+	"navItems": [
+		{ "label": "Home", "href": "#home-section" },
+		{ "label": "Profile", "href": "#about-section" },
+		{ "label": "Experience", "href": "#experience-section" },
+		{ "label": "Impact", "href": "#impact-section" },
+		{ "label": "Toolkit", "href": "#toolkit-section" },
+		{ "label": "Contact", "href": "#contact-section" }
+	],
+	"profile": {
+		"name": "Luke Harjulin",
+		"firstName": "Luke",
+		"lastName": "Harjulin",
+		"role": "Senior DevOps Engineer",
+		"location": "United Kingdom",
+		"specialism": "Platform engineering / cloud automation",
+		"intro": "I build cloud automation, delivery tooling, and platform foundations that help engineering teams move faster with cleaner engineering practices.",
+		"headline": "Platform engineer for automated cloud delivery.",
+		"summary": [
+			"Senior DevOps Engineer with 5+ years building platform tooling, cloud automation, and delivery workflows across aviation and travel, utilities trading, and industrial cloud environments.",
+			"I focus on automation-led delivery: pipeline templates, infrastructure modules, application scaffolding, cloud migration support, environment lifecycle workflows, and developer enablement.",
+			"The common thread across my work is turning manual or repeated delivery problems into maintained platform capability that teams can adopt with less operational overhead."
+		],
+		"cvSummary": [
+			"Senior DevOps Engineer with 5+ years' experience building platform tooling, cloud automation, and delivery workflows across aviation and travel, utilities trading, and industrial cloud environments. Progressed from Junior Engineer to Senior DevOps Engineer at NTT DATA while working across AWS, Azure, Terraform, GitHub Actions, Azure DevOps, ServiceNow automation, and identity platform configuration.",
+			"Strongest where delivery needs automation-led foundations: pipeline templates, infrastructure modules, application scaffolding, cloud migration support, environment lifecycle workflows, and developer enablement. Brings enough application experience in .NET, React, PowerShell, YAML, Kubernetes, and Docker to work closely with product teams and reduce silos."
+		],
+		"focus": [
+			"Automation-led platform tooling for engineering teams.",
+			"Cloud migration, IaC, and CI/CD delivery.",
+			"Governance that fits developer workflows."
+		],
+		"platformFocus": {
+			"title": "Platform Focus",
+			"description": "Build delivery automation that helps engineering teams ship cloud applications and infrastructure with less friction, stronger consistency, and clearer governance.",
+			"tags": ["CI/CD automation", "Cloud IaC", "Developer enablement", "Governance"]
+		},
+		"links": [
+			{
+				"label": "GitHub",
+				"display": "github.com/LukeHarjulin",
+				"href": "https://github.com/LukeHarjulin",
+				"kind": "github"
+			},
+			{
+				"label": "LinkedIn",
+				"display": "linkedin.com/in/luke-harjulin-272314117",
+				"href": "https://www.linkedin.com/in/luke-harjulin-272314117/",
+				"kind": "linkedin"
+			},
+			{
+				"label": "Codewars",
+				"display": "codewars.com/users/LukeHarjulin",
+				"href": "https://www.codewars.com/users/LukeHarjulin",
+				"kind": "codewars"
+			}
+		],
+		"publicLinks": [
+			{ "label": "lukeharjulin.com", "href": "https://www.lukeharjulin.com/" },
+			{ "label": "linkedin.com/in/luke-harjulin-272314117", "href": "https://www.linkedin.com/in/luke-harjulin-272314117/" },
+			{ "label": "github.com/LukeHarjulin", "href": "https://github.com/LukeHarjulin" }
+		],
+		"cv": {
+			"label": "Download CV",
+			"href": "/cv/Luke-Harjulin-CV.pdf",
+			"filename": "Luke-Harjulin-CV.pdf"
+		}
+	},
+	"metrics": [
+		{ "value": "5+ yrs", "label": "DevOps and platform engineering experience" },
+		{ "value": "Cross-sector", "label": "Aviation, travel, utilities trading, and industrial platforms" },
+		{ "value": "AWS + Azure", "label": "Cloud infrastructure, application hosting, and IaC" },
+		{ "value": "Automation", "label": "CI/CD workflows, templates, scripting, and deployment tooling" }
+	],
+	"impactHighlights": [
+		{
+			"title": "Cloud Migration Enablement",
+			"description": "Supported aviation and travel teams moving core applications from on-prem hosting toward AWS, while helping automate GitHub-based delivery practices.",
+			"points": [
+				"Helped move core applications from on-prem hosting toward AWS environments.",
+				"Supported teams automating GitHub and AWS delivery practices."
+			],
+			"tags": ["AWS", "GitHub", "Migration"]
+		},
+		{
+			"title": "Reusable CI/CD Platform",
+			"description": "Built central GitHub workflows and actions for Terraform, npm, .NET, SFTP, and AWS role management, reducing duplicated pipeline logic across teams.",
+			"points": [
+				"Built central GitHub workflows and actions for Terraform, npm, .NET, SFTP, and AWS role management.",
+				"Reduced duplicated pipeline logic and supported TeamCity to GitHub Actions migration."
+			],
+			"tags": ["GitHub Actions", "TeamCity migration", "DevEx"]
+		},
+		{
+			"title": "Azure Platform Engineering",
+			"description": "Delivered infrastructure for React, .NET 6 API, and JMeter performance testing apps, integrating Azure Batch, Service Bus, Event Grid, CDN, Media Services, and private networking.",
+			"points": [
+				"Delivered infrastructure for React, .NET 6 API, and JMeter performance testing apps.",
+				"Integrated Azure Batch, Service Bus, Event Grid, CDN, Media Services, and private networking."
+			],
+			"tags": ["Azure", ".NET 6", "Terraform"]
+		},
+		{
+			"title": "Delivery Starter Kits",
+			"description": "Created tooling to generate .NET APIs, Azure DevOps pipelines, Kubernetes manifests, and repository content, with frontend templates wired to API services.",
+			"points": [
+				"Created tooling to generate .NET API, Azure DevOps pipelines, and Kubernetes manifests.",
+				"Extended templates so React or Angular frontends could connect to APIs out-of-the-box."
+			],
+			"tags": ["AKS", "PowerShell", "Templates"]
+		},
+		{
+			"title": "Infrastructure as Code",
+			"description": "Built Terraform modules and layered cloud patterns across AWS and Azure, improving repeatability for infrastructure changes and environment-aware delivery.",
+			"points": [
+				"Built Terraform modules and layered infrastructure patterns across AWS and Azure.",
+				"Improved repeatability for infrastructure changes and environment-aware delivery."
+			],
+			"tags": ["Terraform", "Docker", "YAML"]
+		},
+		{
+			"title": "Governed Delivery Automation",
+			"description": "Automated ServiceNow change creation and closure from CI/CD, and supported GitOps identity workflows with promotion, rollback, and dry-run paths.",
+			"points": [
+				"Automated ServiceNow change creation and closure from CI/CD pipelines.",
+				"Supported GitOps identity workflows with review, rollback, and dry-run."
+			],
+			"tags": ["ServiceNow", "GitOps", "Rollback"]
+		}
+	],
+	"skillGroups": [
+		{
+			"title": "Cloud & Infrastructure",
+			"items": ["AWS", "Azure", "Terraform", "Kubernetes", "AKS", "Docker", "Networking", "IAM", "RDS", "SQS/SNS", "ECR", "Private networking"]
+		},
+		{
+			"title": "Azure Platform Services",
+			"items": ["Azure Batch", "Azure Service Bus", "Azure Event Grid", "Azure CDN", "Azure Media Services", "Azure Functions", "Azure Web Apps"]
+		},
+		{
+			"title": "DevOps & CI/CD",
+			"items": ["GitHub Actions", "Azure DevOps", "TeamCity", "Octopus Deploy", "Reusable workflows", "YAML pipelines", "Deployment automation", "Semantic versioning", "PR automation"]
+		},
+		{
+			"title": "Application Templates",
+			"items": [".NET 6", "C#", "React", "Angular", "JavaScript", "TypeScript", "Minimal APIs", "JMeter", "API scaffolding", "Frontend/API templates"]
+		},
+		{
+			"title": "Automation & Scripting",
+			"items": ["PowerShell", "YAML", "Bash", "Terraform modules", "Generator tooling", "Repository automation", "API integrations", "Operational automation"]
+		},
+		{
+			"title": "Governance & Tooling",
+			"items": ["ServiceNow automation", "GitHub Advanced Security", "SonarQube", "Artifactory", "Audit-friendly delivery", "Change controls", "Access management", "Rollback tooling"]
+		}
+	],
+	"certifications": [
+		{
+			"label": "Microsoft Certified: Azure Developer Associate",
+			"badge": "/certifications/microsoft-azure-developer-associate.svg",
+			"href": "https://learn.microsoft.com/en-us/users/lukeharjulin-8650/credentials/7c55db20141571e"
+		},
+		{
+			"label": "AWS Certified CloudOps Engineer - Associate",
+			"badge": "/certifications/aws-cloudops-engineer-associate.png",
+			"href": "https://www.credly.com/badges/0e03494d-0184-4ef9-a82a-f1e375ad4662"
+		},
+		{
+			"label": "GitHub Copilot",
+			"badge": "/certifications/github-copilot.svg",
+			"href": "https://learn.microsoft.com/en-gb/users/lukeharjulin-8650/credentials/a95f5846337c3832?ref=https%3A%2F%2Fwww.linkedin.com%2F"
+		},
+		{
+			"label": "GitHub Actions",
+			"badge": "/certifications/github-actions.png",
+			"href": "https://www.credly.com/badges/579671d3-093f-421b-af85-f08d0885ac70/linked_in_profile"
+		},
+		{
+			"label": "Microsoft Certified: Azure Fundamentals",
+			"badge": "/certifications/microsoft-azure-fundamentals.png",
+			"href": "https://www.credly.com/badges/6e4ab486-1b5a-4952-b8bd-56c64bbbd310?source=linked_in_profile"
+		}
+	],
+	"experience": {
+		"company": "NTT DATA",
+		"role": "Senior DevOps Engineer",
+		"context": "Client-facing platform engineering delivery",
+		"cvContext": "Cross-sector platform, DevOps, and cloud infrastructure delivery",
+		"summary": "Progressed from Junior Engineer to Senior DevOps Engineer while delivering cloud, platform, automation, and release engineering work for client delivery teams.",
+		"responsibilities": [
+			"Translate client delivery needs into automated platform patterns, pipelines, scripts, and infrastructure modules.",
+			"Work across application, cloud, and release boundaries, combining hands-on implementation with guidance for engineering teams.",
+			"Support adoption of shared delivery platforms through documentation, pairing, migration support, and practical troubleshooting.",
+			"Improve delivery reliability and traceability through repeatable build, deploy, environment, and change-management workflows.",
+			"Operate across AWS, Azure, CI/CD, infrastructure as code, scripting, and application scaffolding depending on the engagement."
+		],
+		"sectorHighlights": [
+			{
+				"title": "Aviation & Travel",
+				"role": "Lead Platform Engineer",
+				"summary": "Enabled cloud migration and helped delivery teams automate GitHub and AWS delivery workflows.",
+				"points": [
+					"Established central workflows and actions for common automated delivery paths.",
+					"Supported TeamCity to GitHub Actions migration and GitHub Advanced Security trials."
+				],
+				"tags": ["AWS migration", "GitHub Actions", "GHAS"]
+			},
+			{
+				"title": "Utilities Trading",
+				"role": "Platform Engineer",
+				"summary": "Built a starter platform for .NET APIs, Azure DevOps pipelines, Kubernetes manifests, and AKS deployment.",
+				"points": [
+					"Created object-oriented PowerShell generator for API, pipeline, and manifest scaffolding.",
+					"Extended the template to support React or Angular frontends communicating with the API."
+				],
+				"tags": ["AKS", ".NET Core", "PowerShell"]
+			},
+			{
+				"title": "Industry",
+				"role": "Platform Engineer",
+				"summary": "Led platform infrastructure for React, .NET 6 isolated API, and JMeter performance testing applications.",
+				"points": [
+					"Integrated Azure Batch, Service Bus, Event Grid, Media Services, CDN, and private networking.",
+					"Used Terraform, YAML, PowerShell, and Docker registry workflows."
+				],
+				"tags": ["Azure", "Terraform", "Docker"]
+			}
+		]
+	},
+	"toolkitRows": [
+		{ "label": "Cloud", "items": ["AWS", "Azure", "Azure Batch", "Service Bus", "Event Grid", "Azure CDN", "IAM", "RDS"] },
+		{ "label": "Hosting", "items": ["AKS", "Kubernetes", "Docker", "Lambda", "Azure Functions", "Azure Web Apps", "IIS"] },
+		{ "label": "IaC & delivery", "items": ["Terraform", "GitHub Actions", "Azure DevOps", "TeamCity", "Octopus Deploy"] },
+		{ "label": "Languages", "items": ["PowerShell", "YAML", "C#", ".NET 6", "JavaScript", "TypeScript", "React"] },
+		{ "label": "Practices", "items": ["Platform engineering", "Delivery automation", "Developer enablement", "Change control"] }
+	],
+	"education": {
+		"award": "BSc (Hons) Computer Science",
+		"year": "2020"
+	}
+}

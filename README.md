@@ -18,6 +18,17 @@ pnpm build
 pnpm preview
 ```
 
+## CV Content Workflow
+
+Shared website and CV content lives in `src/data/cv.json`. Edit that file first, then regenerate the downloadable CV and build the site:
+
+```powershell
+pip install -r requirements.txt
+pnpm build:all
+```
+
+`pnpm build:all` writes `public/cv/Luke-Harjulin-CV.pdf` and then runs the Astro production build. Avoid editing the generated PDF directly, because it will be overwritten by the next CV generation.
+
 ## Deployment
 
 The workflow in `.github/workflows/deploy.yml` deploys automatically when `master` is pushed.

@@ -6,7 +6,9 @@
 	"packageManager": "pnpm@11.5.3",
 	"scripts": {
 		"dev": "astro dev",
+		"cv:pdf": "python tools/generate_cv_pdf.py",
 		"build": "astro build",
+		"build:all": "pnpm cv:pdf && pnpm build",
 		"preview": "astro preview"
 	},
 	"devDependencies": {
