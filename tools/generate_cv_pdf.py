@@ -17,6 +17,8 @@ CV_DATA: dict[str, Any] = json.loads(DATA_PATH.read_text(encoding="utf-8"))
 PROFILE = CV_DATA["profile"]
 EXPERIENCE = CV_DATA["experience"]
 OUTPUT = ROOT / "public" / PROFILE["cv"]["href"].lstrip("/")
+CV_VERSION = OUTPUT.stem.replace("Luke-Harjulin-CV-", "")
+CV_LABEL = f"CV {CV_VERSION}" if CV_VERSION != OUTPUT.stem else "CV"
 
 PAGE_W, PAGE_H = A4
 MARGIN = 42
@@ -253,7 +255,7 @@ def draw_sidebar(pdf: canvas.Canvas, y_top: float, y_bottom: float, page_num: in
 	pdf.rect(0, y_bottom, MARGIN + LEFT_COL, y_top - y_bottom, stroke=0, fill=1)
 	draw_logo(pdf, MARGIN, PAGE_H - 84, 0.72, light=True)
 	set_font(pdf, "light", 8.4, SIDEBAR_TEXT)
-	pdf.drawString(MARGIN, 34, f"{PROFILE['name']} - CV - Page {page_num}")
+	pdf.drawString(MARGIN, 34, f"{PROFILE['name']} - {CV_LABEL} - Page {page_num}")
 
 
 def page_one(pdf: canvas.Canvas) -> None:
@@ -439,7 +441,7 @@ def page_two(pdf: canvas.Canvas) -> None:
 def build_pdf() -> None:
 	OUTPUT.parent.mkdir(parents=True, exist_ok=True)
 	pdf = canvas.Canvas(str(OUTPUT), pagesize=A4, pageCompression=0)
-	pdf.setTitle(f"{PROFILE['name']} CV")
+	pdf.setTitle(f"{PROFILE['name']} {CV_LABEL}")
 	pdf.setAuthor(PROFILE["name"])
 	page_one(pdf)
 	pdf.showPage()

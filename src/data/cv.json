@@ -19,21 +19,22 @@
 		"summary": [
 			"Senior DevOps Engineer with 5+ years building platform tooling, cloud automation, and delivery workflows across aviation and travel, utilities trading, and industrial cloud environments.",
 			"I focus on automation-led delivery: pipeline templates, infrastructure modules, application scaffolding, cloud migration support, environment lifecycle workflows, and developer enablement.",
-			"The common thread across my work is turning manual or repeated delivery problems into maintained platform capability that teams can adopt with less operational overhead."
+			"I also design AI-assisted engineering workflows and agentic tooling that connect assistants to project practices, team standards, and delivery platforms such as AWS, Jira, and Octopus Deploy."
 		],
 		"cvSummary": [
 			"Senior DevOps Engineer with 5+ years' experience building platform tooling, cloud automation, and delivery workflows across aviation and travel, utilities trading, and industrial cloud environments. Progressed from Junior Engineer to Senior DevOps Engineer at NTT DATA while working across AWS, Azure, Terraform, GitHub Actions, Azure DevOps, ServiceNow automation, and identity platform configuration.",
-			"Strongest where delivery needs automation-led foundations: pipeline templates, infrastructure modules, application scaffolding, cloud migration support, environment lifecycle workflows, and developer enablement. Brings enough application experience in .NET, React, PowerShell, YAML, Kubernetes, and Docker to work closely with product teams and reduce silos."
+			"Strongest where delivery needs automation-led foundations: pipeline templates, infrastructure modules, application scaffolding, cloud migration support, environment lifecycle workflows, and developer enablement. Also designs AI-assisted engineering workflows, agentic tooling, and assistant guardrails that help teams apply project-specific practices across delivery platforms such as AWS, Jira, and Octopus Deploy."
 		],
 		"focus": [
 			"Automation-led platform tooling for engineering teams.",
 			"Cloud migration, IaC, and CI/CD delivery.",
+			"AI-assisted engineering workflows and agentic tooling.",
 			"Governance that fits developer workflows."
 		],
 		"platformFocus": {
 			"title": "Platform Focus",
-			"description": "Build delivery automation that helps engineering teams ship cloud applications and infrastructure with less friction, stronger consistency, and clearer governance.",
-			"tags": ["CI/CD automation", "Cloud IaC", "Developer enablement", "Governance"]
+			"description": "Build delivery automation and AI-assisted engineering workflows that help teams ship cloud applications and infrastructure with less friction, stronger consistency, and clearer governance.",
+			"tags": ["CI/CD automation", "Agentic workflows", "Cloud IaC", "Developer enablement"]
 		},
 		"links": [
 			{
@@ -62,15 +63,15 @@
 		],
 		"cv": {
 			"label": "Download CV",
-			"href": "/cv/Luke-Harjulin-CV.pdf",
-			"filename": "Luke-Harjulin-CV.pdf"
+			"href": "/cv/Luke-Harjulin-CV-v2.pdf",
+			"filename": "Luke-Harjulin-CV-v2.pdf"
 		}
 	},
 	"metrics": [
 		{ "value": "5+ yrs", "label": "DevOps and platform engineering experience" },
 		{ "value": "Cross-sector", "label": "Aviation, travel, utilities trading, and industrial platforms" },
 		{ "value": "AWS + Azure", "label": "Cloud infrastructure, application hosting, and IaC" },
-		{ "value": "Automation", "label": "CI/CD workflows, templates, scripting, and deployment tooling" }
+		{ "value": "AI + Automation", "label": "Agentic workflows, CI/CD tooling, scripting, and platform integration" }
 	],
 	"impactHighlights": [
 		{
@@ -148,6 +149,10 @@
 		{
 			"title": "Automation & Scripting",
 			"items": ["PowerShell", "YAML", "Bash", "Terraform modules", "Generator tooling", "Repository automation", "API integrations", "Operational automation"]
+		},
+		{
+			"title": "AI-Assisted Engineering",
+			"items": ["Agentic workflows", "AI assistant guardrails", "Project-specific practices", "Team enablement", "Platform integrations", "Prompt and workflow design", "AI tooling adoption"]
 		},
 		{
 			"title": "Governance & Tooling",
@@ -232,6 +237,7 @@
 		{ "label": "Hosting", "items": ["AKS", "Kubernetes", "Docker", "Lambda", "Azure Functions", "Azure Web Apps", "IIS"] },
 		{ "label": "IaC & delivery", "items": ["Terraform", "GitHub Actions", "Azure DevOps", "TeamCity", "Octopus Deploy"] },
 		{ "label": "Languages", "items": ["PowerShell", "YAML", "C#", ".NET 6", "JavaScript", "TypeScript", "React"] },
+		{ "label": "AI workflows", "items": ["Agentic tooling", "Assistant guardrails", "Platform integration", "Project-specific practices"] },
 		{ "label": "Practices", "items": ["Platform engineering", "Delivery automation", "Developer enablement", "Change control"] }
 	],
 	"education": {
