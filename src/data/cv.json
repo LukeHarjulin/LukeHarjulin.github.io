@@ -63,8 +63,8 @@
 		],
 		"cv": {
 			"label": "Download CV",
-			"href": "/cv/Luke-Harjulin-CV-v2.pdf",
-			"filename": "Luke-Harjulin-CV-v2.pdf"
+			"href": "/cv/Luke-Harjulin-CV-v3.pdf",
+			"filename": "Luke-Harjulin-CV-v3.pdf"
 		}
 	},
 	"metrics": [
@@ -76,12 +76,12 @@
 	"impactHighlights": [
 		{
 			"title": "Cloud Migration Enablement",
-			"description": "Supported aviation and travel teams moving core applications from on-prem hosting toward AWS, while helping automate GitHub-based delivery practices.",
+			"description": "Supported aviation and travel engineering teams with AWS migration, GitHub adoption, delivery automation, and platform practices.",
 			"points": [
 				"Helped move core applications from on-prem hosting toward AWS environments.",
-				"Supported teams automating GitHub and AWS delivery practices."
+				"Supported GitHub adoption, delivery automation, and emerging AI-assisted engineering practices."
 			],
-			"tags": ["AWS", "GitHub", "Migration"]
+			"tags": ["Aviation & Travel", "AWS", "GitHub"]
 		},
 		{
 			"title": "Reusable CI/CD Platform",
@@ -203,12 +203,14 @@
 			{
 				"title": "Aviation & Travel",
 				"role": "Lead Platform Engineer",
-				"summary": "Enabled cloud migration and helped delivery teams automate GitHub and AWS delivery workflows.",
+				"summary": "Supported aviation and travel engineering teams through on-prem to AWS migration, GitHub adoption, delivery automation, and platform enablement.",
 				"points": [
-					"Established central workflows and actions for common automated delivery paths.",
-					"Supported TeamCity to GitHub Actions migration and GitHub Advanced Security trials."
+					"Established central workflows and actions for Terraform, npm, .NET, SFTP, and AWS role management.",
+					"Supported TeamCity to GitHub Actions migration, GitHub Advanced Security trials, and team onboarding.",
+					"Helped delivery teams adopt automated release paths, reusable platform patterns, and AI-assisted engineering practices."
 				],
-				"tags": ["AWS migration", "GitHub Actions", "GHAS"]
+				"tags": ["AWS migration", "GitHub Actions", "AI enablement"],
+				"cardHeight": 132
 			},
 			{
 				"title": "Utilities Trading",

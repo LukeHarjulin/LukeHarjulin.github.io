@@ -352,19 +352,20 @@ def page_one(pdf: canvas.Canvas) -> None:
 	sector_h = 102
 	sector_gap = 6
 	for sector in EXPERIENCE["sectorHighlights"]:
+		card_h = sector.get("cardHeight", sector_h)
 		sector_row(
 			pdf,
 			RIGHT_X,
 			y,
 			RIGHT_W,
-			sector_h,
+			card_h,
 			sector["title"],
 			sector["role"],
 			sector["summary"],
 			sector["points"],
 			sector["tags"],
 		)
-		y -= sector_h + sector_gap
+		y -= card_h + sector_gap
 
 
 def impact_card(pdf: canvas.Canvas, x: float, y: float, w: float, h: float, title: str, points: Sequence[str], tags: Sequence[str]) -> None:
