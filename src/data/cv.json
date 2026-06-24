@@ -3,7 +3,7 @@
 		{ "label": "Home", "href": "#home-section" },
 		{ "label": "Profile", "href": "#about-section" },
 		{ "label": "Experience", "href": "#experience-section" },
-		{ "label": "Impact", "href": "#impact-section" },
+		{ "label": "Highlights", "href": "#impact-section" },
 		{ "label": "Toolkit", "href": "#toolkit-section" },
 		{ "label": "Contact", "href": "#contact-section" }
 	],
@@ -18,7 +18,7 @@
 		"headline": "Platform engineer for automated cloud delivery.",
 		"summary": [
 			"Senior DevOps Engineer with 5+ years building platform tooling, cloud automation, and delivery workflows across aviation and travel, utilities trading, and industrial cloud environments.",
-			"I focus on automation-led delivery: pipeline templates, infrastructure modules, application scaffolding, cloud migration support, environment lifecycle workflows, and developer enablement.",
+			"My work centres on automation-led delivery: pipeline templates, infrastructure modules, application scaffolding, cloud migration support, environment lifecycle workflows, and developer enablement.",
 			"I also design AI-assisted engineering workflows and agentic tooling that connect assistants to project practices, team standards, and delivery platforms such as AWS, Jira, and Octopus Deploy."
 		],
 		"cvSummary": [
@@ -32,7 +32,7 @@
 			"Governance that fits developer workflows."
 		],
 		"platformFocus": {
-			"title": "Platform Focus",
+			"title": "Delivery Approach",
 			"description": "Build delivery automation and AI-assisted engineering workflows that help teams ship cloud applications and infrastructure with less friction, stronger consistency, and clearer governance.",
 			"tags": ["CI/CD automation", "Agentic workflows", "Cloud IaC", "Developer enablement"]
 		},
@@ -63,8 +63,8 @@
 		],
 		"cv": {
 			"label": "Download CV",
-			"href": "/cv/Luke-Harjulin-CV-v3.pdf",
-			"filename": "Luke-Harjulin-CV-v3.pdf"
+			"href": "/cv/Luke-Harjulin-CV-v4.pdf",
+			"filename": "Luke-Harjulin-CV-v4.pdf"
 		}
 	},
 	"metrics": [
@@ -94,12 +94,12 @@
 		},
 		{
 			"title": "Azure Platform Engineering",
-			"description": "Delivered infrastructure for React, .NET 6 API, and JMeter performance testing apps, integrating Azure Batch, Service Bus, Event Grid, CDN, Media Services, and private networking.",
+			"description": "Delivered infrastructure for React, .NET API, and JMeter performance testing apps, integrating Azure Batch, Service Bus, Event Grid, CDN, Media Services, and private networking.",
 			"points": [
-				"Delivered infrastructure for React, .NET 6 API, and JMeter performance testing apps.",
+				"Delivered infrastructure for React, .NET API, and JMeter performance testing apps.",
 				"Integrated Azure Batch, Service Bus, Event Grid, CDN, Media Services, and private networking."
 			],
-			"tags": ["Azure", ".NET 6", "Terraform"]
+			"tags": ["Azure", ".NET", "Terraform"]
 		},
 		{
 			"title": "Delivery Starter Kits",
@@ -144,7 +144,7 @@
 		},
 		{
 			"title": "Application Templates",
-			"items": [".NET 6", "C#", "React", "Angular", "JavaScript", "TypeScript", "Minimal APIs", "JMeter", "API scaffolding", "Frontend/API templates"]
+			"items": [".NET", "C#", "React", "Angular", "JavaScript", "TypeScript", "Minimal APIs", "JMeter", "API scaffolding", "Frontend/API templates"]
 		},
 		{
 			"title": "Automation & Scripting",
@@ -225,7 +225,7 @@
 			{
 				"title": "Industry",
 				"role": "Platform Engineer",
-				"summary": "Led platform infrastructure for React, .NET 6 isolated API, and JMeter performance testing applications.",
+				"summary": "Led platform infrastructure for React, .NET API, and JMeter performance testing applications.",
 				"points": [
 					"Integrated Azure Batch, Service Bus, Event Grid, Media Services, CDN, and private networking.",
 					"Used Terraform, YAML, PowerShell, and Docker registry workflows."
@@ -238,7 +238,7 @@
 		{ "label": "Cloud", "items": ["AWS", "Azure", "Azure Batch", "Service Bus", "Event Grid", "Azure CDN", "IAM", "RDS"] },
 		{ "label": "Hosting", "items": ["AKS", "Kubernetes", "Docker", "Lambda", "Azure Functions", "Azure Web Apps", "IIS"] },
 		{ "label": "IaC & delivery", "items": ["Terraform", "GitHub Actions", "Azure DevOps", "TeamCity", "Octopus Deploy"] },
-		{ "label": "Languages", "items": ["PowerShell", "YAML", "C#", ".NET 6", "JavaScript", "TypeScript", "React"] },
+		{ "label": "Languages", "items": ["PowerShell", "YAML", "C#", ".NET", "JavaScript", "TypeScript", "React"] },
 		{ "label": "AI workflows", "items": ["Agentic tooling", "Assistant guardrails", "Platform integration", "Project-specific practices"] },
 		{ "label": "Practices", "items": ["Platform engineering", "Delivery automation", "Developer enablement", "Change control"] }
 	],

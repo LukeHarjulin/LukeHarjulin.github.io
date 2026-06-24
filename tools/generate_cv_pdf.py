@@ -277,14 +277,14 @@ def page_one(pdf: canvas.Canvas) -> None:
 		y = link_text(pdf, link["label"], link["href"], MARGIN, y, 7.2 if "linkedin.com" in link["label"] else 8.2)
 
 	y -= 19
-	y = heading(pdf, "At a glance", MARGIN, y, LEFT_COL - 8, dark=True)
+	y = heading(pdf, "Snapshot", MARGIN, y, LEFT_COL - 8, dark=True)
 	for metric in CV_DATA["metrics"]:
 		set_font(pdf, "bold", 18, GOLD)
 		pdf.drawString(MARGIN, y, metric["value"])
 		y -= 13
 		y = paragraph(pdf, metric["label"], MARGIN, y, LEFT_COL - 10, 7.8, 10.2, SIDEBAR_TEXT_STRONG, "regular", 9)
 
-	y = heading(pdf, "Focus", MARGIN, y, LEFT_COL - 8, dark=True)
+	y = heading(pdf, "Core strengths", MARGIN, y, LEFT_COL - 8, dark=True)
 	y = bullets(
 		pdf,
 		PROFILE["focus"],
@@ -416,9 +416,9 @@ def page_two(pdf: canvas.Canvas) -> None:
 
 	y = PAGE_H - 64
 	set_font(pdf, "bold", 8.6, TEAL)
-	pdf.drawString(RIGHT_X, y, "SELECTED IMPACT")
+	pdf.drawString(RIGHT_X, y, "DELIVERY HIGHLIGHTS")
 	y -= 20
-	y = title_block(pdf, "Automation, cloud migration, developer enablement.", RIGHT_X, y, RIGHT_W, 19, 21)
+	y = title_block(pdf, "Cloud migration, automation, platform enablement.", RIGHT_X, y, RIGHT_W, 19, 21)
 	y -= 3
 
 	card_w = (RIGHT_W - 12) / 2
