@@ -12,11 +12,11 @@ export const profile = {
 	role: "Senior DevOps Engineer",
 	location: "United Kingdom",
 	intro:
-		"I build reusable cloud platforms, delivery tooling, and automation that help engineering teams move faster with cleaner engineering foundations.",
+		"I build cloud automation, delivery tooling, and platform foundations that help engineering teams move faster with cleaner engineering practices.",
 	summary: [
 		"Senior DevOps Engineer with 5+ years building platform tooling, cloud automation, and delivery workflows across aviation and travel, utilities trading, and industrial cloud environments.",
-		"I focus on reusable engineering foundations: pipeline templates, infrastructure modules, application scaffolding, cloud migration support, environment automation, and developer enablement.",
-		"Recent work spans AWS migration enablement, GitHub Actions and TeamCity migration, Azure infrastructure for React and .NET 6 services, and tooling that generates APIs, pipelines, and Kubernetes manifests for AKS."
+		"I focus on automation-led delivery: pipeline templates, infrastructure modules, application scaffolding, cloud migration support, environment lifecycle workflows, and developer enablement.",
+		"The common thread across my work is turning manual or repeated delivery problems into maintained platform capability that teams can adopt with less operational overhead."
 	],
 	links: [
 		{
@@ -46,14 +46,14 @@ export const metrics = [
 	{ value: "5+ yrs", label: "DevOps and platform engineering experience" },
 	{ value: "Cross-sector", label: "Aviation, travel, utilities trading, and industrial platforms" },
 	{ value: "AWS + Azure", label: "Cloud infrastructure, application hosting, and IaC" },
-	{ value: "DevEx", label: "Reusable workflows, templates, scaffolding, and CI/CD" }
+	{ value: "Automation", label: "CI/CD workflows, templates, scripting, and deployment tooling" }
 ];
 
 export const impactHighlights = [
 	{
 		title: "Cloud Migration Enablement",
 		description:
-			"Supported aviation and travel teams moving core applications from on-prem hosting toward AWS, while helping teams adopt GitHub and reusable delivery practices.",
+			"Supported aviation and travel teams moving core applications from on-prem hosting toward AWS, while helping automate GitHub-based delivery practices.",
 		tags: ["AWS", "GitHub", "Migration"]
 	},
 	{
@@ -206,17 +206,15 @@ export const certifications = [
 export const experience = {
 	company: "NTT DATA",
 	role: "Senior DevOps Engineer",
-	context: "Aviation, travel, utilities trading, and industrial platform delivery",
+	context: "Client-facing platform engineering delivery",
 	summary:
-		"Platform and DevOps engineer delivering cloud infrastructure, reusable delivery workflows, templates, and migration enablement across AWS and Azure client environments.",
+		"Progressed from Junior Engineer to Senior DevOps Engineer while delivering cloud, platform, automation, and release engineering work for client delivery teams.",
 	responsibilities: [
-		"Led platform infrastructure for industrial cloud apps including a React frontend, .NET 6 isolated API, and JMeter performance testing app.",
-		"Integrated Azure Batch, Service Bus, Event Grid, Media Services, CDN, and private networking into Terraform-managed delivery workflows.",
-		"Built a reusable utilities trading starter platform for .NET APIs, Azure DevOps pipelines, Kubernetes manifests, and AKS deployment.",
-		"Created object-oriented PowerShell generator tooling that scaffolds APIs, pipelines, manifests, and repository content from user inputs.",
-		"Established central GitHub reusable workflows/actions and supported TeamCity to GitHub Actions migration for aviation and travel engineering teams.",
-		"Supported on-prem to AWS migration work, GitHub Advanced Security trials, and reusable platform adoption across delivery teams.",
-		"Automated ServiceNow change management and GitOps-based identity configuration workflows for traceable releases."
+		"Translate client delivery needs into automated platform patterns, pipelines, scripts, and infrastructure modules.",
+		"Work across application, cloud, and release boundaries, combining hands-on implementation with guidance for engineering teams.",
+		"Support adoption of shared delivery platforms through documentation, pairing, migration support, and practical troubleshooting.",
+		"Improve delivery reliability and traceability through repeatable build, deploy, environment, and change-management workflows.",
+		"Operate across AWS, Azure, CI/CD, infrastructure as code, scripting, and application scaffolding depending on the engagement."
 	]
 };
 

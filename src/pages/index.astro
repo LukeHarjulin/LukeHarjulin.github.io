@@ -22,7 +22,7 @@ const iconByKind = {
 };
 
 const pageTitle = `${profile.name} | ${profile.role}`;
-const pageDescription = `${profile.role} specialising in platform engineering, cloud automation, reusable CI/CD, and developer enablement.`;
+const pageDescription = `${profile.role} specialising in platform engineering, cloud automation, CI/CD tooling, and developer enablement.`;
 const skillId = (title: string) =>
 	`skill-${title.toLowerCase().replaceAll(" ", "-").replaceAll("&", "and").replaceAll("/", "-")}`;
 ---
@@ -105,7 +105,7 @@ const skillId = (title: string) =>
 					<img src={profilePic.src} alt="Portrait of Luke Harjulin" width="520" height="520" />
 					<div class="hero__fact">
 						<span>{profile.location}</span>
-						<strong>Reusable cloud platforms and delivery tooling</strong>
+						<strong>Cloud automation and delivery tooling</strong>
 					</div>
 				</div>
 			</section>
@@ -122,7 +122,7 @@ const skillId = (title: string) =>
 			<section id="about-section" class="section-band">
 				<div class="section-heading">
 					<div class="eyebrow">Profile</div>
-					<h2>Platform engineer for reusable cloud delivery.</h2>
+					<h2>Platform engineer for automated cloud delivery.</h2>
 				</div>
 				<div class="profile-grid">
 					<div class="summary-copy">
@@ -163,7 +163,7 @@ const skillId = (title: string) =>
 			<section id="impact-section" class="section-band">
 				<div class="section-heading">
 					<div class="eyebrow">Selected impact</div>
-					<h2>Reusable platforms, cloud migration, and developer enablement.</h2>
+					<h2>Automation, cloud migration, and developer enablement.</h2>
 				</div>
 				<div class="impact-grid">
 					{impactHighlights.map((highlight) => (
@@ -199,7 +199,7 @@ const skillId = (title: string) =>
 				<div>
 					<div class="eyebrow">Contact</div>
 					<h2>Open to senior DevOps and platform engineering conversations.</h2>
-					<p>Best reached via LinkedIn for roles involving cloud migration, reusable delivery platforms, infrastructure automation, and developer enablement.</p>
+					<p>Best reached via LinkedIn for roles involving cloud migration, delivery automation, infrastructure tooling, and developer enablement.</p>
 				</div>
 				<div class="contact-actions">
 					<a class="button button--primary" href={profile.cv.href} download={profile.cv.filename}>{profile.cv.label}</a>
