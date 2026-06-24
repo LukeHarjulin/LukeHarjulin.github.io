@@ -37,8 +37,8 @@ export const profile = {
 	],
 	cv: {
 		label: "Download CV",
-		href: "/cv/Luke-Harjulin-CV.pdf",
-		filename: "Luke-Harjulin-CV.pdf"
+		href: "/cv/Luke-Harjulin-CV-v1.pdf",
+		filename: "Luke-Harjulin-CV-v1.pdf"
 	}
 };
 
