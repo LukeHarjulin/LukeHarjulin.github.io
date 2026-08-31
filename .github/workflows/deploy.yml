@@ -98,6 +98,7 @@ jobs:
           PUBLIC_GIT_REF: ${{ steps.version.outputs.ref }}
           PUBLIC_VERSION_LABEL: ${{ steps.version.outputs.label }}
           PUBLIC_DEPLOYED_AT: ${{ steps.version.outputs.deployed_at }}
+          PUBLIC_SPOTIFY_API_BASE_URL: ${{ vars.PUBLIC_SPOTIFY_API_BASE_URL }}
         run: pnpm run build:all
 
       - name: Publish built output for branch-based Pages

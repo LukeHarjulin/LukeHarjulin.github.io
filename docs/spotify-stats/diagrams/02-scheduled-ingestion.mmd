@@ -1,0 +1,42 @@
+---
+title: Spotify Listening Stats - Scheduled Ingestion
+---
+sequenceDiagram
+	autonumber
+	participant Cron as Cloudflare Cron
+	participant Worker as Worker scheduled handler
+	participant D1 as Cloudflare D1
+	participant Accounts as Spotify Accounts
+	participant API as Spotify Web API
+
+	Cron->>Worker: Trigger every 5 minutes
+	Worker->>D1: Read recently_played_after_ms cursor
+	D1-->>Worker: Cursor or null
+	Worker->>Accounts: POST refresh_token grant
+	alt Token refresh succeeds
+		Accounts-->>Worker: Short-lived access token
+		Worker->>API: GET /me/player/recently-played?limit=50&after=cursor
+		alt Recently played succeeds
+			API-->>Worker: Items with track metadata and played_at
+			Worker->>Worker: Validate, normalize, sort, and deduplicate by track ID plus played_at
+			alt No accepted plays
+				Worker-->>Cron: Complete without writes
+			else Accepted plays exist
+				Worker->>D1: Atomic batch: upsert albums, artists, tracks, track_artists
+				Worker->>D1: INSERT OR IGNORE plays
+				Note over Worker,D1: UNIQUE spotify_track_id plus played_at prevents duplicate plays
+				Worker->>D1: Upsert cursor to newest accepted played_at milliseconds
+				D1-->>Worker: Batch committed
+				Worker-->>Cron: Ingestion completed
+			end
+		else Spotify returns 429 or request fails
+			API--xWorker: Rate limit or upstream error
+			Note over Worker,D1: No tight retry; failed run is observable and cursor remains unchanged
+			Worker--xCron: Scheduled execution fails
+		end
+	else Token refresh fails
+		Accounts--xWorker: Token error
+		Note over Worker,D1: No D1 batch and no cursor update
+		Worker--xCron: Scheduled execution fails
+	end
+

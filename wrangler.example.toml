@@ -1,0 +1,31 @@
+name = "spotify-listening-stats"
+main = "workers/spotify-stats/src/index.ts"
+compatibility_date = "2026-08-27"
+workers_dev = false
+
+[[routes]]
+pattern = "spotify-api.lukeharjulin.com"
+custom_domain = true
+
+[triggers]
+crons = ["*/5 * * * *"]
+
+[observability]
+enabled = true
+head_sampling_rate = 1
+
+[vars]
+PUBLIC_SITE_ORIGIN = "https://www.lukeharjulin.com"
+
+[secrets]
+required = [
+	"SPOTIFY_CLIENT_ID",
+	"SPOTIFY_CLIENT_SECRET",
+	"SPOTIFY_REFRESH_TOKEN",
+]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "spotify-listening"
+database_id = "<D1_DATABASE_ID>"
+migrations_dir = "workers/spotify-stats/migrations"

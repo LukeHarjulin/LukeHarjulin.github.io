@@ -1,0 +1,43 @@
+---
+import ListeningStats from "../components/ListeningStats.astro";
+import { profile } from "../data/cv";
+import "../styles/global.css";
+
+const spotifyApiBaseUrl = import.meta.env.PUBLIC_SPOTIFY_API_BASE_URL ?? "";
+const pageTitle = `Listening | ${profile.name}`;
+const pageDescription = `Public Spotify listening statistics for ${profile.name}.`;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>{pageTitle}</title>
+		<meta name="description" content={pageDescription} />
+		<meta name="theme-color" content="#111417" />
+		<link rel="canonical" href="https://www.lukeharjulin.com/listening/" />
+		<meta property="og:title" content={pageTitle} />
+		<meta property="og:description" content={pageDescription} />
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content="https://www.lukeharjulin.com/listening/" />
+	</head>
+	<body class="listening-page">
+		<a class="skip-link" href="#mainContent">Skip to content</a>
+		<header class="listening-page-header">
+			<a class="listening-page-brand" href="/">{profile.name}</a>
+			<a class="listening-back" href="/">Back to portfolio</a>
+		</header>
+
+		<main id="mainContent">
+			<ListeningStats apiBase={spotifyApiBaseUrl} />
+		</main>
+
+		<footer>
+			<span>{profile.name}</span>
+			<a href="/">Portfolio</a>
+		</footer>
+
+		<script src="../scripts/site.ts"></script>
+	</body>
+</html>

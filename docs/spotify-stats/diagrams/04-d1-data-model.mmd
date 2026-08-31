@@ -1,0 +1,60 @@
+---
+title: Spotify Listening Stats - D1 Data Model
+---
+erDiagram
+	ALBUMS o|--o{ TRACKS : contains
+	TRACKS ||--o{ TRACK_ARTISTS : credits
+	ARTISTS ||--o{ TRACK_ARTISTS : appears_in
+	TRACKS ||--o{ PLAYS : receives
+
+	ARTISTS {
+		TEXT spotify_artist_id PK
+		TEXT name
+		TEXT spotify_url
+		TEXT created_at
+		TEXT updated_at
+	}
+
+	ALBUMS {
+		TEXT spotify_album_id PK
+		TEXT name
+		TEXT album_type
+		TEXT release_date
+		TEXT artwork_url
+		TEXT spotify_url
+		TEXT created_at
+		TEXT updated_at
+	}
+
+	TRACKS {
+		TEXT spotify_track_id PK
+		TEXT spotify_album_id FK
+		TEXT name
+		INTEGER duration_ms
+		INTEGER explicit
+		TEXT spotify_url
+		TEXT created_at
+		TEXT updated_at
+	}
+
+	TRACK_ARTISTS {
+		TEXT spotify_track_id PK, FK, UK "PK with artist ID; UK with artist order"
+		TEXT spotify_artist_id PK, FK "PK with track ID"
+		INTEGER artist_order UK "UK with track ID"
+	}
+
+	PLAYS {
+		INTEGER id PK
+		TEXT spotify_track_id FK, UK "UK with played_at"
+		TEXT played_at UK "UK with track ID"
+		INTEGER played_at_unix_ms
+		TEXT context_type
+		TEXT context_uri
+		TEXT created_at
+	}
+
+	INGESTION_STATE {
+		TEXT key PK
+		TEXT value
+		TEXT updated_at
+	}

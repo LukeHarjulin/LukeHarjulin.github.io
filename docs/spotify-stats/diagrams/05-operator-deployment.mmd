@@ -1,0 +1,61 @@
+---
+title: Spotify Listening Stats - Operator Deployment
+---
+flowchart TD
+	Operator["Operator"]:::actor
+
+	subgraph SpotifySetup["Spotify setup"]
+		SpotifyApp["Create Spotify Web API app<br>register 127.0.0.1 callback"]:::external
+		OAuth["Run pnpm spotify:oauth<br>local loopback authorization"]:::operator
+		DevVars[".dev.vars<br>three Spotify secrets<br>ignored"]:::private
+	end
+
+	subgraph CloudflareSetup["Cloudflare setup"]
+		D1Create["Create D1 database<br>spotify-listening in weur"]:::operator
+		D1Id["Cloudflare-generated D1 ID"]:::data
+		Wrangler["wrangler.toml<br>copy example and insert D1 ID<br>ignored"]:::private
+		Migrate["Apply remote D1 migration"]:::operator
+		Deploy["pnpm worker:deploy<br>validate exact secret set"]:::operator
+		Worker["Deploy Worker<br>spotify-listening-stats"]:::service
+		Domain["Activate custom domain<br>spotify-api.lukeharjulin.com"]:::edge
+		Cron["Activate 5-minute Cron<br>after controlled verification"]:::schedule
+	end
+
+	subgraph GitHubSetup["GitHub Pages setup"]
+		RepoVar["GitHub Actions variable<br>PUBLIC_SPOTIFY_API_BASE_URL"]:::delivery
+		Actions["GitHub Actions workflow"]:::delivery
+		Build["Astro static build<br>API base embedded as public config"]:::delivery
+		Pages["GitHub Pages deployment<br>/listening/"]:::public
+	end
+
+	Operator --> SpotifyApp
+	SpotifyApp --> OAuth
+	OAuth --> DevVars
+	Operator --> D1Create
+	D1Create --> D1Id
+	D1Id --> Wrangler
+	Operator --> Wrangler
+	Wrangler --> Migrate
+	Migrate --> Deploy
+	DevVars -->|"validated secrets file"| Deploy
+	Deploy --> Worker
+	Operator --> Domain
+	Domain -->|"routes public HTTPS API"| Worker
+	Operator --> Cron
+	Cron -->|"scheduled events"| Worker
+	Operator --> RepoVar
+	Domain -->|"HTTPS API origin"| RepoVar
+	RepoVar --> Actions
+	Actions --> Build
+	Build --> Pages
+
+	classDef actor fill:#ffffff,stroke:#374151,stroke-width:2px,color:#111827
+	classDef operator fill:#eef2f7,stroke:#64748b,color:#172033
+	classDef private fill:#fff4dc,stroke:#a66b12,stroke-width:2px,color:#2f2415
+	classDef data fill:#e8f5e9,stroke:#3f7d44,color:#17351b
+	classDef service fill:#fff4dc,stroke:#a66b12,color:#2f2415
+	classDef edge fill:#e8f1fb,stroke:#3b6ea8,color:#172033
+	classDef schedule fill:#f3e8ff,stroke:#7c3aed,color:#2e1065
+	classDef delivery fill:#f2f2f2,stroke:#555555,color:#202020
+	classDef public fill:#e8f1fb,stroke:#3b6ea8,color:#172033
+	classDef external fill:#e7f7ef,stroke:#16845b,color:#123c2b

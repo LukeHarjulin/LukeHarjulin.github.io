@@ -1,0 +1,120 @@
+---
+interface Props {
+	apiBase: string;
+}
+
+const { apiBase } = Astro.props;
+---
+
+<section
+	id="listening-section"
+	class="listening-section section-band"
+	data-api-base={apiBase}
+	aria-labelledby="listening-heading"
+>
+	<div class="section-heading listening-heading">
+		<div>
+			<div class="eyebrow">Listening</div>
+			<h1 id="listening-heading">What has been in rotation.</h1>
+		</div>
+		<p id="listening-status" class="listening-status" role="status">Loading listening stats...</p>
+	</div>
+
+	<div class="now-playing" aria-live="polite">
+		<div class="now-playing__artwork" id="now-playing-artwork" aria-hidden="true"></div>
+		<div class="now-playing__details">
+			<span id="now-playing-label" class="now-playing__label">Now playing</span>
+			<h2 id="now-playing-track">Loading...</h2>
+			<p id="now-playing-artist">Connecting to Spotify</p>
+			<p id="now-playing-album" class="now-playing__album"></p>
+			<div id="now-playing-progress" class="play-progress" hidden>
+				<div class="play-progress__track"><span></span></div>
+				<div class="play-progress__times">
+					<span id="now-playing-elapsed">0:00</span>
+					<span id="now-playing-duration">0:00</span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="listening-summary" class="listening-summary" aria-label="Listening summary">
+		<div><span>Plays today</span><strong data-summary="playsToday">-</strong></div>
+		<div><span>Plays this month</span><strong data-summary="playsThisMonth">-</strong></div>
+		<div><span>Estimated this month</span><strong data-summary="listeningTimeMs">-</strong></div>
+		<div><span>Artists this month</span><strong data-summary="uniqueArtists">-</strong></div>
+		<div><span>Tracks this month</span><strong data-summary="uniqueTracks">-</strong></div>
+	</div>
+
+	<div class="listening-columns">
+		<section class="ranking-panel" aria-labelledby="top-artists-heading">
+			<div class="panel-heading">
+				<h2 id="top-artists-heading">Top artists</h2>
+				<div class="period-control" data-ranking="artists" aria-label="Top artists period">
+					<button type="button" data-period="7d" aria-pressed="true">7 days</button>
+					<button type="button" data-period="30d" aria-pressed="false">30 days</button>
+					<button type="button" data-period="year" aria-pressed="false">Year</button>
+					<button type="button" data-period="all" aria-pressed="false">All</button>
+				</div>
+			</div>
+			<ol id="top-artists-list" class="ranking-list"><li class="loading-row">Loading...</li></ol>
+		</section>
+
+		<section class="ranking-panel" aria-labelledby="top-tracks-heading">
+			<div class="panel-heading">
+				<h2 id="top-tracks-heading">Top tracks</h2>
+				<div class="period-control" data-ranking="tracks" aria-label="Top tracks period">
+					<button type="button" data-period="7d" aria-pressed="true">7 days</button>
+					<button type="button" data-period="30d" aria-pressed="false">30 days</button>
+					<button type="button" data-period="year" aria-pressed="false">Year</button>
+					<button type="button" data-period="all" aria-pressed="false">All</button>
+				</div>
+			</div>
+			<ol id="top-tracks-list" class="ranking-list"><li class="loading-row">Loading...</li></ol>
+		</section>
+	</div>
+
+	<section class="activity-panel" aria-labelledby="activity-heading">
+		<div class="panel-heading">
+			<div>
+				<h2 id="activity-heading">Listening activity</h2>
+				<p>Daily plays across the trailing 365 days.</p>
+			</div>
+			<div class="activity-legend" aria-hidden="true"><span>Less</span><i></i><i></i><i></i><i></i><i></i><span>More</span></div>
+		</div>
+		<div id="listening-heatmap" class="listening-heatmap" aria-label="Listening activity heatmap"></div>
+	</section>
+
+	<div class="archive-layout">
+		<section class="archive-search" aria-labelledby="archive-heading">
+			<div class="panel-heading">
+				<div>
+					<h2 id="archive-heading">Listening archive</h2>
+					<p>Find a track and see its listening history.</p>
+				</div>
+			</div>
+			<form id="archive-search-form" class="search-form" role="search">
+				<label for="archive-query">Track</label>
+				<div>
+					<input id="archive-query" name="q" type="search" autocomplete="off" placeholder="Search tracks" minlength="2" required />
+					<button type="submit">Search</button>
+				</div>
+			</form>
+			<div id="archive-results" class="archive-results" aria-live="polite"></div>
+		</section>
+
+		<section class="recent-panel" aria-labelledby="recent-heading">
+			<div class="panel-heading"><h2 id="recent-heading">Recent plays</h2></div>
+			<ol id="recent-plays-list" class="recent-list"><li class="loading-row">Loading...</li></ol>
+		</section>
+	</div>
+
+	<section class="lifetime-panel" aria-labelledby="lifetime-heading">
+		<h2 id="lifetime-heading">Lifetime totals</h2>
+		<div id="lifetime-totals" class="lifetime-totals">
+			<div><strong data-lifetime="plays">-</strong><span>plays</span></div>
+			<div><strong data-lifetime="listeningTimeMs">-</strong><span>estimated listening</span></div>
+			<div><strong data-lifetime="uniqueArtists">-</strong><span>artists</span></div>
+			<div><strong data-lifetime="uniqueTracks">-</strong><span>tracks</span></div>
+		</div>
+	</section>
+</section>
