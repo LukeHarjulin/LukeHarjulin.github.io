@@ -1,0 +1,46 @@
+---
+title: Spotify Listening Stats - Public Read Paths
+---
+sequenceDiagram
+	autonumber
+	actor Visitor as Website visitor
+	participant Frontend as GitHub Pages listening page
+	participant Worker as Cloudflare Worker API
+	participant Spotify as Spotify Web API
+	participant D1 as Cloudflare D1
+
+	Visitor->>Frontend: Open /listening/
+	Frontend->>Worker: GET public stats endpoints with Origin header
+	alt CORS configuration is missing or malformed
+		Worker-->>Frontend: 503 SERVICE_UNAVAILABLE
+	else Browser Origin is present but does not match
+		Worker-->>Frontend: 403 CORS_ORIGIN_DENIED
+	else Origin is allowed or absent on a non-browser request
+		par Live now-playing path
+			Frontend->>Worker: GET /api/spotify/now-playing
+			Worker->>Spotify: Refresh access token and request currently playing
+			alt Track is currently playing
+				Spotify-->>Worker: Track, artwork, state, and progress
+				Worker-->>Frontend: data plus meta, public max-age=15
+			else Nothing is currently playing
+				Spotify-->>Worker: No active item
+				Worker->>D1: Query latest stored play
+				D1-->>Worker: Most recent public track projection or null
+				Worker-->>Frontend: Fallback data plus meta, public max-age=15
+			end
+		and Stored read paths
+			Frontend->>Worker: GET summary, top artists, top tracks, activity, lifetime
+			Worker->>D1: Aggregate queries only
+			D1-->>Worker: Aggregate projections
+			Worker-->>Frontend: data plus meta, public max-age=60
+		and Bounded recent and archive paths
+			Frontend->>Worker: GET recent?limit or archive/search?q&limit
+			Worker->>D1: Bounded recent or track-name aggregate search
+			D1-->>Worker: Required public fields only
+			Worker-->>Frontend: data plus meta, recent max-age=30; archive max-age=60
+		end
+	end
+
+	Note over Frontend,Worker: Success envelope is data plus meta; error envelope is error with code and message
+	Note over Worker,D1: Errors use Cache-Control no-store
+	Note over Visitor,D1: No endpoint exposes the full raw timestamped plays table

@@ -1,7 +1,14 @@
 node_modules/
 dist/
 .astro/
+.wrangler/
+.dev.vars*
+.env*
+wrangler.toml
+wrangler.local.toml
 .verification/
 .astro-preview.log
 .astro-preview.err.log
 .DS_Store
+output/
+tools/

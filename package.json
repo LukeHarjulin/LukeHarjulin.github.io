@@ -6,6 +6,15 @@
 	"packageManager": "pnpm@11.5.3",
 	"scripts": {
 		"dev": "astro dev",
+		"worker:dev": "wrangler dev --config wrangler.toml --test-scheduled",
+		"worker:deploy": "pwsh -NoProfile -File tools/deploy_spotify_worker.ps1",
+		"worker:test": "vitest run --config workers/spotify-stats/vitest.config.ts",
+		"worker:typecheck": "tsc --project workers/spotify-stats/tsconfig.json",
+		"spotify:oauth": "pwsh -NoProfile -File tools/spotify_oauth_bootstrap.ps1",
+		"spotify:oauth:test": "pwsh -NoProfile -File tools/test_spotify_oauth_bootstrap.ps1",
+		"worker:secrets": "pwsh -NoProfile -File tools/upload_spotify_secrets.ps1",
+		"d1:migrate:local": "wrangler d1 migrations apply DB --local --config wrangler.toml",
+		"d1:migrate:remote": "wrangler d1 migrations apply DB --remote --config wrangler.toml",
 		"cv:pdf": "python tools/generate_cv_pdf.py",
 		"build": "astro build",
 		"build:all": "pnpm cv:pdf && pnpm build",
@@ -13,6 +22,8 @@
 	},
 	"devDependencies": {
 		"astro": "7.0.0",
-		"typescript": "6.0.3"
+		"typescript": "6.0.3",
+		"vitest": "4.0.18",
+		"wrangler": "4.127.1"
 	}
 }

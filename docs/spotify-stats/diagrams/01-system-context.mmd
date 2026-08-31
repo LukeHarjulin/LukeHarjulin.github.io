@@ -1,0 +1,46 @@
+---
+title: Spotify Listening Stats - System Context
+---
+flowchart LR
+	Visitor["Website visitor"]:::actor
+
+	subgraph PublicWeb["Public web boundary"]
+		Pages["GitHub Pages<br>Astro listening page"]:::public
+	end
+
+	subgraph Cloudflare["Cloudflare account boundary"]
+		Edge["Cloudflare DNS<br>spotify-api.lukeharjulin.com"]:::edge
+		Cron["Cron Trigger<br>every 5 minutes"]:::schedule
+		subgraph ServerSide["Server-side trust boundary"]
+			Worker["Spotify listening-stats Worker<br>public API ingress; private secrets and execution"]:::private
+			D1[("D1<br>spotify-listening")]:::data
+		end
+	end
+
+	subgraph Spotify["Spotify service boundary"]
+		SpotifyApi["Spotify Web API<br>current and recent playback"]:::external
+		SpotifyAccounts["Spotify Accounts<br>token endpoint"]:::external
+	end
+
+	subgraph GitHub["GitHub boundary"]
+		Actions["GitHub Actions<br>Astro build and Pages deploy"]:::delivery
+	end
+
+	Visitor -->|"loads /listening/"| Pages
+	Pages -->|"public read-only HTTPS API"| Edge
+	Edge --> Worker
+	Cron -->|"scheduled event"| Worker
+	Worker -->|"aggregate and bounded queries"| D1
+	Worker -->|"refresh token exchange"| SpotifyAccounts
+	Worker -->|"Bearer token requests"| SpotifyApi
+	Actions -->|"deploys static dist"| Pages
+	Actions -.->|"PUBLIC_SPOTIFY_API_BASE_URL"| Pages
+
+	classDef actor fill:#ffffff,stroke:#374151,stroke-width:2px,color:#111827
+	classDef public fill:#e8f1fb,stroke:#3b6ea8,color:#172033
+	classDef edge fill:#eef2f7,stroke:#64748b,color:#172033
+	classDef private fill:#fff4dc,stroke:#a66b12,stroke-width:2px,color:#2f2415
+	classDef data fill:#e8f5e9,stroke:#3f7d44,color:#17351b
+	classDef schedule fill:#f3e8ff,stroke:#7c3aed,color:#2e1065
+	classDef external fill:#e7f7ef,stroke:#16845b,color:#123c2b
+	classDef delivery fill:#f2f2f2,stroke:#555555,color:#202020
