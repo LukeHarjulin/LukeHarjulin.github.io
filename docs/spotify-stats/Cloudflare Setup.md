@@ -84,6 +84,7 @@ Run verification with:
 
 ```powershell
 pnpm spotify:oauth:test
+pnpm spotify:history:test
 pnpm worker:test
 pnpm worker:typecheck
 pnpm build
@@ -101,6 +102,8 @@ Do not commit `wrangler.toml`, `.dev.vars`, `.wrangler/`, or environment-specifi
 6. Record the applied migration and deployment outcome in [[Task List]].
 
 Migrations should be additive and reviewable. Destructive schema changes require a backup and a separate approved decision.
+
+Migration `0002_history_import.sql` adds imported-play provenance and duration, `0003_history_import_progress.sql` adds authoritative plan and chunk progress, and `0004_history_metadata_fallback.sql` adds export-provided fallback metadata and the reporting artist view. Apply all three migrations before deploying the corresponding Worker code; reversing that order can make production queries reference columns or views that do not exist yet. Apply remote migrations separately from historical chunks so their index-building writes can be reviewed against the daily allowance. The historical data workflow, write guardrails, Cron pause, and recovery procedure are in [[Extended History Import]].
 
 ## Manual-First Deployment
 

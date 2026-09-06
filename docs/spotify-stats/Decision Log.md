@@ -137,3 +137,81 @@ Use `l-harjulin.workers.dev` as the Cloudflare account-wide Workers subdomain re
 **Status:** Approved
 
 Enable Workers Logs with 100% head sampling while the initial Cron deployment is being verified. Do not enable Workers Traces or an external log export. At the expected traffic volume this remains within Cloudflare's included Workers Logs allowance; review the sampling rate and invocation-log retention after release if traffic or privacy requirements change.
+
+## 2026-09-01
+
+### D-023: Import Extended History Through Local Operator Tooling
+
+**Status:** Approved
+
+Process Spotify Extended Streaming History only on the operator's computer. Do not add a public or administrative upload route to the Worker, and never commit or deploy the raw export. Store temporary extraction, metadata caches, reports, and generated SQL only under the ignored `.spotify-history/` directory.
+
+### D-024: Limit the Initial Import to Public Music History
+
+**Status:** Approved
+
+Import Spotify music-track records with a positive `ms_played` value. Exclude podcasts, audiobooks, video, local files, URI-less records, and private-session records. Report exclusions without storing the sensitive source fields that caused them.
+
+### D-025: Use Actual Historical Listening Duration
+
+**Status:** Approved
+
+Persist the export's `ms_played` for imported records and use it in listening-time aggregates. Continue using Spotify track duration as the estimate for live recently-played records, which do not include actual listening duration.
+
+### D-026: Add Import Provenance and Audit State to D1
+
+**Status:** Approved
+
+Add play source, deterministic source-event key, actual listened milliseconds, and the source stream-end timestamp to `plays`. Add a `history_imports` audit table with the source checksum, status, counts, and date range. Keep reimports idempotent with a unique source-event index.
+
+### D-027: Keep Imported History Before the Live-Ingestion Boundary
+
+**Status:** Approved
+
+Use the export's exact UTC stream-end timestamp as the imported play timestamp and retain it as source provenance. Import only records ending strictly before the earliest existing live API play so the export cannot overlap the already-collected recent history. Do not modify the live recently-played cursor.
+
+### D-028: Enrich Tracks Through Supported Individual API Requests
+
+**Status:** Approved
+
+Extract canonical track IDs from Spotify URIs and enrich each unique track through the supported `GET /tracks/{id}` endpoint. Do not use the batch track endpoint removed for Development Mode apps. Cache results locally, bound concurrency, and honor `429 Retry-After` responses.
+
+### D-029: Skip Unavailable Metadata Without Inventing Identities
+
+**Status:** Approved
+
+Skip tracks that no longer resolve through Spotify or lack a canonical track URI. Include their counts and source descriptions in the private dry-run report, but do not invent track, artist, or album IDs.
+
+### D-030: Apply Historical Imports in Verified Chunks
+
+**Status:** Approved
+
+Generate a dry-run report and deterministic, chunked SQL artifacts. Apply and rerun the import against local D1 first. Before remote application, confirm a recovery point, pause Cron explicitly, apply the migration and chunks within the account's D1 write allowance, verify counts and idempotency, and then restore Cron.
+
+## 2026-09-05
+
+### D-031: Persist Plan And Chunk Progress In D1
+
+**Status:** Approved
+
+Identify each generated historical import with a deterministic plan fingerprint and persist each completed chunk by plan fingerprint, chunk number, and chunk checksum. Treat D1 chunk markers as authoritative resume state and local files only as cached artifacts. Store the expected record count, applied timestamp, and reported remote write metadata when available. Because chunk data and its final marker are imported together, a failed import can be retried idempotently; Time Travel restoration rolls both data and progress back together.
+
+## 2026-09-06
+
+### D-032: Use Export Metadata As The Historical Fallback
+
+**Status:** Approved
+
+Default historical planning to cache-only metadata resolution. Use cached Spotify catalog metadata when available; otherwise retain the latest non-empty track, primary-artist, and album names supplied by the Extended Streaming History export. Do not create synthetic Spotify artist or album IDs. Preserve exact imported listening time and include fallback artist names in aggregate statistics. Tracks without either a catalog name or an export track name remain unresolved and are reported rather than assigned invented metadata. Optional catalog refresh remains an explicit operator action because the development-mode single-track API returned a roughly 24-hour retry interval after 602 requests for an export containing 15,305 unique candidate tracks.
+
+### D-033: Verify Read Targets And Make Extraction Disposable
+
+**Status:** Approved
+
+Require the operator's expected Cloudflare account ID and D1 database UUID before Report or Generate mode automatically reads the remote overlap cutoff, using the same target verification required by ApplyRemote. Allow an explicit reviewed cutoff to run without a remote query. Keep extracted ZIP contents under the ignored private workspace and provide an explicit cleanup switch that removes the extracted copy after a successful operation while retaining the original ZIP and generated report or plan.
+
+### D-034: Resolve Same-Track Timestamp Collisions By Greatest Duration
+
+**Status:** Approved
+
+Treat Extended Streaming History rows with the same Spotify track ID and exact stream-end timestamp as one play, matching the existing D1 uniqueness constraint. Retain the row with the greatest `ms_played` value and report every discarded variant as `duplicate_track_timestamp`; do not sum durations that claim the same ending instant. Permit a historical-import rerun to raise an existing `spotify_export` row to the retained duration and event key, but never overwrite a live-ingested row through this conflict path.

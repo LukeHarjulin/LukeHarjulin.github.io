@@ -1,4 +1,5 @@
 node_modules/
+.pnpm-store/
 dist/
 .astro/
 .wrangler/
@@ -11,4 +12,4 @@ wrangler.local.toml
 .astro-preview.err.log
 .DS_Store
 output/
-tools/
+.spotify-history/

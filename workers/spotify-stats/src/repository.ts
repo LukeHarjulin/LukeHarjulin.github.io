@@ -51,15 +51,17 @@ const TRACK_COLUMNS = `
 		t.name,
 		t.duration_ms AS durationMs,
 		t.spotify_url AS spotifyUrl,
-		a.spotify_album_id AS albumId,
-		a.name AS albumName,
+		COALESCE(a.spotify_album_id, '') AS albumId,
+		COALESCE(a.name, t.history_album_name, '') AS albumName,
 		a.artwork_url AS artworkUrl,
 		COALESCE((
-			SELECT json_group_array(json_object('id', artist.spotify_artist_id, 'name', artist.name))
-			FROM track_artists ta
-			JOIN artists artist ON artist.spotify_artist_id = ta.spotify_artist_id
-			WHERE ta.spotify_track_id = t.spotify_track_id
-			ORDER BY ta.artist_order
+			SELECT json_group_array(json_object('id', artist.artist_id, 'name', artist.name))
+			FROM (
+				SELECT ordered_artist.artist_id, ordered_artist.name
+				FROM reporting_track_artists ordered_artist
+				WHERE ordered_artist.spotify_track_id = t.spotify_track_id
+				ORDER BY ordered_artist.artist_order
+			) artist
 		), '[]') AS artistsJson
 `;
 
@@ -79,7 +81,7 @@ export async function getMostRecentPlay(db: D1Database): Promise<{ track: Public
 	const row = await db.prepare(`
 		SELECT ${TRACK_COLUMNS}, p.played_at AS playedAt
 		FROM tracks t
-		JOIN albums a ON a.spotify_album_id = t.spotify_album_id
+		LEFT JOIN albums a ON a.spotify_album_id = t.spotify_album_id
 		JOIN plays p ON p.spotify_track_id = t.spotify_track_id
 		ORDER BY p.played_at DESC
 		LIMIT 1
@@ -91,17 +93,17 @@ export async function getMostRecentPlay(db: D1Database): Promise<{ track: Public
 export async function getSummary(db: D1Database, start: string | null) {
 	return bindPeriod(db.prepare(`
 		WITH filtered_plays AS (
-			SELECT p.id, p.spotify_track_id
+			SELECT p.id, p.spotify_track_id, p.listened_ms
 			FROM plays p
 			WHERE ${periodFilter(start)}
 		)
 		SELECT
 			COUNT(*) AS plays,
-			COALESCE(SUM(t.duration_ms), 0) AS listeningTimeMs,
+			COALESCE(SUM(COALESCE(fp.listened_ms, t.duration_ms)), 0) AS listeningTimeMs,
 			(
-				SELECT COUNT(DISTINCT ta.spotify_artist_id)
+				SELECT COUNT(DISTINCT artist.artist_id)
 				FROM filtered_plays fp
-				JOIN track_artists ta ON ta.spotify_track_id = fp.spotify_track_id
+				JOIN reporting_track_artists artist ON artist.spotify_track_id = fp.spotify_track_id
 			) AS uniqueArtists,
 			COUNT(DISTINCT fp.spotify_track_id) AS uniqueTracks
 		FROM filtered_plays fp
@@ -117,18 +119,17 @@ export async function getSummary(db: D1Database, start: string | null) {
 export async function getTopArtists(db: D1Database, start: string | null, limit: number) {
 	const result = await bindPeriod(db.prepare(`
 		SELECT
-			a.spotify_artist_id AS id,
-			a.name,
-			a.spotify_url AS spotifyUrl,
+			artist.artist_id AS id,
+			artist.name,
+			artist.spotify_url AS spotifyUrl,
 			COUNT(*) AS plays,
-			COALESCE(SUM(t.duration_ms), 0) AS listeningTimeMs
+			COALESCE(SUM(COALESCE(p.listened_ms, t.duration_ms)), 0) AS listeningTimeMs
 		FROM plays p
 		JOIN tracks t ON t.spotify_track_id = p.spotify_track_id
-		JOIN track_artists ta ON ta.spotify_track_id = p.spotify_track_id
-		JOIN artists a ON a.spotify_artist_id = ta.spotify_artist_id
+		JOIN reporting_track_artists artist ON artist.spotify_track_id = p.spotify_track_id
 		WHERE ${periodFilter(start)}
-		GROUP BY a.spotify_artist_id
-		ORDER BY plays DESC, a.name COLLATE NOCASE
+		GROUP BY artist.artist_id, artist.name, artist.spotify_url
+		ORDER BY plays DESC, artist.name COLLATE NOCASE
 		LIMIT ?
 	`), start, limit).all();
 	return result.results ?? [];
@@ -138,9 +139,9 @@ export async function getTopTracks(db: D1Database, start: string | null, limit: 
 	const result = await bindPeriod(db.prepare(`
 		SELECT ${TRACK_COLUMNS},
 			COUNT(*) AS plays,
-			COALESCE(SUM(t.duration_ms), 0) AS listeningTimeMs
+			COALESCE(SUM(COALESCE(p.listened_ms, t.duration_ms)), 0) AS listeningTimeMs
 		FROM tracks t
-		JOIN albums a ON a.spotify_album_id = t.spotify_album_id
+		LEFT JOIN albums a ON a.spotify_album_id = t.spotify_album_id
 		JOIN plays p ON p.spotify_track_id = t.spotify_track_id
 		WHERE ${periodFilter(start)}
 		GROUP BY t.spotify_track_id
@@ -159,7 +160,7 @@ export async function getActivity(db: D1Database, start: string | null) {
 	const result = await bindPeriod(db.prepare(`
 		SELECT
 			p.played_at AS playedAt,
-			t.duration_ms AS durationMs
+			COALESCE(p.listened_ms, t.duration_ms) AS durationMs
 		FROM plays p
 		JOIN tracks t ON t.spotify_track_id = p.spotify_track_id
 		WHERE ${periodFilter(start)}
@@ -183,9 +184,9 @@ export async function searchArchive(
 			COUNT(*) AS totalPlays,
 			SUM(CASE WHEN p.played_at >= ? THEN 1 ELSE 0 END) AS playsThisYear,
 			SUM(CASE WHEN p.played_at >= ? THEN 1 ELSE 0 END) AS playsThisMonth,
-			COALESCE(SUM(t.duration_ms), 0) AS totalListeningTimeMs
+			COALESCE(SUM(COALESCE(p.listened_ms, t.duration_ms)), 0) AS totalListeningTimeMs
 		FROM tracks t
-		JOIN albums a ON a.spotify_album_id = t.spotify_album_id
+		LEFT JOIN albums a ON a.spotify_album_id = t.spotify_album_id
 		JOIN plays p ON p.spotify_track_id = t.spotify_track_id
 		WHERE t.name LIKE ? ESCAPE '\\'
 		GROUP BY t.spotify_track_id
@@ -215,7 +216,7 @@ export async function getRecentPlays(db: D1Database, limit: number) {
 	const result = await db.prepare(`
 		SELECT ${TRACK_COLUMNS}, p.played_at AS playedAt
 		FROM tracks t
-		JOIN albums a ON a.spotify_album_id = t.spotify_album_id
+		LEFT JOIN albums a ON a.spotify_album_id = t.spotify_album_id
 		JOIN plays p ON p.spotify_track_id = t.spotify_track_id
 		ORDER BY p.played_at DESC
 		LIMIT ?
@@ -231,11 +232,12 @@ export async function getLifetimeTotals(db: D1Database) {
 	return db.prepare(`
 		SELECT
 			COUNT(*) AS plays,
-			COALESCE(SUM(t.duration_ms), 0) AS listeningTimeMs,
+			COALESCE(SUM(COALESCE(p.listened_ms, t.duration_ms)), 0) AS listeningTimeMs,
 			(
-				SELECT COUNT(DISTINCT ta.spotify_artist_id)
+				SELECT COUNT(DISTINCT artist.artist_id)
 				FROM plays artist_plays
-				JOIN track_artists ta ON ta.spotify_track_id = artist_plays.spotify_track_id
+				JOIN reporting_track_artists artist
+					ON artist.spotify_track_id = artist_plays.spotify_track_id
 			) AS uniqueArtists,
 			COUNT(DISTINCT p.spotify_track_id) AS uniqueTracks,
 			MIN(p.played_at) AS firstPlayed,

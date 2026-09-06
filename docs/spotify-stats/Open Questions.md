@@ -4,10 +4,6 @@ Back to [[Spotify Stats]]. Record approved answers in [[Decision Log]].
 
 These items remain deliberately unresolved. They require operator values or product/API decisions and must not be guessed during implementation.
 
-## Product and Reporting
-
-- How should plays with missing or unavailable Spotify metadata appear?
-
 ## API
 
 - What pagination contract should archive search use?
@@ -26,5 +22,4 @@ These items remain deliberately unresolved. They require operator values or prod
 
 ## Historical Coverage
 
-- Spotify's recently-played endpoint provides a limited recent window. Is forward-only collection sufficient for launch?
-- If older listening history is later imported, what source format and provenance rules should apply?
+- What actual `rows_written` rate will Cloudflare report for the first 250-play calibration chunk, and how many UTC allowance windows will the remaining 456 chunks require?

@@ -84,3 +84,27 @@ Back to [[Spotify Stats]]. Decisions are in [[Decision Log]] and unresolved choi
 - [x] Enable persisted Worker invocation logs at 100% sampling with traces disabled.
 - [ ] Verify Cloudflare dispatches the five-minute Cron Trigger; a cleanly recreated schedule was present in the API from 2026-08-31 20:09:33Z, but no scheduled invocation appeared at the 21:10, 21:15, 21:20, or 21:25 Europe/London boundaries while live tailing captured ordinary requests.
 - [ ] Consider Worker deployment automation only after manual deployment is stable.
+
+## Extended History Import
+
+- [x] Approve the import scope, privacy filtering, reporting semantics, schema additions, metadata API, overlap rule, and local-only operation.
+- [x] Add the D1 migration for play provenance, actual listening time, event fingerprints, and import audit state.
+- [x] Update aggregate queries to prefer actual imported listening time and retain live duration estimates.
+- [x] Implement local ZIP/JSON discovery and structural validation without relying on Spotify filenames.
+- [x] Filter unsupported media, URI-less records, zero-duration records, and private-session records.
+- [x] Implement supported single-track metadata enrichment with caching and rate-limit handling.
+- [x] Generate deterministic event keys, a private dry-run report, and chunked SQL artifacts.
+- [x] Add parser, filtering, fingerprint, enrichment, SQL, migration, aggregate-query, and CLI tests.
+- [x] Apply the migration and a representative import to local D1, then prove rerun idempotency.
+- [x] Document the Spotify export request, local workflow, D1 allowance checks, remote recovery, Cron pause, import, verification, and resume procedure.
+- [x] Pin automatic overlap discovery to `source = 'spotify_api'` so historical chunks cannot move the live cutoff between runs.
+- [x] Remove explicit transaction statements from generated D1 import files and verify the remote-compatible file format.
+- [x] Bind resume state to D1 markers, pin remote account/database identity, and make Time Travel roll progress back with imported data.
+- [x] Replace the undercounted D1 write estimate with indexed-write planning, a bounded calibration chunk, actual `rows_written` capture, and an explicit remaining budget.
+- [x] Add apply/resume tests covering legacy migration, metadata-sensitive fingerprints, remote-compatible SQL, target and budget guards, marker mismatches, and D1 idempotency.
+- [x] Request and receive the operator's Extended Streaming History ZIP from Spotify.
+- [x] Diagnose Spotify metadata throttling and approve cache-first export metadata fallback.
+- [x] Add fallback metadata storage, aggregate-query support, target verification, cleanup controls, and regression tests.
+- [x] Run the approved dry run against the real export and review its private report before remote import.
+- [x] Apply the real 250-play plan to local D1, reconcile aggregate totals, and prove rerun idempotency.
+- [ ] Apply and verify the approved historical import against remote D1.
