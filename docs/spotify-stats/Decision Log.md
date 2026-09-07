@@ -215,3 +215,11 @@ Require the operator's expected Cloudflare account ID and D1 database UUID befor
 **Status:** Approved
 
 Treat Extended Streaming History rows with the same Spotify track ID and exact stream-end timestamp as one play, matching the existing D1 uniqueness constraint. Retain the row with the greatest `ms_played` value and report every discarded variant as `duplicate_track_timestamp`; do not sum durations that claim the same ending instant. Permit a historical-import rerun to raise an existing `spotify_export` row to the retained duration and event key, but never overwrite a live-ingested row through this conflict path.
+
+## 2026-09-07
+
+### D-035: Import 10,000 Historical Plays Per UTC Day
+
+**Status:** Approved
+
+Use an 80,000-row operational ceiling within Cloudflare D1's 100,000-row Free daily allowance. Target 10,000 historical plays per UTC day in 250-play chunks, stopping earlier if the importer's measured-write budget guard requires it. For each daily batch, remove and verify the production Cron Trigger, capture a post-pause Time Travel bookmark, apply the bounded batch, reconcile markers and event keys, then restore and verify the five-minute Cron Trigger.
