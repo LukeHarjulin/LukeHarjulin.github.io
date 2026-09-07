@@ -64,8 +64,8 @@ Repeat the command and verify that aggregate play counts do not increase. The un
 
 Before the first remote chunk:
 
-1. Record the current [D1 Time Travel](https://developers.cloudflare.com/d1/reference/time-travel/) bookmark: `pnpm exec wrangler d1 time-travel info DB --config wrangler.toml`.
-2. Deploy `crons = []` and confirm the production Cron Trigger is absent. Omitting the `crons` key does not remove an existing trigger.
+1. Remove the production Cron Trigger without deploying schema-dependent Worker code, and confirm the trigger is absent. Omitting the `crons` key does not remove an existing trigger.
+2. Record the current [D1 Time Travel](https://developers.cloudflare.com/d1/reference/time-travel/) bookmark: `pnpm exec wrangler d1 time-travel info DB --config wrangler.toml`. Capturing it after Cron is paused prevents a later restore from discarding scheduled writes made between the bookmark and trigger removal.
 3. Apply migrations `0002_history_import.sql`, `0003_history_import_progress.sql`, and `0004_history_metadata_fallback.sql` separately with `pnpm d1:migrate:remote`. Review migration D1 write usage before importing data; the importer intentionally refuses to combine remote migrations and chunks.
 4. Deploy the updated Worker only after all three migrations exist, because its aggregate queries read the imported duration and fallback metadata fields and view.
 5. Keep the Cron paused for the entire historical import.
@@ -75,7 +75,7 @@ Read the expected account ID from `pnpm exec wrangler whoami` and the D1 UUID fr
 The first remote application is a calibration run limited to one chunk of at most 250 plays. `-CronPaused`, `-MaxChunks`, and `-RemainingWriteBudget` are mandatory safety inputs:
 
 ```powershell
-pnpm spotify:history -InputPath "C:\private\my_spotify_data.zip" -Mode ApplyRemote -CronPaused -StartChunk 1 -MaxChunks 1 -RemainingWriteBudget 50000 -ChunkSize 250 -ExpectedAccountId "<CLOUDFLARE_ACCOUNT_ID>" -ExpectedDatabaseId "<D1_DATABASE_ID>"
+pnpm spotify:history -InputPath "C:\private\my_spotify_data.zip" -Mode ApplyRemote -CronPaused -StartChunk 1 -MaxChunks 1 -RemainingWriteBudget 50000 -ChunkSize 250 -Cutoff "2026-08-30T20:11:42Z" -ExpectedAccountId "<CLOUDFLARE_ACCOUNT_ID>" -ExpectedDatabaseId "<D1_DATABASE_ID>"
 ```
 
 On the next allowed write window, advance `-StartChunk`, keep an explicit `-MaxChunks`, and supply the newly verified remaining budget. D1 chunk markers are authoritative: matching chunks are skipped, missing chunks are retried idempotently, and a checksum mismatch stops the import. Each successful remote chunk stores its reported row writes and final bookmark when Wrangler supplies one. The audit is marked completed only after D1 contains every expected marker. Time Travel restoration rolls markers back with their data, so resume naturally starts from the earliest missing chunk.
