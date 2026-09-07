@@ -107,4 +107,7 @@ Back to [[Spotify Stats]]. Decisions are in [[Decision Log]] and unresolved choi
 - [x] Add fallback metadata storage, aggregate-query support, target verification, cleanup controls, and regression tests.
 - [x] Run the approved dry run against the real export and review its private report before remote import.
 - [x] Apply the real 250-play plan to local D1, reconcile aggregate totals, and prove rerun idempotency.
-- [ ] Apply and verify the approved historical import against remote D1.
+- [x] Pause production Cron, capture a post-pause recovery bookmark, apply migrations `0002`-`0004`, and deploy the updated Worker with Cron disabled.
+- [x] Apply and verify the first 250-play remote calibration chunk; Cloudflare reported 1,889 rows written, or 7.556 rows per play.
+- [ ] Apply and verify the remaining 456 historical chunks against remote D1 using bounded UTC-day write budgets.
+- [ ] Restore and verify the five-minute production Cron Trigger after the final batch, or between batches if that operating approach is approved.
