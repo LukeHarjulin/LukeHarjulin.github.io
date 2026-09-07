@@ -84,7 +84,7 @@ function Invoke-WranglerJson {
 	if ($LASTEXITCODE -ne 0) {
 		throw "Wrangler exited with code $LASTEXITCODE."
 	}
-	return $output | ConvertFrom-Json -NoEnumerate
+	return ConvertFrom-SpotifyWranglerJson -Output $output
 }
 
 function Assert-RemoteHistorySchema {
@@ -117,7 +117,7 @@ function Get-EarliestPlay {
 	$scope = if ($Local) { "--local" } else { "--remote" }
 	$schemaOutput = & $wranglerPath d1 execute DB $scope --config $configPath --command "SELECT COUNT(*) AS source_columns FROM pragma_table_info('plays') WHERE name = 'source';" --json
 	if ($LASTEXITCODE -ne 0) { throw "Could not inspect the D1 plays schema." }
-	$schemaPayload = $schemaOutput | ConvertFrom-Json
+	$schemaPayload = ConvertFrom-SpotifyWranglerJson -Output $schemaOutput
 	$hasSourceColumn = [int]$schemaPayload[0].results[0].source_columns -gt 0
 	$query = if ($hasSourceColumn) {
 		"SELECT MIN(played_at) AS cutoff FROM plays WHERE source = 'spotify_api';"
@@ -126,7 +126,7 @@ function Get-EarliestPlay {
 	}
 	$output = & $wranglerPath d1 execute DB $scope --config $configPath --command $query --json
 	if ($LASTEXITCODE -ne 0) { throw "Could not query the earliest live D1 play." }
-	$payload = $output | ConvertFrom-Json
+	$payload = ConvertFrom-SpotifyWranglerJson -Output $output
 	$value = $payload[0].results[0].cutoff
 	if (-not $value) {
 		throw "D1 has no Spotify API play to use as a cutoff. Supply -Cutoff explicitly after reviewing the boundary."

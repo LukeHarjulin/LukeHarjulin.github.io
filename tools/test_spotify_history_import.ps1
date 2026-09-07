@@ -24,6 +24,17 @@ try {
 	[Threading.Thread]::CurrentThread.CurrentCulture = $previousCulture
 }
 Assert-Throws { ConvertTo-SpotifyHistoryUtcTimestamp -Value "not-a-timestamp" } "invalid cutoff timestamp"
+$wranglerPayload = ConvertFrom-SpotifyWranglerJson -Output @(
+	" ⛅️ wrangler 4.129.1",
+	"────────────────────",
+	"[",
+	'  { "results": [{ "value": 42 }], "success": true }',
+	"]"
+)
+if ([int]$wranglerPayload[0].results[0].value -ne 42) {
+	throw "Wrangler JSON parsing did not ignore leading status output."
+}
+Assert-Throws { ConvertFrom-SpotifyWranglerJson -Output @("no payload") } "missing Wrangler JSON"
 if (Test-SpotifyHistoryModeWritesD1 -Mode Report) { throw "Report mode must not write to D1." }
 if (Test-SpotifyHistoryModeWritesD1 -Mode Generate) { throw "Generate mode must not write to D1." }
 if (-not (Test-SpotifyHistoryModeWritesD1 -Mode ApplyLocal)) { throw "ApplyLocal must be classified as writing to D1." }

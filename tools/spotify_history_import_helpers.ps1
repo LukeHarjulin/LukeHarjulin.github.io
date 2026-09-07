@@ -30,6 +30,30 @@ function Test-SpotifyHistoryModeWritesD1 {
 	return $Mode -in @("ApplyLocal", "ApplyRemote")
 }
 
+function ConvertFrom-SpotifyWranglerJson {
+	param([Parameter(Mandatory)][object[]]$Output)
+
+	$lines = @($Output | ForEach-Object { [string]$_ })
+	$startIndex = -1
+	for ($index = 0; $index -lt $lines.Count; $index++) {
+		$trimmed = $lines[$index].TrimStart()
+		if ($trimmed.StartsWith("[") -or $trimmed.StartsWith("{")) {
+			$startIndex = $index
+			break
+		}
+	}
+	if ($startIndex -lt 0) {
+		throw "Wrangler did not return a JSON payload."
+	}
+
+	$json = ($lines[$startIndex..($lines.Count - 1)] -join "`n")
+	try {
+		return $json | ConvertFrom-Json -NoEnumerate
+	} catch {
+		throw "Wrangler returned an invalid JSON payload: $($_.Exception.Message)"
+	}
+}
+
 function Assert-SpotifyHistoryRemoteTarget {
 	param(
 		[string]$ExpectedAccountId,
