@@ -54,15 +54,25 @@ const TRACK_COLUMNS = `
 		COALESCE(a.spotify_album_id, '') AS albumId,
 		COALESCE(a.name, t.history_album_name, '') AS albumName,
 		a.artwork_url AS artworkUrl,
-		COALESCE((
+		CASE WHEN EXISTS (
+			SELECT 1 FROM track_artists ta WHERE ta.spotify_track_id = t.spotify_track_id
+		) THEN (
 			SELECT json_group_array(json_object('id', artist.artist_id, 'name', artist.name))
 			FROM (
-				SELECT ordered_artist.artist_id, ordered_artist.name
-				FROM reporting_track_artists ordered_artist
-				WHERE ordered_artist.spotify_track_id = t.spotify_track_id
-				ORDER BY ordered_artist.artist_order
+				SELECT a.spotify_artist_id AS artist_id, a.name
+				FROM track_artists ta JOIN artists a ON a.spotify_artist_id = ta.spotify_artist_id
+				WHERE ta.spotify_track_id = t.spotify_track_id ORDER BY ta.artist_order
 			) artist
-		), '[]') AS artistsJson
+		) WHEN length(trim(COALESCE(t.history_artist_name, ''))) > 0 THEN (
+			SELECT json_array(json_object(
+				'id', COALESCE(a.spotify_artist_id, 'history:' || lower(trim(t.history_artist_name))),
+				'name', COALESCE(a.name, trim(t.history_artist_name))
+			)) FROM (
+				SELECT CASE WHEN COUNT(*) = 1 THEN MIN(candidate.spotify_artist_id) END AS artist_id
+				FROM artists candidate WHERE length(trim(candidate.name)) > 0
+					AND lower(trim(candidate.name)) = lower(trim(t.history_artist_name))
+			) match LEFT JOIN artists a ON a.spotify_artist_id = match.artist_id
+		) ELSE '[]' END AS artistsJson
 `;
 
 function periodFilter(start: string | null, alias = "p"): string {
@@ -79,12 +89,13 @@ function bindPeriod(
 
 export async function getMostRecentPlay(db: D1Database): Promise<{ track: PublicTrack; playedAt: string } | null> {
 	const row = await db.prepare(`
+		WITH recent AS MATERIALIZED (
+			SELECT spotify_track_id, played_at FROM plays ORDER BY played_at DESC LIMIT 1
+		)
 		SELECT ${TRACK_COLUMNS}, p.played_at AS playedAt
-		FROM tracks t
+		FROM recent p
+		JOIN tracks t ON t.spotify_track_id = p.spotify_track_id
 		LEFT JOIN albums a ON a.spotify_album_id = t.spotify_album_id
-		JOIN plays p ON p.spotify_track_id = t.spotify_track_id
-		ORDER BY p.played_at DESC
-		LIMIT 1
 	`).first<RecentRow>();
 
 	return row ? { track: mapTrack(row), playedAt: row.playedAt } : null;
@@ -137,16 +148,21 @@ export async function getTopArtists(db: D1Database, start: string | null, limit:
 
 export async function getTopTracks(db: D1Database, start: string | null, limit: number) {
 	const result = await bindPeriod(db.prepare(`
-		SELECT ${TRACK_COLUMNS},
-			COUNT(*) AS plays,
-			COALESCE(SUM(COALESCE(p.listened_ms, t.duration_ms)), 0) AS listeningTimeMs
-		FROM tracks t
+		WITH ranked AS MATERIALIZED (
+			SELECT t.spotify_track_id, COUNT(*) AS plays,
+				COALESCE(SUM(COALESCE(p.listened_ms, t.duration_ms)), 0) AS listeningTimeMs
+			FROM plays p
+			JOIN tracks t ON t.spotify_track_id = p.spotify_track_id
+			WHERE ${periodFilter(start)}
+			GROUP BY t.spotify_track_id
+			ORDER BY COUNT(*) DESC, t.name COLLATE NOCASE
+			LIMIT ?
+		)
+		SELECT ${TRACK_COLUMNS}, ranked.plays, ranked.listeningTimeMs
+		FROM ranked
+		JOIN tracks t ON t.spotify_track_id = ranked.spotify_track_id
 		LEFT JOIN albums a ON a.spotify_album_id = t.spotify_album_id
-		JOIN plays p ON p.spotify_track_id = t.spotify_track_id
-		WHERE ${periodFilter(start)}
-		GROUP BY t.spotify_track_id
-		ORDER BY COUNT(*) DESC, t.name COLLATE NOCASE
-		LIMIT ?
+		ORDER BY ranked.plays DESC, t.name COLLATE NOCASE
 	`), start, limit).all<TrackRow & { plays: number; listeningTimeMs: number }>();
 
 	return (result.results ?? []).map((row) => ({
@@ -214,12 +230,14 @@ export async function searchArchive(
 
 export async function getRecentPlays(db: D1Database, limit: number) {
 	const result = await db.prepare(`
+		WITH recent AS MATERIALIZED (
+			SELECT spotify_track_id, played_at FROM plays ORDER BY played_at DESC LIMIT ?
+		)
 		SELECT ${TRACK_COLUMNS}, p.played_at AS playedAt
-		FROM tracks t
+		FROM recent p
+		JOIN tracks t ON t.spotify_track_id = p.spotify_track_id
 		LEFT JOIN albums a ON a.spotify_album_id = t.spotify_album_id
-		JOIN plays p ON p.spotify_track_id = t.spotify_track_id
 		ORDER BY p.played_at DESC
-		LIMIT ?
 	`).bind(limit).all<RecentRow>();
 
 	return (result.results ?? []).map((row) => ({

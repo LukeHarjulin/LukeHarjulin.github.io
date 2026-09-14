@@ -109,10 +109,10 @@ describe("history-aware listening duration queries", () => {
 		expect(topArtists).toContain("GROUP BY artist.artist_id, artist.name, artist.spotify_url");
 		expect(topTracks).toContain("LEFT JOIN albums a");
 		expect(topTracks).toContain("COALESCE(a.name, t.history_album_name, '') AS albumName");
-		expect(topTracks).toContain("FROM reporting_track_artists ordered_artist");
-		expect(topTracks).toContain("ORDER BY ordered_artist.artist_order");
+		expect(topTracks).toContain("FROM track_artists ta JOIN artists a");
+		expect(topTracks).toContain("ORDER BY ta.artist_order");
 		expect(archive).toContain("LEFT JOIN albums a");
-		expect(archive).toContain("FROM reporting_track_artists ordered_artist");
+		expect(archive).toContain("FROM track_artists ta JOIN artists a");
 		expect(lifetime).toContain("COUNT(DISTINCT artist.artist_id)");
 	});
 });
