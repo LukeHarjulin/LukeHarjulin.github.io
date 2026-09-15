@@ -1,6 +1,15 @@
 # D1 read reduction
 
-Implemented on `codex/reduce-d1-row-reads`. Production has not been changed.
+Implemented on `codex/reduce-d1-row-reads` in commit `6ba636d` and deployed to production on September 15, 2026, verified at 18:25 UTC (19:25 BST).
+
+## Production deployment
+
+- Migration `0005_artist_lookup_index.sql` applied successfully; Wrangler confirms no pending migrations.
+- Worker version: `c8d20e7a-3b5f-4768-ab70-f4a657eaf803`.
+- Custom domain: `spotify-api.lukeharjulin.com`; ingestion schedule remains every five minutes.
+- Recent plays, summary, top tracks, top artists, lifetime totals, activity, and now-playing all returned HTTP 200 and `X-Spotify-Cache: HIT` on repeated requests with identical response bodies. CORS headers matched the public site origin on the five statistics endpoints checked for CORS.
+- Pre-migration D1 recovery bookmark: `00000d4d-00000000-000050e7-227a582e4cc11f5d6a9d3c29c8a74dab`. Restoring it would also roll back subsequent ingestion, so it is a recovery reference, not a routine rollback step.
+- Actual full-day production reads remain to be measured; the deployment and cache checks do not prove the account stays below its daily allowance.
 
 ## Changes
 
