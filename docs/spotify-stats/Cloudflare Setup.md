@@ -84,6 +84,7 @@ Run verification with:
 
 ```powershell
 pnpm spotify:oauth:test
+pnpm spotify:history:test
 pnpm worker:test
 pnpm worker:typecheck
 pnpm build
@@ -101,6 +102,8 @@ Do not commit `wrangler.toml`, `.dev.vars`, `.wrangler/`, or environment-specifi
 6. Record the applied migration and deployment outcome in [[Task List]].
 
 Migrations should be additive and reviewable. Destructive schema changes require a backup and a separate approved decision.
+
+Migration `0002_history_import.sql` adds imported-play provenance and duration, `0003_history_import_progress.sql` adds authoritative plan and chunk progress, and `0004_history_metadata_fallback.sql` adds export-provided fallback metadata and the reporting artist view. Apply all three migrations before deploying the corresponding Worker code; reversing that order can make production queries reference columns or views that do not exist yet. Apply remote migrations separately from historical chunks so their index-building writes can be reviewed against the daily allowance. The historical data workflow, write guardrails, Cron pause, and recovery procedure are in [[Extended History Import]].
 
 ## Manual-First Deployment
 
@@ -141,6 +144,6 @@ Cloudflare may take up to 15 minutes to propagate a new or changed Cron Trigger.
 
 Cloudflare API error `10063` means the account-wide `workers.dev` subdomain has not been initialized. Open the Workers & Pages account overview and complete that one-time setup, then redeploy the trigger. Keep `workers_dev = false` for this Worker.
 
-As of 2026-08-31, the production trigger remains an external blocker: it was explicitly deleted with `crons = []`, recreated at 20:09:33Z, and confirmed by the schedules API, but a working live tail captured normal HTTP invocations and no scheduled event through the first boundary after Cloudflare's 15-minute propagation window. Before another deployment, inspect **Settings > Trigger Events > View events** in the Cloudflare dashboard and retain the current Worker version and schedule timestamps for a Cloudflare support report.
+The earlier dispatch issue was resolved after the historical-import Worker deployment and trigger recreation. On 2026-09-07, the dashboard showed `*/5 * * * *` and remote D1 advanced the ingestion cursor at `22:55:01Z` on the first full five-minute UTC boundary after restoration. Continue to verify the cursor after each daily historical batch rather than treating trigger presence alone as proof of dispatch.
 
 For a controlled remote D1 verification without adding an ingestion HTTP route, temporarily add `remote = true` to the ignored `DB` binding in `wrangler.toml`, run `pnpm worker:dev`, and invoke Wrangler's local test-scheduled endpoint. Confirm the remote counts, repeat the invocation to prove deduplication, stop the development process, and remove `remote = true`. This writes production data and must be used deliberately.

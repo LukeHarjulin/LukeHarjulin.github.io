@@ -1,10 +1,10 @@
 import { ingestRecentlyPlayed } from "./ingest";
-import { routeRequest } from "./router";
+import { cachedRouteRequest } from "./cache";
 import type { Env, ExecutionContextLike, ScheduledControllerLike } from "./runtime";
 
 export default {
-	fetch(request: Request, env: Env): Promise<Response> {
-		return routeRequest(request, env);
+	fetch(request: Request, env: Env, context: ExecutionContextLike): Promise<Response> {
+		return cachedRouteRequest(request, env, context);
 	},
 
 	scheduled(_controller: ScheduledControllerLike, env: Env, context: ExecutionContextLike): void {

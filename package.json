@@ -12,6 +12,8 @@
 		"worker:typecheck": "tsc --project workers/spotify-stats/tsconfig.json",
 		"spotify:oauth": "pwsh -NoProfile -File tools/spotify_oauth_bootstrap.ps1",
 		"spotify:oauth:test": "pwsh -NoProfile -File tools/test_spotify_oauth_bootstrap.ps1",
+		"spotify:history": "pwsh -NoProfile -File tools/import_spotify_history.ps1",
+		"spotify:history:test": "pwsh -NoProfile -File tools/test_spotify_history_import.ps1",
 		"worker:secrets": "pwsh -NoProfile -File tools/upload_spotify_secrets.ps1",
 		"d1:migrate:local": "wrangler d1 migrations apply DB --local --config wrangler.toml",
 		"d1:migrate:remote": "wrangler d1 migrations apply DB --remote --config wrangler.toml",

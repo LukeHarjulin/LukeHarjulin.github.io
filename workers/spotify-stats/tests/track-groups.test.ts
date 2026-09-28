@@ -24,7 +24,9 @@ describe("song identity", () => {
 
 function fixture() {
 	const sqlite = new DatabaseSync(":memory:");
-	sqlite.exec(readFileSync(new URL("../migrations/0001_initial.sql", import.meta.url), "utf8"));
+	for (const file of ["0001_initial.sql", "0002_history_import.sql", "0003_history_import_progress.sql", "0004_history_metadata_fallback.sql", "0005_artist_lookup_index.sql"]) {
+		sqlite.exec(readFileSync(new URL(`../migrations/${file}`, import.meta.url), "utf8"));
+	}
 	sqlite.exec(`INSERT INTO artists (spotify_artist_id, name) VALUES ('artist', 'Artist');
 		INSERT INTO albums (spotify_album_id, name) VALUES ('album', 'Album');`);
 	const db: D1Database = {
