@@ -35,9 +35,10 @@ export function toPublicTrack(track: SpotifyTrack): PublicTrack {
 	};
 }
 
-async function getAccessToken(env: Env, fetcher: typeof fetch): Promise<string> {
+export async function getAccessToken(env: Env, fetcher: typeof fetch): Promise<string> {
 	const credentials = btoa(`${env.SPOTIFY_CLIENT_ID}:${env.SPOTIFY_CLIENT_SECRET}`);
 	const response = await fetcher(TOKEN_ENDPOINT, {
+		signal: AbortSignal.timeout(10000),
 		method: "POST",
 		headers: {
 			Authorization: `Basic ${credentials}`,

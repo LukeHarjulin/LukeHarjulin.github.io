@@ -1,3 +1,6 @@
+import { initializeAlbumRecommendations } from "./album-recommendations";
+import type { AlbumRecommendations } from "../data/album-recommendation";
+
 const header = document.getElementById("headerTop");
 const navMenu = document.querySelector<HTMLElement>(".navMenu");
 const navButton = document.querySelector<HTMLButtonElement>(".navButton");
@@ -619,11 +622,16 @@ async function initializeListeningStats() {
 
 	if (!apiBase) {
 		setListeningStatus("Listening stats backend is not configured yet.", "error");
+		setText("[data-recommendation-status]", "Album suggestions are not configured yet.");
 		disableListeningControls();
 		return;
 	}
 
 	registerListeningInteractions();
+	void initializeAlbumRecommendations(async () => {
+		const response = await requestApi<AlbumRecommendations>("/api/spotify/recommendations");
+		return response.data;
+	});
 	setListeningStatus("Loading listening stats...", "loading");
 	const tasks = [
 		loadNowPlaying(),

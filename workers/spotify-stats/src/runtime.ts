@@ -22,6 +22,8 @@ export interface Env {
 	SPOTIFY_CLIENT_SECRET: string;
 	SPOTIFY_REFRESH_TOKEN: string;
 	PUBLIC_SITE_ORIGIN?: string;
+	LASTFM_API_KEY?: string;
+	RECOMMENDATIONS_ENABLED?: string;
 }
 
 export interface ExecutionContextLike {

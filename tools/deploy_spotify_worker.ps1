@@ -7,7 +7,8 @@ $configPath = Join-Path $repoRoot "wrangler.toml"
 $managedKeys = @(
 	"SPOTIFY_CLIENT_ID",
 	"SPOTIFY_CLIENT_SECRET",
-	"SPOTIFY_REFRESH_TOKEN"
+	"SPOTIFY_REFRESH_TOKEN",
+	"LASTFM_API_KEY"
 )
 
 . (Join-Path $PSScriptRoot "spotify_oauth_secrets.ps1")
