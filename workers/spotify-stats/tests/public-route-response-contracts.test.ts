@@ -156,7 +156,7 @@ describe("public Spotify stats success response contracts", () => {
 		};
 		const response = await routeRequest(
 			request("/api/spotify/summary?period=month"),
-			environment(mockDatabase({ first: totals })),
+			environment(mockDatabase({ first: totals, all: Array.from({ length: totals.uniqueTracks }, (_, i) => ({ ...trackRow, id: `track-${i}`, name: `Song ${i}` })) })),
 		);
 
 		await expectSuccess(response, { totals }, { period: "month" });
@@ -262,7 +262,7 @@ describe("public Spotify stats success response contracts", () => {
 		};
 		const response = await routeRequest(
 			request("/api/spotify/lifetime"),
-			environment(mockDatabase({ first: totals })),
+			environment(mockDatabase({ first: totals, all: Array.from({ length: totals.uniqueTracks }, (_, i) => ({ ...trackRow, id: `track-${i}`, name: `Song ${i}` })) })),
 		);
 
 		await expectSuccess(response, { totals });

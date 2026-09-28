@@ -149,3 +149,13 @@ Browser access is restricted to the exact operator-supplied `PUBLIC_SITE_ORIGIN`
 ## Future API Changes
 
 New public fields or endpoints require a privacy review. Any endpoint that increases timestamp precision, expands history depth, or combines dimensions in a way that reconstructs raw listening behavior must be approved and added to [[Decision Log]] before implementation.
+
+## Song grouping
+
+Top tracks, archive search, and unique-track totals combine Spotify IDs with the same normalized song title, full set of artist IDs, and explicit flag. Case and whitespace are normalized; complete trailing remaster annotations (such as `- 2011 Remaster`, `(Remastered 2011)`, or `[Remastered]`) are ignored. Live, acoustic, remix, radio-edit, and other version labels remain part of the identity. Tracks without artist metadata stay separate.
+
+Counts and listening time are summed across matching versions before ranking and applying the result limit. Each play contributes its own recording's duration. Archive searches match any version's title and return the entire group's first/last play and period totals. Summary and lifetime `uniqueTracks` count song groups; play counts and artist totals retain their existing meaning.
+
+Grouped track objects include optional `versionIds` containing the Spotify IDs represented in that result. A single version retains the existing response shape. The representative metadata prefers a title without a remaster annotation, then the lowest Spotify ID; grouped display titles omit the annotation. For period rankings, only versions played in that period participate. The UI labels combined entries with their version count. Now-playing and recent-play responses preserve the exact recording and do not contain grouping metadata.
+
+Grouping runs on read and applies to existing history without a migration. SQL returns one aggregate per track, never the complete play history, for grouping inside the Worker. Read cost and memory scale with the number of distinct tracks; a larger archive may eventually warrant persisted group keys. This is metadata-based matching, not audio fingerprinting: identically titled re-recordings with identical artist credits/explicit flags can combine, and unconventional remaster labels or changed artist credits can stay separate. No public mutation endpoint is added, and version IDs expose only public Spotify identifiers.

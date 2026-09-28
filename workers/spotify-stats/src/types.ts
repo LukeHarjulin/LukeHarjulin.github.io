@@ -59,6 +59,7 @@ export interface PublicArtist {
 }
 
 export interface PublicTrack {
+	versionIds?: string[];
 	id: string;
 	name: string;
 	artists: PublicArtist[];
