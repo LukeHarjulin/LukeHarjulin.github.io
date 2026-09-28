@@ -45,6 +45,10 @@ function cachePolicy(request: Request, env: Env): { key: Request; seconds: numbe
 		case "/api/spotify/lifetime":
 			seconds = 3600;
 			break;
+		case "/api/spotify/recommendations":
+			seconds = 60;
+			key.searchParams.set("_enabled", env.RECOMMENDATIONS_ENABLED ?? "false");
+			break;
 		case "/api/spotify/now-playing":
 			seconds = 15;
 			break;

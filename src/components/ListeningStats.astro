@@ -37,6 +37,32 @@ const { apiBase } = Astro.props;
 		</div>
 	</div>
 
+	<section id="album-recommendations" class="album-recommendations" aria-labelledby="album-recommendation-heading">
+		<div class="panel-heading">
+			<div>
+				<div class="eyebrow">Next on the turntable</div>
+				<h2 id="album-recommendation-heading">An album for the next listen.</h2>
+				<p>Mostly old favourites worth revisiting, with the occasional new direction.</p>
+			</div>
+		</div>
+		<p data-recommendation-status role="status">Loading an album suggestion...</p>
+		<div class="album-recommendations__content" data-recommendation-content hidden>
+			<img data-recommendation-artwork width="200" height="200" alt="" hidden />
+			<div>
+				<p class="album-recommendations__kind" data-recommendation-kind></p>
+				<h3 data-recommendation-name></h3>
+				<p class="album-recommendations__artist" data-recommendation-artist></p>
+				<p data-recommendation-reason></p>
+				<a class="album-recommendations__link" data-recommendation-link target="_blank" rel="noopener noreferrer">Open album in Spotify ↗</a>
+			</div>
+		</div>
+		<div class="album-recommendations__actions">
+			<button type="button" data-recommendation-skip disabled>Suggest another</button>
+			<button type="button" data-recommendation-reset hidden>Back to today's pick</button>
+		</div>
+		<p class="album-recommendations__note">Alternatives stay in this browser. New picks daily. Music via Spotify; discovery data from <a href="https://www.last.fm" target="_blank" rel="noopener noreferrer">Last.fm</a>.</p>
+	</section>
+
 	<div id="listening-summary" class="listening-summary" aria-label="Listening summary">
 		<div><span>Plays today</span><strong data-summary="playsToday">-</strong></div>
 		<div><span>Plays this month</span><strong data-summary="playsThisMonth">-</strong></div>

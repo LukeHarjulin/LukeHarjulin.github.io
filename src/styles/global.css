@@ -16,6 +16,38 @@
 	--header-height: 112px;
 }
 
+.album-recommendations {
+	padding: clamp(20px, 3vw, 32px);
+	margin-block: 24px;
+	border: 1px solid var(--line);
+	border-radius: 18px;
+	background: var(--paper-strong);
+}
+
+.album-recommendations__content {
+	display: flex;
+	align-items: center;
+	gap: 28px;
+	margin-block: 24px;
+}
+
+.album-recommendations [hidden] { display: none; }
+.album-recommendations__content img { width: 200px; height: 200px; object-fit: contain; flex-shrink: 0; }
+.album-recommendations__content h3 { font-size: clamp(24px, 3vw, 36px); line-height: 1.2; overflow-wrap: anywhere; }
+.album-recommendations__content p { margin-block: 10px; }
+.album-recommendations__kind { color: var(--teal); font-weight: 700; }
+.album-recommendations__artist { font-size: 20px; }
+.album-recommendations__link { display: inline-block; margin-top: 12px; text-decoration: underline; font-weight: 700; }
+.album-recommendations__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-block: 20px 12px; }
+.album-recommendations button { padding: 12px 18px; border-radius: 8px; border: 1px solid var(--ink); background: var(--ink); color: var(--inverse); cursor: pointer; }
+.album-recommendations button:disabled { opacity: 0.5; cursor: default; }
+.album-recommendations :is(a, button):focus-visible { outline: 3px solid var(--teal); outline-offset: 4px; }
+.album-recommendations__note, [data-recommendation-status] { color: var(--muted); font-size: 0.9rem; }
+.album-recommendations__note a { text-decoration: underline; }
+@media (max-width: 600px) {
+	.album-recommendations__content { flex-direction: column; align-items: flex-start; gap: 16px; }
+}
+
 * {
 	box-sizing: border-box;
 	margin: 0;

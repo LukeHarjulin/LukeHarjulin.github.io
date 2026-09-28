@@ -1,4 +1,5 @@
 import { failure, options, success, validateCors } from "./http";
+import { readRecommendations } from "./recommendations";
 import {
 	activityPeriodStart,
 	parseActivityPeriod,
@@ -6,6 +7,7 @@ import {
 	parseRankingPeriod,
 	parseSummaryPeriod,
 	periodStart,
+	reportingDate,
 } from "./periods";
 import {
 	getActivity,
@@ -39,6 +41,11 @@ export async function routeRequest(request: Request, env: Env): Promise<Response
 
 	try {
 		switch (url.pathname) {
+			case "/api/spotify/recommendations":
+				return success(env.RECOMMENDATIONS_ENABLED === "true"
+					? await readRecommendations(env.DB, now)
+					: { date: reportingDate(now), generatedAt: null, stale: false, items: [] },
+				request, env, { cacheSeconds: 60, generatedAt: now });
 			case "/api/spotify/now-playing": {
 				const current = await getCurrentlyPlaying(env);
 				if (current?.item) {

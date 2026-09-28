@@ -16,12 +16,15 @@ head_sampling_rate = 1
 
 [vars]
 PUBLIC_SITE_ORIGIN = "https://www.lukeharjulin.com"
+# Enable after applying migration 0005 and setting the LASTFM_API_KEY secret.
+RECOMMENDATIONS_ENABLED = "true"
 
 [secrets]
 required = [
 	"SPOTIFY_CLIENT_ID",
 	"SPOTIFY_CLIENT_SECRET",
 	"SPOTIFY_REFRESH_TOKEN",
+	"LASTFM_API_KEY",
 ]
 
 [[d1_databases]]

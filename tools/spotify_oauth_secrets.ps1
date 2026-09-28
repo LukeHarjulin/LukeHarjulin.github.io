@@ -17,6 +17,14 @@ function Save-LocalSecrets {
 	)
 
 	$lines = [Collections.Generic.List[string]]::new()
+	# Spotify reauthorization must preserve the independent Last.fm key.
+	if (Test-Path -LiteralPath $Path) {
+		foreach ($line in [IO.File]::ReadAllLines($Path)) {
+			if ($line -match '^\s*(?:export\s+)?LASTFM_API_KEY\s*=' -and -not $Values.Contains('LASTFM_API_KEY')) {
+				$lines.Add($line)
+			}
+		}
+	}
 	foreach ($key in $Values.Keys) {
 		$lines.Add("$key=$(Quote-DotEnvValue -Value $Values[$key])")
 	}
@@ -56,7 +64,7 @@ function Assert-ManagedSecretsFile {
 			throw ".dev.vars contains an invalid dotenv line. Move or correct it before continuing."
 		}
 		$key = $assignment.Groups['key'].Value
-		if ($ManagedKeys -cnotcontains $key) {
+		if ($ManagedKeys -cnotcontains $key -and $key -cne 'LASTFM_API_KEY') {
 			throw ".dev.vars contains the unmanaged key '$key'. Move it so it cannot be uploaded to the Spotify Worker."
 		}
 		if (-not $seenKeys.Add($key)) {
