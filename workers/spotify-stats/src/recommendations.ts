@@ -169,6 +169,6 @@ export async function refreshRecommendations(env: Env, now = new Date(), fetcher
 		const retry = historyScanned ? 86400 : error instanceof CatalogueError ? Math.max(7200, error.retrySeconds) : 86400;
 		await env.DB.prepare("UPDATE album_recommendation_days SET retry_after_ms = ? WHERE date = ? AND lease_owner = ?")
 			.bind(now.getTime() + retry * 1000, date, owner).run();
-		console.warn(JSON.stringify({ event: "album_recommendations_failed", service: error instanceof CatalogueError ? error.service : "unknown", status: error instanceof CatalogueError ? error.status : 500 }));
+		console.warn(JSON.stringify({ event: "album_recommendations_failed", service: error instanceof CatalogueError ? error.service : "unknown", status: error instanceof CatalogueError ? error.status : 500, failure: error instanceof CatalogueError ? error.failure : "other", endpoint: error instanceof CatalogueError ? error.endpoint : "other" }));
 	}
 }

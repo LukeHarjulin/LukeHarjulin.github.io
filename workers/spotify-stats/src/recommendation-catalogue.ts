@@ -24,7 +24,9 @@ export interface VerifiedAlbum {
 }
 
 export class CatalogueError extends Error {
-	constructor(readonly service: string, readonly status: number, readonly retrySeconds = 3600) {
+	constructor(readonly service: string, readonly status: number, readonly retrySeconds = 3600,
+		readonly failure: "http" | "timeout" | "network" | "response" | "other" = "other",
+		readonly endpoint: "search" | "album" | "other" = "other", readonly elapsedMs = 0) {
 		super(`${service} catalogue unavailable (${status})`);
 	}
 }
@@ -46,16 +48,21 @@ export class RecommendationCatalogue {
 
 	private async request<T>(url: string, service: string, headers?: HeadersInit): Promise<T> {
 		if (++this.requests > 38) throw new CatalogueError("request budget", 429);
+		const endpoint = service === "Spotify" ? url.includes("/v1/search?") ? "search" : url.includes("/v1/albums/") ? "album" : "other" : "other";
+		const started = Date.now();
 		let response: Response;
 		try {
-			response = await this.fetcher(url, { headers, signal: AbortSignal.timeout(10000) });
-		} catch { throw new CatalogueError(service, 503); }
+			response = await this.fetcher.call(globalThis, url, { headers, signal: AbortSignal.timeout(10000) });
+		} catch (error) {
+			const failure = error instanceof Error && /timeout|abort/i.test(error.name) ? "timeout" : "network";
+			throw new CatalogueError(service, 503, 3600, failure, endpoint, Date.now() - started);
+		}
 		if (!response.ok) {
 			const retry = Number(response.headers.get("Retry-After"));
-			throw new CatalogueError(service, response.status, Number.isFinite(retry) && retry > 0 ? retry : 3600);
+			throw new CatalogueError(service, response.status, Number.isFinite(retry) && retry > 0 ? retry : 3600, "http", endpoint, Date.now() - started);
 		}
 		try { return await response.json() as T; }
-		catch { throw new CatalogueError(service, 502); }
+		catch { throw new CatalogueError(service, 502, 3600, "response", endpoint, Date.now() - started); }
 	}
 
 	private async spotify<T>(path: string): Promise<T> {
@@ -63,7 +70,8 @@ export class RecommendationCatalogue {
 			this.requests++;
 			try { this.token = await getAccessToken(this.env, this.fetcher); }
 			catch (error) {
-				throw new CatalogueError("Spotify authentication", error instanceof SpotifyApiError ? error.status : 503);
+				throw new CatalogueError("Spotify authentication", error instanceof SpotifyApiError ? error.status : 503,
+					3600, error instanceof SpotifyApiError ? "http" : error instanceof Error && /timeout|abort/i.test(error.name) ? "timeout" : "network");
 			}
 		}
 		return this.request<T>(`https://api.spotify.com/v1${path}`, "Spotify", { Authorization: `Bearer ${this.token}` });
@@ -71,7 +79,9 @@ export class RecommendationCatalogue {
 
 	async checkSpotifyAvailability(): Promise<void> {
 		const query = new URLSearchParams({ q: "artist:Michael Jackson album:Thriller", type: "album", market: "GB", limit: "1" });
-		await this.spotify(`/search?${query}`);
+		const search = await this.spotify<{ albums?: { items?: { id?: string }[] } }>(`/search?${query}`);
+		const id = search.albums?.items?.[0]?.id;
+		if (id && /^[a-zA-Z0-9]{22}$/.test(id)) await this.spotify(`/albums/${id}?market=GB`);
 	}
 
 	private async lastfm<T extends { error?: number }>(method: string, params: Record<string, string>): Promise<T> {
