@@ -107,15 +107,29 @@ describe("stored recommendation serving and scheduled leases", () => {
 		expect(fetcher).not.toHaveBeenCalled();
 		sqlite.close();
 	});
-	it("only one concurrent generation acquires the lease and an empty result is retried hourly", async () => {
+	it("checks Spotify before scanning history and limits retries when Spotify is unavailable", async () => {
 		const { DB, sqlite } = database();
 		const spy = vi.spyOn(DB, "prepare");
-		await Promise.all([refreshRecommendations(env(DB), now), refreshRecommendations(env(DB), now)]);
+		const fetcher = vi.fn<typeof fetch>(async (input) => String(input).includes("api/token")
+			? Response.json({ access_token: "token" }) : new Response(null, { status: 503 }));
+		await Promise.all([refreshRecommendations(env(DB), now, fetcher), refreshRecommendations(env(DB), now, fetcher)]);
+		expect(fetcher).toHaveBeenCalledTimes(2);
+		expect(spy.mock.calls.filter(([sql]) => sql === HISTORY_QUERY)).toHaveLength(0);
+		await refreshRecommendations(env(DB), new Date(now.getTime() + 300000), fetcher);
+		expect(fetcher).toHaveBeenCalledTimes(2);
+		await refreshRecommendations(env(DB), new Date(now.getTime() + 7200001), fetcher);
+		expect(fetcher).toHaveBeenCalledTimes(4);
+		expect(spy.mock.calls.filter(([sql]) => sql === HISTORY_QUERY)).toHaveLength(0);
+		sqlite.close();
+	});
+	it("scans history only once per day when no catalogue picks can be built", async () => {
+		const { DB, sqlite } = database();
+		const spy = vi.spyOn(DB, "prepare");
+		const fetcher = vi.fn<typeof fetch>(async (input) => String(input).includes("api/token")
+			? Response.json({ access_token: "token" }) : Response.json({ albums: { items: [] } }));
+		await refreshRecommendations(env(DB), now, fetcher);
+		await refreshRecommendations(env(DB), new Date(now.getTime() + 7200001), fetcher);
 		expect(spy.mock.calls.filter(([sql]) => sql === HISTORY_QUERY)).toHaveLength(1);
-		await refreshRecommendations(env(DB), new Date(now.getTime() + 300000));
-		expect(spy.mock.calls.filter(([sql]) => sql === HISTORY_QUERY)).toHaveLength(1);
-		await refreshRecommendations(env(DB), new Date(now.getTime() + 3600001));
-		expect(spy.mock.calls.filter(([sql]) => sql === HISTORY_QUERY)).toHaveLength(2);
 		sqlite.close();
 	});
 	it("keeps the endpoint read-only and supports disabled operation before migrations", async () => {

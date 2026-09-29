@@ -144,15 +144,20 @@ export async function refreshRecommendations(env: Env, now = new Date(), fetcher
 	const lease = await env.DB.prepare(`INSERT INTO album_recommendation_days (date, retry_after_ms, lease_owner)
 		VALUES (?, ?, ?) ON CONFLICT(date) DO UPDATE SET retry_after_ms = excluded.retry_after_ms, lease_owner = excluded.lease_owner
 		WHERE album_recommendation_days.payload IS NULL AND album_recommendation_days.retry_after_ms <= ? RETURNING lease_owner`)
-		.bind(date, now.getTime() + 3600000, owner, now.getTime()).first<{ lease_owner: string }>();
+		.bind(date, now.getTime() + 86400000, owner, now.getTime()).first<{ lease_owner: string }>();
 	if (lease?.lease_owner !== owner) return;
+	let historyScanned = false;
 	try {
+		const catalogue = new RecommendationCatalogue(env, fetcher);
+		// Spotify failures are common enough that the costly history scan must come later.
+		await catalogue.checkSpotifyAvailability();
+		historyScanned = true;
 		const rows = await env.DB.prepare(HISTORY_QUERY).all<HistoryTrack>();
 		const previous = await env.DB.prepare(`SELECT payload FROM album_recommendation_days
 			WHERE date < ? AND payload IS NOT NULL ORDER BY date DESC LIMIT 14`).bind(date).all<{ payload: string }>();
 		const recent = new Set((previous.results ?? []).flatMap((row) =>
 			(JSON.parse(row.payload) as AlbumRecommendation[]).slice(0, 1).map((item) => albumKey(item.artist, item.name))));
-		const items = await buildRecommendations(groupHistory(rows.results ?? []), new RecommendationCatalogue(env, fetcher), now, recent);
+		const items = await buildRecommendations(groupHistory(rows.results ?? []), catalogue, now, recent);
 		if (!items.length) return;
 		await env.DB.prepare(`UPDATE album_recommendation_days SET payload = ?, generated_at = ?
 			WHERE date = ? AND lease_owner = ?`).bind(JSON.stringify(items), now.toISOString(), date, owner).run();
@@ -160,7 +165,8 @@ export async function refreshRecommendations(env: Env, now = new Date(), fetcher
 			.bind(new Date(now.getTime() - 30 * 86400000).toISOString().slice(0, 10)).run();
 		console.info(JSON.stringify({ event: "album_recommendations_ready", date, count: items.length }));
 	} catch (error) {
-		const retry = error instanceof CatalogueError ? Math.max(3600, error.retrySeconds) : 3600;
+		// A full history scan is allowed only once per London day on the D1 Free plan.
+		const retry = historyScanned ? 86400 : error instanceof CatalogueError ? Math.max(7200, error.retrySeconds) : 86400;
 		await env.DB.prepare("UPDATE album_recommendation_days SET retry_after_ms = ? WHERE date = ? AND lease_owner = ?")
 			.bind(now.getTime() + retry * 1000, date, owner).run();
 		console.warn(JSON.stringify({ event: "album_recommendations_failed", service: error instanceof CatalogueError ? error.service : "unknown", status: error instanceof CatalogueError ? error.status : 500 }));

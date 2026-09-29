@@ -20,6 +20,7 @@ function cachePolicy(request: Request, env: Env): { key: Request; seconds: numbe
 			period = parseSummaryPeriod(source.searchParams.get("period"));
 			if (!period) return null;
 			key.searchParams.set("period", period);
+			seconds = period === "all" || period === "year" ? 21600 : period === "month" ? 3600 : 600;
 			break;
 		case "/api/spotify/top-artists":
 		case "/api/spotify/top-tracks": {
@@ -28,12 +29,14 @@ function cachePolicy(request: Request, env: Env): { key: Request; seconds: numbe
 			if (!period || !limit) return null;
 			key.searchParams.set("period", period);
 			key.searchParams.set("limit", String(limit));
+			seconds = period === "all" || period === "year" ? 21600 : period === "30d" ? 3600 : 600;
 			break;
 		}
 		case "/api/spotify/activity":
 			period = parseActivityPeriod(source.searchParams.get("period"));
 			if (!period) return null;
 			key.searchParams.set("period", period);
+			seconds = 21600;
 			break;
 		case "/api/spotify/recent": {
 			const limit = parseLimit(source.searchParams.get("limit"), 20, 50);
@@ -43,7 +46,7 @@ function cachePolicy(request: Request, env: Env): { key: Request; seconds: numbe
 			break;
 		}
 		case "/api/spotify/lifetime":
-			seconds = 3600;
+			seconds = 86400;
 			break;
 		case "/api/spotify/recommendations":
 			seconds = 60;

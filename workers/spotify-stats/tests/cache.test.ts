@@ -42,6 +42,17 @@ function harness() {
 }
 
 describe("public statistics cache", () => {
+	it("keeps expensive history summaries cached within the free D1 budget", async () => {
+		const h = harness();
+		for (const [path, seconds] of [
+			["/api/spotify/activity", 21600],
+			["/api/spotify/top-artists?period=all", 21600],
+			["/api/spotify/summary?period=year", 21600],
+			["/api/spotify/lifetime", 86400],
+		] as const) {
+			expect((await h.fetch(path)).headers.get("Cache-Control")).toContain(`s-maxage=${seconds}`);
+		}
+	});
 	it("shares normalized requests, avoids D1 on hits, and refreshes after expiry", async () => {
 		vi.useFakeTimers(); vi.setSystemTime(new Date("2026-09-14T12:00:00Z"));
 		const h = harness();
@@ -52,7 +63,7 @@ describe("public statistics cache", () => {
 		expect(hit.headers.get("X-Spotify-Cache")).toBe("HIT");
 		expect(await hit.json()).toEqual(body);
 		expect(h.first).toHaveBeenCalledTimes(1);
-		vi.advanceTimersByTime(601000);
+		vi.advanceTimersByTime(3601000);
 		expect((await h.fetch("/api/spotify/summary")).headers.get("X-Spotify-Cache")).toBe("MISS");
 		expect(h.first).toHaveBeenCalledTimes(2);
 	});
