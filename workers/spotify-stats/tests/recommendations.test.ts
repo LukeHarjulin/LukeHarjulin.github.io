@@ -147,6 +147,18 @@ describe("stored recommendation serving and scheduled leases", () => {
 
 describe("catalogue verification", () => {
 	const album = { id, name: "Album", artists: [{ name: "Artist" }], album_type: "album", release_date: "1990-01-01", tracks: { items: Array.from({ length: 8 }, (_, i) => ({ name: `Track ${i}`, is_playable: true })) } };
+	it("calls Worker fetch with the global receiver", async () => {
+		const { DB, sqlite } = database();
+		const fetcher = vi.fn<typeof fetch>(async function (this: unknown, input) {
+			if (String(input).includes("api/token")) return Response.json({ access_token: "token" });
+			if (this !== globalThis) throw new TypeError("Illegal invocation");
+			if (String(input).includes("/search?")) return Response.json({ albums: { items: [{ id }] } });
+			return Response.json(album);
+		});
+		await expect(new RecommendationCatalogue(env(DB), fetcher).checkSpotifyAvailability()).resolves.toBeUndefined();
+		expect(fetcher).toHaveBeenCalledTimes(3);
+		sqlite.close();
+	});
 	function fetcher(override: Record<string, unknown> = {}, tags: string[] = []) {
 		return vi.fn<typeof fetch>(async (input) => {
 			const url = String(input);
