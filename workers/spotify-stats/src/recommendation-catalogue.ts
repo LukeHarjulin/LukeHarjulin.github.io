@@ -69,6 +69,11 @@ export class RecommendationCatalogue {
 		return this.request<T>(`https://api.spotify.com/v1${path}`, "Spotify", { Authorization: `Bearer ${this.token}` });
 	}
 
+	async checkSpotifyAvailability(): Promise<void> {
+		const query = new URLSearchParams({ q: "artist:Michael Jackson album:Thriller", type: "album", market: "GB", limit: "1" });
+		await this.spotify(`/search?${query}`);
+	}
+
 	private async lastfm<T extends { error?: number }>(method: string, params: Record<string, string>): Promise<T> {
 		if (!this.env.LASTFM_API_KEY) throw new CatalogueError("Last.fm configuration", 503);
 		const query = new URLSearchParams({ method, api_key: this.env.LASTFM_API_KEY, format: "json", autocorrect: "1", ...params });
