@@ -1,5 +1,7 @@
 # API Reference and Privacy
 
+> Access update: all `/api/spotify/*` endpoints now require a shared-passphrase session. “Public” below describes the selected response fields, not anonymous access. See [Listening authentication](Listening%20Authentication.md) for login endpoints, credentialed CORS, cache policy, and rollout. Client-facing API responses are now `private, no-store`; earlier public cache headers no longer apply.
+
 Back to [[Spotify Stats]]. Architecture is described in [[Overview and Architecture]].
 
 ## Configuration

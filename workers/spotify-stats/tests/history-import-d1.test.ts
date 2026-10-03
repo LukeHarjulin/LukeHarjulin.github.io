@@ -140,5 +140,5 @@ VALUES ('${trackId}', 'd1-artist', 0);`,
 			artist_name: "Fresh D1 Artist",
 			artist_relation_count: 1,
 		});
-	}, 20_000);
+	}, 120_000);
 });

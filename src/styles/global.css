@@ -1625,3 +1625,26 @@ footer .footer-link--quiet:focus-visible {
 		animation-iteration-count: 1 !important;
 	}
 }
+
+/* The access gate must remain hidden even when component layout uses flex/grid. */
+.listening-page [hidden] { display: none !important; }
+.listening-access {
+	width: min(100% - 40px, 560px);
+	margin: clamp(32px, 8vw, 100px) auto;
+	padding: clamp(24px, 5vw, 44px);
+	border: 1px solid var(--line);
+	border-radius: 18px;
+	background: var(--paper-strong);
+}
+.listening-access h1 { font-size: clamp(28px, 5vw, 40px); line-height: 1.15; margin-block: 14px 20px; }
+.listening-access p { color: var(--muted); line-height: 1.6; }
+.listening-access form { margin-top: 28px; }
+.listening-access label { display: block; font-weight: 700; margin-bottom: 8px; }
+.listening-access-field { display: flex; gap: 8px; margin-bottom: 16px; }
+.listening-access input { min-width: 0; width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); color: var(--text); font: inherit; }
+.listening-access-field button { padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); color: var(--text); font: inherit; cursor: pointer; }
+.listening-access-button { padding: 12px 24px; border: 0; border-radius: 8px; background: var(--ink); color: var(--inverse); font: inherit; font-weight: 700; cursor: pointer; }
+.listening-access-button:disabled { opacity: 0.6; cursor: wait; }
+.listening-access :is(input, button):focus-visible, #listening-lock:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; }
+#listening-access-status { min-height: 3.2em; margin-top: 16px; }
+.listening-access .listening-access-note { font-size: 0.85rem; margin-top: 12px; }
