@@ -5,6 +5,8 @@ $repoRoot = Split-Path $PSScriptRoot -Parent
 $devVarsPath = Join-Path $repoRoot ".dev.vars"
 $configPath = Join-Path $repoRoot "wrangler.toml"
 $managedKeys = @(
+	"LISTENING_PASSPHRASE",
+	"LISTENING_SESSION_SECRET",
 	"SPOTIFY_CLIENT_ID",
 	"SPOTIFY_CLIENT_SECRET",
 	"SPOTIFY_REFRESH_TOKEN"

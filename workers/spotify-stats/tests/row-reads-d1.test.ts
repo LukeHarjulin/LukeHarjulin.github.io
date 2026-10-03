@@ -30,7 +30,8 @@ describe("D1 query correctness and row-read regression", () => {
 		const mf = new Miniflare(convertV4MiniflareOptions({
 			modules: true, script: bundle.outputFiles[0].text,
 			compatibilityDate: "2026-08-27", d1Databases: ["DB"],
-			bindings: { PUBLIC_SITE_ORIGIN: "https://www.example.com" },
+			bindings: { PUBLIC_SITE_ORIGIN: "https://www.example.com", LISTENING_PASSPHRASE: "test listening phrase", LISTENING_SESSION_SECRET: "test-session-secret-at-least-32-characters" },
+			ratelimits: { LOGIN_RATE_LIMITER: { namespace_id: "1001", simple: { limit: 5, period: 60 } } },
 		}));
 		try {
 			const db = await mf.getD1Database("DB");
@@ -104,11 +105,19 @@ SELECT 't'||(x%1200+1), strftime('%Y-%m-%dT%H:%M:%fZ',1788220800+x*60,'unixepoch
 			}
 			// Exercise the actual bundled fetch handler and runtime Cache API.
 			const url = "https://api.example.com/api/spotify/lifetime";
-			const first = await mf.dispatchFetch(url, { headers: { Origin: "https://www.example.com" } });
+			expect((await mf.dispatchFetch(url)).status).toBe(401);
+			const login = await mf.dispatchFetch("https://api.example.com/api/auth/login", {
+				method: "POST", headers: { Origin: "https://www.example.com", "Content-Type": "application/json" },
+				body: JSON.stringify({ passphrase: "test listening phrase" }),
+			});
+			expect(login.status).toBe(200);
+			const headers = { Origin: "https://www.example.com", Cookie: login.headers.get("Set-Cookie")!.split(";")[0] };
+			const first = await mf.dispatchFetch(url, { headers });
 			expect(first.headers.get("X-Spotify-Cache")).toBe("MISS");
 			const firstBody = await first.json();
 			await expect.poll(async () => {
-				const hit = await mf.dispatchFetch(url, { headers: { Origin: "https://www.example.com" } });
+				const hit = await mf.dispatchFetch(url, { headers });
+			expect(hit.headers.get("Cache-Control")).toBe("private, no-store");
 				expect(await hit.json()).toEqual(firstBody);
 				expect(hit.headers.get("Access-Control-Allow-Origin")).toBe("https://www.example.com");
 				return hit.headers.get("X-Spotify-Cache");

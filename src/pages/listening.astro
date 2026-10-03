@@ -5,7 +5,7 @@ import "../styles/global.css";
 
 const spotifyApiBaseUrl = import.meta.env.PUBLIC_SPOTIFY_API_BASE_URL ?? "";
 const pageTitle = `Listening | ${profile.name}`;
-const pageDescription = `Public Spotify listening statistics for ${profile.name}.`;
+const pageDescription = `Private Spotify listening statistics for ${profile.name}.`;
 ---
 
 <!doctype html>
@@ -17,6 +17,7 @@ const pageDescription = `Public Spotify listening statistics for ${profile.name}
 		<link rel="icon" type="image/png" sizes="32x32" href="/icons/spotify.png" />
 		<link rel="icon" type="image/svg+xml" sizes="any" href="/icons/spotify.svg" />
 		<meta name="description" content={pageDescription} />
+		<meta name="robots" content="noindex" />
 		<meta name="theme-color" content="#111417" />
 		<link rel="canonical" href="https://www.lukeharjulin.com/listening/" />
 		<meta property="og:title" content={pageTitle} />
@@ -28,11 +29,30 @@ const pageDescription = `Public Spotify listening statistics for ${profile.name}
 		<a class="skip-link" href="#mainContent">Skip to content</a>
 		<header class="listening-page-header">
 			<a class="listening-page-brand" href="/">{profile.name}</a>
+			<button id="listening-lock" class="listening-access-button" type="button" hidden>Lock</button>
 			<a class="listening-back" href="/">Back to portfolio</a>
 		</header>
 
 		<main id="mainContent">
-			<ListeningStats apiBase={spotifyApiBaseUrl} />
+			<section id="listening-access" class="listening-access" aria-labelledby="listening-access-heading">
+				<div class="eyebrow">Private listening archive</div>
+				<h1 id="listening-access-heading">A little music, behind a passphrase.</h1>
+				<p>Unlock my listening stats, recent plays, and album picks.</p>
+				<form id="listening-login">
+					<label for="listening-passphrase">Shared passphrase</label>
+					<div class="listening-access-field">
+						<input id="listening-passphrase" name="passphrase" type="password" minlength="12" maxlength="1024" autocomplete="current-password" autocapitalize="none" spellcheck="false" required aria-describedby="listening-access-status listening-access-note" />
+						<button id="listening-show-passphrase" type="button" aria-controls="listening-passphrase" aria-pressed="false">Show</button>
+					</div>
+					<button id="listening-unlock" class="listening-access-button" type="submit" disabled>Unlock</button>
+					<p id="listening-access-status" role="status" aria-live="polite">Checking access…</p>
+					<p id="listening-access-note" class="listening-access-note">This browser stays unlocked for seven days. Use Lock when you’re finished on a shared device.</p>
+				</form>
+				<noscript><p>Enable JavaScript to unlock and view listening stats.</p></noscript>
+			</section>
+			<div id="listening-dashboard" hidden>
+				<ListeningStats apiBase={spotifyApiBaseUrl} />
+			</div>
 		</main>
 
 		<footer>

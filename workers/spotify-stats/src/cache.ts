@@ -5,7 +5,8 @@ import {
 import { routeRequest } from "./router";
 import type { Env, ExecutionContextLike } from "./runtime";
 
-// Cache only the finite public statistics variants. Search remains uncached.
+// Internal cache: the Worker authenticates before calling this module.
+// Cache only the finite statistics variants. Search remains uncached.
 // Normalize parameters so tracking parameters and equivalent defaults cannot
 // create an unbounded set of expensive cache misses.
 function cachePolicy(request: Request, env: Env): { key: Request; seconds: number } | null {
@@ -75,7 +76,7 @@ export async function cachedRouteRequest(
 	if (!policy) return routeRequest(request, env);
 	let cache: Pick<Cache, "match" | "put"> | undefined;
 	try {
-		cache = await storage.open("spotify-public-v2");
+		cache = await storage.open("spotify-authenticated-v1");
 		const hit = await cache.match(policy.key);
 		if (hit) {
 			const response = new Response(hit.body, hit);

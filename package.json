@@ -20,9 +20,14 @@
 		"cv:pdf": "python tools/generate_cv_pdf.py",
 		"build": "astro build",
 		"build:all": "pnpm cv:pdf && pnpm build",
-		"preview": "astro preview"
+		"preview": "astro preview",
+		"listening:secrets": "pwsh -NoProfile -File tools/setup_listening_secrets.ps1",
+		"test:browser": "playwright test",
+		"site:typecheck": "tsc --ignoreConfig --noEmit --strict --target ES2022 --module ESNext --moduleResolution Bundler --lib ES2022,DOM --skipLibCheck src/scripts/site.ts"
 	},
 	"devDependencies": {
+		"@cloudflare/workers-types": "^5.20260929.1",
+		"@playwright/test": "^1.63.0",
 		"astro": "7.0.0",
 		"typescript": "6.0.3",
 		"vitest": "4.0.18",

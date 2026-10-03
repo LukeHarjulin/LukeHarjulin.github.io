@@ -8,6 +8,10 @@ export interface SuccessOptions {
 }
 
 export type ErrorCode =
+	| "INVALID_REQUEST"
+	| "INVALID_PASSPHRASE"
+	| "UNAUTHENTICATED"
+	| "TOO_MANY_ATTEMPTS"
 	| "INVALID_PERIOD"
 	| "INVALID_LIMIT"
 	| "INVALID_QUERY"
@@ -23,7 +27,7 @@ interface CorsRejection {
 	status: 403 | 503;
 }
 
-function configuredOrigin(env: Env): string | null {
+export function configuredOrigin(env: Env): string | null {
 	if (!env.PUBLIC_SITE_ORIGIN) {
 		return null;
 	}
@@ -38,7 +42,7 @@ function configuredOrigin(env: Env): string | null {
 
 function corsHeaders(request: Request, env: Env): Record<string, string> {
 	const headers: Record<string, string> = {
-		"Access-Control-Allow-Methods": "GET, OPTIONS",
+		"Access-Control-Allow-Methods": "GET, POST, OPTIONS",
 		"Access-Control-Allow-Headers": "Content-Type",
 		"Access-Control-Max-Age": "86400",
 		Vary: "Origin",
@@ -47,6 +51,8 @@ function corsHeaders(request: Request, env: Env): Record<string, string> {
 	const allowedOrigin = configuredOrigin(env);
 	if (requestOrigin && allowedOrigin && requestOrigin === allowedOrigin) {
 		headers["Access-Control-Allow-Origin"] = allowedOrigin;
+		headers["Access-Control-Allow-Credentials"] = "true";
+		headers["Access-Control-Expose-Headers"] = "Retry-After";
 	}
 	return headers;
 }

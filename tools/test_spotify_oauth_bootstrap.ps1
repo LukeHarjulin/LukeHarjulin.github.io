@@ -111,6 +111,13 @@ try {
 		throw "Spotify reauthorization did not preserve the Last.fm key."
 	}
 	Assert-ManagedSecretsFile -Path $tempFile -ManagedKeys ($managedKeys + "LASTFM_API_KEY") -RequireAll
+	[IO.File]::AppendAllText($tempFile, 'LISTENING_PASSPHRASE="test listening phrase"' + [Environment]::NewLine + 'LISTENING_SESSION_SECRET="test signing secret"' + [Environment]::NewLine)
+	Save-LocalSecrets -Path $tempFile -Values ([ordered]@{ SPOTIFY_REFRESH_TOKEN = "rotated-refresh" })
+	foreach ($entry in @('LISTENING_PASSPHRASE="test listening phrase"', 'LISTENING_SESSION_SECRET="test signing secret"', 'SPOTIFY_CLIENT_ID="new-client"')) {
+		if (@(Get-Content -LiteralPath $tempFile) -cnotcontains $entry) { throw "Secret update removed an independent credential." }
+	}
+	Assert-ManagedSecretsFile -Path $tempFile -ManagedKeys ($managedKeys + "LISTENING_PASSPHRASE" + "LISTENING_SESSION_SECRET") -RequireAll
+
 	if (Get-ChildItem -LiteralPath (Split-Path $tempFile -Parent) -Filter $tempPattern) {
 		throw "A temporary credential file was left behind."
 	}

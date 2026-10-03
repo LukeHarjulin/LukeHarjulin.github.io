@@ -17,6 +17,10 @@ export interface D1Database {
 }
 
 export interface Env {
+	LISTENING_PASSPHRASE?: string;
+	LISTENING_SESSION_SECRET?: string;
+	LISTENING_LOCAL_HTTP?: string;
+	LOGIN_RATE_LIMITER?: CloudflareBindings["LOGIN_RATE_LIMITER"];
 	DB: D1Database;
 	SPOTIFY_CLIENT_ID: string;
 	SPOTIFY_CLIENT_SECRET: string;

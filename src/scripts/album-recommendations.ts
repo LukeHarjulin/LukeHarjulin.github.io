@@ -9,7 +9,7 @@ export function restoreRecommendationIndex(raw: string | null, data: AlbumRecomm
 	} catch { return 0; }
 }
 
-export async function initializeAlbumRecommendations(load: () => Promise<AlbumRecommendations>): Promise<void> {
+export async function initializeAlbumRecommendations(load: () => Promise<AlbumRecommendations>, signal: AbortSignal = new AbortController().signal): Promise<void> {
 	const panel = document.getElementById("album-recommendations");
 	if (!panel) return;
 	const status = panel.querySelector<HTMLElement>("[data-recommendation-status]")!;
@@ -54,17 +54,19 @@ export async function initializeAlbumRecommendations(load: () => Promise<AlbumRe
 		status.textContent = `${data.stale ? `Latest available pick (${data.date})` : index === 0 ? "Today's album" : "Your alternative for today"}: ${item.name} by ${item.artist}.${exhausted}`;
 	};
 	const refresh = async () => {
-		if (loading) return;
+		if (loading || signal.aborted) return;
 		loading = true;
 		skip.disabled = true;
 		try {
 			data = await load();
+			if (signal.aborted) return;
 			loadedDay = today();
 			let raw: string | null = null;
 			try { raw = localStorage.getItem(storageKey); } catch { /* Optional storage. */ }
 			index = restoreRecommendationIndex(raw, data);
 			render();
 		} catch {
+			if (signal.aborted) return;
 			content.hidden = true;
 			reset.hidden = true;
 			status.textContent = "Album suggestions are temporarily unavailable.";
@@ -73,14 +75,14 @@ export async function initializeAlbumRecommendations(load: () => Promise<AlbumRe
 	skip.addEventListener("click", async () => {
 		if (today() !== loadedDay) { await refresh(); return; }
 		if (index < data.items.length - 1) { index++; save(); render(); }
-	});
-	reset.addEventListener("click", () => { index = 0; save(); render(); });
+	}, { signal });
+	reset.addEventListener("click", () => { index = 0; save(); render(); }, { signal });
 	document.addEventListener("visibilitychange", () => {
 		if (document.visibilityState === "visible" && (today() !== loadedDay || data?.stale || !data?.items.length)) void refresh();
-	});
+	}, { signal });
 	const refreshTimer = window.setInterval(() => {
 		if (document.visibilityState === "visible" && (today() !== loadedDay || data?.stale || !data?.items.length)) void refresh();
 	}, 60000);
-	window.addEventListener("beforeunload", () => window.clearInterval(refreshTimer), { once: true });
+	signal.addEventListener("abort", () => window.clearInterval(refreshTimer), { once: true });
 	await refresh();
 }

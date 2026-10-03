@@ -2,6 +2,7 @@ name = "spotify-listening-stats"
 main = "workers/spotify-stats/src/index.ts"
 compatibility_date = "2026-08-27"
 workers_dev = false
+preview_urls = false
 
 [[routes]]
 pattern = "spotify-api.lukeharjulin.com"
@@ -21,6 +22,8 @@ RECOMMENDATIONS_ENABLED = "true"
 
 [secrets]
 required = [
+	"LISTENING_PASSPHRASE",
+	"LISTENING_SESSION_SECRET",
 	"SPOTIFY_CLIENT_ID",
 	"SPOTIFY_CLIENT_SECRET",
 	"SPOTIFY_REFRESH_TOKEN",
@@ -32,3 +35,8 @@ binding = "DB"
 database_name = "spotify-listening"
 database_id = "<D1_DATABASE_ID>"
 migrations_dir = "workers/spotify-stats/migrations"
+
+[[ratelimits]]
+name = "LOGIN_RATE_LIMITER"
+namespace_id = "1001"
+simple = { limit = 5, period = 60 }

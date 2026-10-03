@@ -17,10 +17,10 @@ function Save-LocalSecrets {
 	)
 
 	$lines = [Collections.Generic.List[string]]::new()
-	# Spotify reauthorization must preserve the independent Last.fm key.
+	# Reauthorization and auth setup preserve other supported Worker secrets.
 	if (Test-Path -LiteralPath $Path) {
 		foreach ($line in [IO.File]::ReadAllLines($Path)) {
-			if ($line -match '^\s*(?:export\s+)?LASTFM_API_KEY\s*=' -and -not $Values.Contains('LASTFM_API_KEY')) {
+			if ($line -match '^\s*(?:export\s+)?(SPOTIFY_CLIENT_ID|SPOTIFY_CLIENT_SECRET|SPOTIFY_REFRESH_TOKEN|LASTFM_API_KEY|LISTENING_PASSPHRASE|LISTENING_SESSION_SECRET)\s*=' -and -not $Values.Contains($Matches[1])) {
 				$lines.Add($line)
 			}
 		}
@@ -64,7 +64,7 @@ function Assert-ManagedSecretsFile {
 			throw ".dev.vars contains an invalid dotenv line. Move or correct it before continuing."
 		}
 		$key = $assignment.Groups['key'].Value
-		if ($ManagedKeys -cnotcontains $key -and $key -cne 'LASTFM_API_KEY') {
+		if ($ManagedKeys -cnotcontains $key -and @('LASTFM_API_KEY', 'LISTENING_PASSPHRASE', 'LISTENING_SESSION_SECRET') -cnotcontains $key) {
 			throw ".dev.vars contains the unmanaged key '$key'. Move it so it cannot be uploaded to the Spotify Worker."
 		}
 		if (-not $seenKeys.Add($key)) {
@@ -75,7 +75,7 @@ function Assert-ManagedSecretsFile {
 	if ($RequireAll) {
 		$missingKeys = @($ManagedKeys | Where-Object { -not $seenKeys.Contains($_) })
 		if ($missingKeys.Count -gt 0) {
-			throw ".dev.vars is missing required Spotify keys: $($missingKeys -join ', ')."
+			throw ".dev.vars is missing required Worker keys: $($missingKeys -join ', ')."
 		}
 	}
 }
