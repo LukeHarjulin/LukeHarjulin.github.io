@@ -20,7 +20,7 @@ The production handler requires the existing session before querying or consulti
 
 ## Limits and remaining work
 
-Empty buckets mean no recorded plays; they do not certify that the historical import is complete. The dashboard uses a general coverage note; an explicit “Import incomplete” label still requires import audit state from the backend. Recorded and estimated time are shown separately. The trends page loads only its own data after session verification; Lock/expiry aborts requests and clears its rendered content.
+The dashboard derives `importCoverage` from overlapping import audit ranges: unfinished/failed imports are `incomplete`, completed overlapping imports are `imported`, periods beginning after live collection started are `live`, and others are `unverified`. Annual and monthly responses expose only these labels; no audit identifiers or raw timestamps are returned. “Imported history” identifies an audited import, not proof that every calendar day is covered. Empty buckets mean no recorded plays; they do not certify complete listening history. Recorded and estimated time are shown separately. Lock/expiry aborts requests and clears rendered content.
 
 ## Slice 3 contract and enrichment
 
@@ -38,4 +38,10 @@ Spotify recommendations and genres share an atomic ceiling of 40 catalogue attem
 2. Deploy the Worker with enrichment disabled, verify authenticated trends, then deploy the frontend.
 3. Enable enrichment when ready and verify coverage rises progressively. Historical cache entries refresh within six hours; current-year entries within one hour. A new trends cache-key version prevents reuse of pre-genre responses.
 
-All implementation and verification in these slices is local; no production migrations, catalogue requests, or deployment have been performed.
+## Production release — 2026-10-14
+
+Migration 0006 applied to the verified production D1 binding. Worker deployed first with enrichment disabled; authenticated annual/monthly totals and private cache headers verified against production. The frontend published successfully through GitHub Pages. Headless desktop/mobile production checks verified login, refresh/session persistence, month navigation, Lock, no horizontal overflow, and zero browser errors. The production configuration now enables bounded genre enrichment; coverage fills only when Spotify supplies classifications.
+
+Release source includes the latest production song grouping and Spotify icons. Final verification: 95 backend tests, nine browser tests, Worker/site type checking, and a production-configured Astro build. Unrelated historical-import edits were left uncommitted. The recovery bookmark and production verification scripts/screenshots are in the ignored `.verification/` directory.
+
+The earlier “Not deployed” entries above describe the individual slice handoffs; this release supersedes that deployment state.
