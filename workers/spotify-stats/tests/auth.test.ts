@@ -76,11 +76,13 @@ describe("listening authentication boundary", () => {
 		const cookie = await sessionCookie();
 		const first = await request("/api/spotify/summary", { headers: { Cookie: cookie } });
 		expect(first.headers.get("X-Spotify-Cache")).toBe("MISS");
+		expect(env.DB.prepare).toHaveBeenCalled();
+		vi.mocked(env.DB.prepare).mockClear();
 		const hit = await request("/api/spotify/summary", { headers: { Cookie: cookie } });
 		expect(hit.headers.get("X-Spotify-Cache")).toBe("HIT");
 		expect(hit.headers.get("Cache-Control")).toBe("private, no-store");
 		expect(hit.headers.get("CDN-Cache-Control")).toBe("no-store");
-		expect(env.DB.prepare).toHaveBeenCalledTimes(1);
+		expect(env.DB.prepare).not.toHaveBeenCalled();
 		expect((await request("/api/spotify/summary")).status).toBe(401);
 		for (const [cacheRequest, response] of cache.put.mock.calls) {
 			expect(cacheRequest.headers.has("Cookie")).toBe(false);

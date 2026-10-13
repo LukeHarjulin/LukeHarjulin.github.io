@@ -10,6 +10,7 @@ export function startListeningDashboard(signal: AbortSignal, onUnauthorized: () 
 	}
 
 	interface PublicTrack {
+		versionIds?: string[];
 		id: string;
 		name: string;
 		artists: PublicArtist[];
@@ -174,7 +175,7 @@ export function startListeningDashboard(signal: AbortSignal, onUnauthorized: () 
 		}
 
 		const details = document.createElement("small");
-		details.textContent = artistNames(track);
+		details.textContent = artistNames(track) + (track.versionIds?.length ? ` \u00b7 ${track.versionIds.length} versions combined` : "");
 		wrapper.append(title, details);
 		return wrapper;
 	}

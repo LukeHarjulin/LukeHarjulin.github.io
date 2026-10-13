@@ -58,7 +58,7 @@ describe("response envelopes", () => {
 		const totals = { plays: 3, listeningTimeMs: 540000, uniqueArtists: 2, uniqueTracks: 3 };
 		const response = await routeRequest(
 			request("/api/spotify/summary?period=today"),
-			environment(mockDatabase({ first: totals })),
+			environment(mockDatabase({ first: totals, all: Array.from({ length: 3 }, (_, i) => ({ id: `track-${i}`, name: `Song ${i}`, artistsJson: "[]" })) })),
 		);
 		const body = await response.json() as Record<string, any>;
 
@@ -168,8 +168,6 @@ describe("cache and limits", () => {
 		expect(archiveBindings).toEqual([[
 			"2026-01-01T00:00:00.000Z",
 			"2026-03-01T00:00:00.000Z",
-			"%test%",
-			20,
 		]]);
 		expect(await activityResponse.json()).toMatchObject({
 			data: { days: [] },

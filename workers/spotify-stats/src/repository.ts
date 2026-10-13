@@ -1,8 +1,10 @@
 import type { D1Database, D1PreparedStatement } from "./runtime";
 import { groupActivityByReportingDate } from "./periods";
 import type { PublicArtist, PublicTrack } from "./types";
+import { groupSongs, representativeTrack } from "./track-groups";
 
 interface TrackRow {
+	explicit: number;
 	id: string;
 	name: string;
 	durationMs: number;
@@ -49,6 +51,7 @@ function mapTrack(row: TrackRow): PublicTrack {
 const TRACK_COLUMNS = `
 		t.spotify_track_id AS id,
 		t.name,
+		t.explicit,
 		t.duration_ms AS durationMs,
 		t.spotify_url AS spotifyUrl,
 		COALESCE(a.spotify_album_id, '') AS albumId,
@@ -76,8 +79,7 @@ const TRACK_COLUMNS = `
 `;
 
 function periodFilter(start: string | null, alias = "p", end: string | null = null): string {
-	return [start ? `${alias}.played_at >= ?` : null, end ? `${alias}.played_at < ?` : null]
-		.filter(Boolean).join(" AND ") || "1 = 1";
+	return [start ? `${alias}.played_at >= ?` : null, end ? `${alias}.played_at < ?` : null].filter(Boolean).join(" AND ") || "1 = 1";
 }
 
 function bindPeriod(
@@ -103,7 +105,7 @@ export async function getMostRecentPlay(db: D1Database): Promise<{ track: Public
 }
 
 export async function getSummary(db: D1Database, start: string | null, end: string | null = null) {
-	return bindPeriod(db.prepare(`
+	const totals = await bindPeriod(db.prepare(`
 		WITH filtered_plays AS (
 			SELECT p.id, p.spotify_track_id, p.listened_ms
 			FROM plays p
@@ -126,12 +128,10 @@ export async function getSummary(db: D1Database, start: string | null, end: stri
 		uniqueArtists: number;
 		uniqueTracks: number;
 	}>();
+	return totals ? { ...totals, uniqueTracks: await countSongs(db, start, end) } : null;
 }
 
-interface RankingOptions {
-	end?: string;
-	byListeningTime?: boolean;
-}
+interface RankingOptions { end?: string; byListeningTime?: boolean }
 
 export async function getTopArtists(db: D1Database, start: string | null, limit: number, options: RankingOptions = {}) {
 	const result = await bindPeriod(db.prepare(`
@@ -152,30 +152,43 @@ export async function getTopArtists(db: D1Database, start: string | null, limit:
 	return result.results ?? [];
 }
 
-export async function getTopTracks(db: D1Database, start: string | null, limit: number, options: RankingOptions = {}) {
+async function countSongs(db: D1Database, start: string | null, end: string | null = null): Promise<number> {
 	const result = await bindPeriod(db.prepare(`
-		WITH ranked AS MATERIALIZED (
-			SELECT t.spotify_track_id, COUNT(*) AS plays,
-				COALESCE(SUM(COALESCE(p.listened_ms, t.duration_ms)), 0) AS listeningTimeMs
-			FROM plays p
-			JOIN tracks t ON t.spotify_track_id = p.spotify_track_id
-			WHERE ${periodFilter(start, "p", options.end)}
-			GROUP BY t.spotify_track_id
-			ORDER BY ${options.byListeningTime ? "listeningTimeMs DESC, " : ""}COUNT(*) DESC, t.name COLLATE NOCASE, t.spotify_track_id
-			LIMIT ?
-		)
-		SELECT ${TRACK_COLUMNS}, ranked.plays, ranked.listeningTimeMs
-		FROM ranked
-		JOIN tracks t ON t.spotify_track_id = ranked.spotify_track_id
+		SELECT ${TRACK_COLUMNS}
+		FROM tracks t
 		LEFT JOIN albums a ON a.spotify_album_id = t.spotify_album_id
-		ORDER BY ${options.byListeningTime ? "ranked.listeningTimeMs DESC, " : ""}ranked.plays DESC, t.name COLLATE NOCASE, t.spotify_track_id
-	`), start, ...(options.end ? [options.end] : []), limit).all<TrackRow & { plays: number; listeningTimeMs: number }>();
+		WHERE EXISTS (
+			SELECT 1 FROM plays p
+			WHERE p.spotify_track_id = t.spotify_track_id AND ${periodFilter(start, "p", end)}
+		)
+	`), start, ...(end ? [end] : [])).all<TrackRow>();
+	return groupSongs((result.results ?? []).map((row) => ({
+		track: mapTrack(row), explicit: Boolean(row.explicit),
+	}))).length;
+}
 
-	return (result.results ?? []).map((row) => ({
-		track: mapTrack(row),
-		plays: row.plays,
-		listeningTimeMs: row.listeningTimeMs,
-	}));
+export async function getTopTracks(db: D1Database, start: string | null, limit: number, options: RankingOptions = {}) {
+	// Aggregate by Spotify ID in SQL, then combine songs before ranking/limiting.
+	const result = await bindPeriod(db.prepare(`
+		SELECT ${TRACK_COLUMNS},
+			COUNT(*) AS plays,
+			COALESCE(SUM(COALESCE(p.listened_ms, t.duration_ms)), 0) AS listeningTimeMs
+		FROM tracks t
+		LEFT JOIN albums a ON a.spotify_album_id = t.spotify_album_id
+		JOIN plays p ON p.spotify_track_id = t.spotify_track_id
+		WHERE ${periodFilter(start, "p", options.end)}
+		GROUP BY t.spotify_track_id
+	`), start, ...(options.end ? [options.end] : [])).all<TrackRow & { plays: number; listeningTimeMs: number }>();
+
+	return groupSongs((result.results ?? []).map((row) => ({
+		track: mapTrack(row), explicit: Boolean(row.explicit),
+		plays: row.plays, listeningTimeMs: row.listeningTimeMs,
+	}))).map((group) => ({
+		track: representativeTrack(group.map((row) => row.track)),
+		plays: group.reduce((sum, row) => sum + row.plays, 0),
+		listeningTimeMs: group.reduce((sum, row) => sum + row.listeningTimeMs, 0),
+	})).sort((a, b) => (options.byListeningTime ? b.listeningTimeMs - a.listeningTimeMs : 0) || b.plays - a.plays || a.track.name.localeCompare(b.track.name) || a.track.id.localeCompare(b.track.id))
+		.slice(0, limit);
 }
 
 export async function getActivity(db: D1Database, start: string | null) {
@@ -198,7 +211,6 @@ export async function searchArchive(
 	yearStart: string,
 	monthStart: string,
 ) {
-	const escapedQuery = query.replaceAll("\\", "\\\\").replaceAll("%", "\\%").replaceAll("_", "\\_");
 	const result = await db.prepare(`
 		SELECT ${TRACK_COLUMNS},
 			MIN(p.played_at) AS firstPlayed,
@@ -210,11 +222,8 @@ export async function searchArchive(
 		FROM tracks t
 		LEFT JOIN albums a ON a.spotify_album_id = t.spotify_album_id
 		JOIN plays p ON p.spotify_track_id = t.spotify_track_id
-		WHERE t.name LIKE ? ESCAPE '\\'
 		GROUP BY t.spotify_track_id
-		ORDER BY COUNT(*) DESC, t.name COLLATE NOCASE
-		LIMIT ?
-	`).bind(yearStart, monthStart, `%${escapedQuery}%`, limit).all<TrackRow & {
+	`).bind(yearStart, monthStart).all<TrackRow & {
 		firstPlayed: string;
 		lastPlayed: string;
 		totalPlays: number;
@@ -223,15 +232,20 @@ export async function searchArchive(
 		totalListeningTimeMs: number;
 	}>();
 
-	return (result.results ?? []).map((row) => ({
-		track: mapTrack(row),
-		firstPlayed: row.firstPlayed,
-		lastPlayed: row.lastPlayed,
-		totalPlays: row.totalPlays,
-		playsThisYear: row.playsThisYear,
-		playsThisMonth: row.playsThisMonth,
-		totalListeningTimeMs: row.totalListeningTimeMs,
-	}));
+	const needle = query.normalize("NFKC").toLowerCase();
+	return groupSongs((result.results ?? []).map((row) => ({
+		...row, track: mapTrack(row), explicit: Boolean(row.explicit),
+	}))).filter((group) => group.some((row) => row.name.normalize("NFKC").toLowerCase().includes(needle)))
+		.map((group) => ({
+			track: representativeTrack(group.map((row) => row.track)),
+			firstPlayed: group.reduce((first, row) => row.firstPlayed < first ? row.firstPlayed : first, group[0].firstPlayed),
+			lastPlayed: group.reduce((last, row) => row.lastPlayed > last ? row.lastPlayed : last, group[0].lastPlayed),
+			totalPlays: group.reduce((sum, row) => sum + row.totalPlays, 0),
+			playsThisYear: group.reduce((sum, row) => sum + row.playsThisYear, 0),
+			playsThisMonth: group.reduce((sum, row) => sum + row.playsThisMonth, 0),
+			totalListeningTimeMs: group.reduce((sum, row) => sum + row.totalListeningTimeMs, 0),
+		})).sort((a, b) => b.totalPlays - a.totalPlays || a.track.name.localeCompare(b.track.name) || a.track.id.localeCompare(b.track.id))
+		.slice(0, limit);
 }
 
 export async function getRecentPlays(db: D1Database, limit: number) {
@@ -253,7 +267,7 @@ export async function getRecentPlays(db: D1Database, limit: number) {
 }
 
 export async function getLifetimeTotals(db: D1Database) {
-	return db.prepare(`
+	const totals = await db.prepare(`
 		SELECT
 			COUNT(*) AS plays,
 			COALESCE(SUM(COALESCE(p.listened_ms, t.duration_ms)), 0) AS listeningTimeMs,
@@ -268,5 +282,6 @@ export async function getLifetimeTotals(db: D1Database) {
 			MAX(p.played_at) AS lastPlayed
 		FROM plays p
 		JOIN tracks t ON t.spotify_track_id = p.spotify_track_id
-	`).first();
+	`).first<Record<string, unknown>>();
+	return totals ? { ...totals, uniqueTracks: await countSongs(db, null) } : null;
 }

@@ -1,11 +1,14 @@
 import { failure, options, success, validateCors } from "./http";
 import { readRecommendations } from "./recommendations";
+import { getTrends } from "./trends";
 import {
 	activityPeriodStart,
 	parseActivityPeriod,
 	parseLimit,
 	parseRankingPeriod,
 	parseSummaryPeriod,
+	parseTrendsYear,
+	parseTrendsMonth,
 	periodStart,
 	reportingDate,
 } from "./periods";
@@ -41,6 +44,17 @@ export async function routeRequest(request: Request, env: Env): Promise<Response
 
 	try {
 		switch (url.pathname) {
+			case "/api/spotify/trends": {
+				const year = parseTrendsYear(url.searchParams.get("year"), now);
+				const rawMonth = url.searchParams.get("month");
+				const month = parseTrendsMonth(rawMonth);
+				if (year === null) return failure("INVALID_YEAR", "Invalid year", request, env, 400);
+				if (rawMonth !== null && month === null) return failure("INVALID_MONTH", "Invalid month", request, env, 400);
+				return success(await getTrends(env.DB, year, month, now), request, env, {
+					period: month === null ? String(year) : `${year}-${String(month).padStart(2, "0")}`,
+					generatedAt: now,
+				});
+			}
 			case "/api/spotify/recommendations":
 				return success(env.RECOMMENDATIONS_ENABLED === "true"
 					? await readRecommendations(env.DB, now)

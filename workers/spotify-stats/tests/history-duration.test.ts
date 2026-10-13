@@ -87,9 +87,9 @@ describe("history-aware listening duration queries", () => {
 		expect(db.statements.map(({ bindings }) => bindings)).toEqual([
 			[periodStart],
 			[periodStart, 7],
-			[periodStart, 8],
 			[periodStart],
-			["2026-01-01T00:00:00.000Z", "2026-09-01T00:00:00.000Z", "%100\\%\\_mix%", 9],
+			[periodStart],
+			["2026-01-01T00:00:00.000Z", "2026-09-01T00:00:00.000Z"],
 		]);
 	});
 
