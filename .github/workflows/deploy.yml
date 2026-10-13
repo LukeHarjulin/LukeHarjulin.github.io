@@ -111,7 +111,7 @@ jobs:
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html version.json CNAME .nojekyll _astro certifications cv
+          git add index.html version.json CNAME .nojekyll _astro certifications cv icons listening
 
           if git diff --cached --quiet; then
             echo "No built output changes to publish."

@@ -1,6 +1,7 @@
 import type { Env } from "./runtime";
 import { getAccessToken, SpotifyApiError } from "./spotify";
 import { editionName, normalizedName } from "./recommendation-ranking";
+import { pauseCatalogue, reserveCatalogueRequest, retrySeconds } from "./catalogue-budget";
 
 interface CatalogueAlbum {
 	id: string;
@@ -58,23 +59,30 @@ export class RecommendationCatalogue {
 			throw new CatalogueError(service, 503, 3600, failure, endpoint, Date.now() - started);
 		}
 		if (!response.ok) {
-			const retry = Number(response.headers.get("Retry-After"));
-			throw new CatalogueError(service, response.status, Number.isFinite(retry) && retry > 0 ? retry : 3600, "http", endpoint, Date.now() - started);
+			const retry = retrySeconds(response.headers.get("Retry-After"));
+			throw new CatalogueError(service, response.status, response.status === 429 ? retry : 3600, "http", endpoint, Date.now() - started);
 		}
 		try { return await response.json() as T; }
 		catch { throw new CatalogueError(service, 502, 3600, "response", endpoint, Date.now() - started); }
 	}
 
 	private async spotify<T>(path: string): Promise<T> {
+		if (!await reserveCatalogueRequest(this.env.DB)) throw new CatalogueError("Spotify budget", 429, 86400);
 		if (!this.token) {
 			this.requests++;
 			try { this.token = await getAccessToken(this.env, this.fetcher); }
 			catch (error) {
+				if (error instanceof SpotifyApiError && [401, 403, 429].includes(error.status)) await pauseCatalogue(this.env.DB, error.status === 429 ? retrySeconds(error.retryAfter) : 86400);
 				throw new CatalogueError("Spotify authentication", error instanceof SpotifyApiError ? error.status : 503,
 					3600, error instanceof SpotifyApiError ? "http" : error instanceof Error && /timeout|abort/i.test(error.name) ? "timeout" : "network");
 			}
 		}
-		return this.request<T>(`https://api.spotify.com/v1${path}`, "Spotify", { Authorization: `Bearer ${this.token}` });
+		try {
+			return await this.request<T>(`https://api.spotify.com/v1${path}`, "Spotify", { Authorization: `Bearer ${this.token}` });
+		} catch (error) {
+			if (error instanceof CatalogueError && [401, 403, 429].includes(error.status)) await pauseCatalogue(this.env.DB, error.retrySeconds);
+			throw error;
+		}
 	}
 
 	async checkSpotifyAvailability(): Promise<void> {

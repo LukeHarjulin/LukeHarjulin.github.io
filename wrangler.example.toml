@@ -19,6 +19,8 @@ head_sampling_rate = 1
 PUBLIC_SITE_ORIGIN = "https://www.lukeharjulin.com"
 # Enable after applying migration 0005 and setting the LASTFM_API_KEY secret.
 RECOMMENDATIONS_ENABLED = "true"
+# Enable after migration 0006; genres fill progressively within the shared budget.
+GENRE_ENRICHMENT_ENABLED = "false"
 
 [secrets]
 required = [

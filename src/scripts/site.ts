@@ -1,4 +1,5 @@
 import { initializeListeningAccess } from "./listening-access";
+import { startListeningDashboard } from "./listening-dashboard";
 
 const header = document.getElementById("headerTop");
 const navMenu = document.querySelector<HTMLElement>(".navMenu");
@@ -71,4 +72,4 @@ window.addEventListener("resize", () => {
 setHeaderState();
 setCurrentSectionFromScroll();
 
-initializeListeningAccess();
+initializeListeningAccess(startListeningDashboard);

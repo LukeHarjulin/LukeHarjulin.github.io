@@ -28,6 +28,7 @@ export interface Env {
 	PUBLIC_SITE_ORIGIN?: string;
 	LASTFM_API_KEY?: string;
 	RECOMMENDATIONS_ENABLED?: string;
+	GENRE_ENRICHMENT_ENABLED?: string;
 }
 
 export interface ExecutionContextLike {

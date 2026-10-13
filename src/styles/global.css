@@ -999,6 +999,10 @@ p {
 	gap: 42px;
 }
 
+.listening-trends-link { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px 24px; }
+.listening-trends-link a { color: var(--teal); font-weight: 800; text-decoration: underline; text-underline-offset: 4px; }
+.listening-trends-link span { color: var(--muted); font-size: 0.86rem; }
+
 .ranking-panel,
 .activity-panel,
 .archive-search,

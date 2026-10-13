@@ -60,6 +60,10 @@ The stable initial error codes are:
 
 ## Public Endpoints
 
+### `GET /api/spotify/trends?year=YYYY&month=M`
+
+Returns calendar-year or calendar-month aggregates and top ten artist/track rankings by listening time, plus genre allocations and identified coverage. Year defaults to the current London year; month is optional. Annual responses include twelve monthly buckets with leading artists and top identified genres. Unknown and Other allocations are distinct. Requires the existing listening session and inherits its private client cache policy. See [Listening Trends](Listening%20Trends.md) for the response contract, duration provenance, migration prerequisite, validation, and delivery slices. New validation codes are `INVALID_YEAR` and `INVALID_MONTH`.
+
 ### `GET /api/spotify/now-playing`
 
 Returns the current track when Spotify reports active playback. The website needs track, artists, album, artwork, playback state, and progress when practical. If nothing is playing, the response falls back to the most recent stored play and identifies it as a fallback rather than live playback. When neither exists, `data` is `null` and the normal `meta` object remains present.

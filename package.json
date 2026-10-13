@@ -23,7 +23,7 @@
 		"preview": "astro preview",
 		"listening:secrets": "pwsh -NoProfile -File tools/setup_listening_secrets.ps1",
 		"test:browser": "playwright test",
-		"site:typecheck": "tsc --ignoreConfig --noEmit --strict --target ES2022 --module ESNext --moduleResolution Bundler --lib ES2022,DOM --skipLibCheck src/scripts/site.ts"
+		"site:typecheck": "tsc --ignoreConfig --noEmit --strict --target ES2022 --module ESNext --moduleResolution Bundler --lib ES2022,DOM --skipLibCheck src/scripts/site.ts src/scripts/listening-trends.ts"
 	},
 	"devDependencies": {
 		"@cloudflare/workers-types": "^5.20260929.1",

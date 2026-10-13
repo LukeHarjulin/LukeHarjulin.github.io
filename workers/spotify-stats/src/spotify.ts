@@ -51,7 +51,7 @@ export async function getAccessToken(env: Env, fetcher: typeof fetch): Promise<s
 	});
 
 	if (!response.ok) {
-		throw new SpotifyApiError("Spotify token refresh failed", response.status);
+		throw new SpotifyApiError("Spotify token refresh failed", response.status, response.headers.get("Retry-After"));
 	}
 
 	const payload = await response.json() as { access_token?: string };

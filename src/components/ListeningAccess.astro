@@ -1,0 +1,23 @@
+---
+interface Props {
+	description?: string;
+}
+const { description = "Unlock my listening stats, recent plays, and album picks." } = Astro.props;
+---
+
+<section id="listening-access" class="listening-access" aria-labelledby="listening-access-heading">
+	<div class="eyebrow">Private listening archive</div>
+	<h1 id="listening-access-heading">A little music, behind a passphrase.</h1>
+	<p>{description}</p>
+	<form id="listening-login">
+		<label for="listening-passphrase">Shared passphrase</label>
+		<div class="listening-access-field">
+			<input id="listening-passphrase" name="passphrase" type="password" minlength="12" maxlength="1024" autocomplete="current-password" autocapitalize="none" spellcheck="false" required aria-describedby="listening-access-status listening-access-note" />
+			<button id="listening-show-passphrase" type="button" aria-controls="listening-passphrase" aria-pressed="false">Show</button>
+		</div>
+		<button id="listening-unlock" class="listening-access-button" type="submit" disabled>Unlock</button>
+		<p id="listening-access-status" role="status" aria-live="polite">Checking access…</p>
+		<p id="listening-access-note" class="listening-access-note">This browser stays unlocked for seven days. Use Lock when you’re finished on a shared device.</p>
+	</form>
+	<noscript><p>Enable JavaScript to unlock and view listening stats.</p></noscript>
+</section>

@@ -62,7 +62,7 @@ describe("listening authentication boundary", () => {
 
 	it("rejects every data endpoint before cache, database, or upstream access", async () => {
 		const upstream = vi.fn(); vi.stubGlobal("fetch", upstream);
-		for (const path of ["now-playing", "summary", "top-artists", "top-tracks", "activity", "recent", "lifetime", "archive/search?q=test", "recommendations"]) {
+		for (const path of ["now-playing", "summary", "top-artists", "top-tracks", "activity", "recent", "lifetime", "archive/search?q=test", "recommendations", "trends?year=2025"]) {
 			const response = await request(`/api/spotify/${path}`);
 			expect(response.status).toBe(401);
 			expect(response.headers.get("Cache-Control")).toBe("private, no-store");
@@ -89,6 +89,22 @@ describe("listening authentication boundary", () => {
 			expect(response.headers.has("Set-Cookie")).toBe(false);
 			expect(response.headers.get("Cache-Control")).toContain("s-maxage=");
 		}
+	});
+
+	it("serves trends through the existing session and keeps cached data private", async () => {
+		const cookie = await sessionCookie();
+		const path = "/api/spotify/trends?year=2025&month=3";
+		const first = await request(path, { headers: { Cookie: cookie } });
+		expect(first.status).toBe(200);
+		expect(first.headers.get("X-Spotify-Cache")).toBe("MISS");
+		expect(await first.json()).toMatchObject({ data: { year: 2025, month: 3 }, meta: { period: "2025-03" } });
+		const reads = vi.mocked(env.DB.prepare).mock.calls.length;
+		const hit = await request(path, { headers: { Cookie: cookie } });
+		expect(hit.headers.get("X-Spotify-Cache")).toBe("HIT");
+		expect(hit.headers.get("Cache-Control")).toBe("private, no-store");
+		expect(hit.headers.get("CDN-Cache-Control")).toBe("no-store");
+		expect(env.DB.prepare).toHaveBeenCalledTimes(reads);
+		expect((await request(path)).status).toBe(401);
 	});
 
 	it("rejects tampering, malformed cookies, duplicates, expiry, and either secret rotation", async () => {

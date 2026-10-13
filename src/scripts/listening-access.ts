@@ -1,6 +1,4 @@
-import { startListeningDashboard } from "./listening-dashboard";
-
-export function initializeListeningAccess(): void {
+export function initializeListeningAccess(startDashboard: (signal: AbortSignal, onUnauthorized: () => void) => void): void {
 	const gate = document.querySelector<HTMLElement>("#listening-access");
 	const dashboard = document.querySelector<HTMLElement>("#listening-dashboard");
 	const form = document.querySelector<HTMLFormElement>("#listening-login");
@@ -69,7 +67,7 @@ export function initializeListeningAccess(): void {
 			input!.focus();
 		};
 		expiryTimer = window.setTimeout(expired, Math.max(0, expiresAt - Date.now()));
-		startListeningDashboard(dataController.signal, expired);
+		startDashboard(dataController.signal, expired);
 	}
 
 	async function checkSession(): Promise<void> {

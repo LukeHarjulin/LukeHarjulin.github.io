@@ -75,8 +75,9 @@ const TRACK_COLUMNS = `
 		) ELSE '[]' END AS artistsJson
 `;
 
-function periodFilter(start: string | null, alias = "p"): string {
-	return start ? `${alias}.played_at >= ?` : "1 = 1";
+function periodFilter(start: string | null, alias = "p", end: string | null = null): string {
+	return [start ? `${alias}.played_at >= ?` : null, end ? `${alias}.played_at < ?` : null]
+		.filter(Boolean).join(" AND ") || "1 = 1";
 }
 
 function bindPeriod(
@@ -101,12 +102,12 @@ export async function getMostRecentPlay(db: D1Database): Promise<{ track: Public
 	return row ? { track: mapTrack(row), playedAt: row.playedAt } : null;
 }
 
-export async function getSummary(db: D1Database, start: string | null) {
+export async function getSummary(db: D1Database, start: string | null, end: string | null = null) {
 	return bindPeriod(db.prepare(`
 		WITH filtered_plays AS (
 			SELECT p.id, p.spotify_track_id, p.listened_ms
 			FROM plays p
-			WHERE ${periodFilter(start)}
+			WHERE ${periodFilter(start, "p", end)}
 		)
 		SELECT
 			COUNT(*) AS plays,
@@ -119,7 +120,7 @@ export async function getSummary(db: D1Database, start: string | null) {
 			COUNT(DISTINCT fp.spotify_track_id) AS uniqueTracks
 		FROM filtered_plays fp
 		JOIN tracks t ON t.spotify_track_id = fp.spotify_track_id
-	`), start).first<{
+	`), start, ...(end ? [end] : [])).first<{
 		plays: number;
 		listeningTimeMs: number;
 		uniqueArtists: number;
@@ -127,7 +128,12 @@ export async function getSummary(db: D1Database, start: string | null) {
 	}>();
 }
 
-export async function getTopArtists(db: D1Database, start: string | null, limit: number) {
+interface RankingOptions {
+	end?: string;
+	byListeningTime?: boolean;
+}
+
+export async function getTopArtists(db: D1Database, start: string | null, limit: number, options: RankingOptions = {}) {
 	const result = await bindPeriod(db.prepare(`
 		SELECT
 			artist.artist_id AS id,
@@ -138,32 +144,32 @@ export async function getTopArtists(db: D1Database, start: string | null, limit:
 		FROM plays p
 		JOIN tracks t ON t.spotify_track_id = p.spotify_track_id
 		JOIN reporting_track_artists artist ON artist.spotify_track_id = p.spotify_track_id
-		WHERE ${periodFilter(start)}
+		WHERE ${periodFilter(start, "p", options.end)}
 		GROUP BY artist.artist_id, artist.name, artist.spotify_url
-		ORDER BY plays DESC, artist.name COLLATE NOCASE
+		ORDER BY ${options.byListeningTime ? "listeningTimeMs DESC, " : ""}plays DESC, artist.name COLLATE NOCASE, artist.artist_id
 		LIMIT ?
-	`), start, limit).all();
+	`), start, ...(options.end ? [options.end] : []), limit).all();
 	return result.results ?? [];
 }
 
-export async function getTopTracks(db: D1Database, start: string | null, limit: number) {
+export async function getTopTracks(db: D1Database, start: string | null, limit: number, options: RankingOptions = {}) {
 	const result = await bindPeriod(db.prepare(`
 		WITH ranked AS MATERIALIZED (
 			SELECT t.spotify_track_id, COUNT(*) AS plays,
 				COALESCE(SUM(COALESCE(p.listened_ms, t.duration_ms)), 0) AS listeningTimeMs
 			FROM plays p
 			JOIN tracks t ON t.spotify_track_id = p.spotify_track_id
-			WHERE ${periodFilter(start)}
+			WHERE ${periodFilter(start, "p", options.end)}
 			GROUP BY t.spotify_track_id
-			ORDER BY COUNT(*) DESC, t.name COLLATE NOCASE
+			ORDER BY ${options.byListeningTime ? "listeningTimeMs DESC, " : ""}COUNT(*) DESC, t.name COLLATE NOCASE, t.spotify_track_id
 			LIMIT ?
 		)
 		SELECT ${TRACK_COLUMNS}, ranked.plays, ranked.listeningTimeMs
 		FROM ranked
 		JOIN tracks t ON t.spotify_track_id = ranked.spotify_track_id
 		LEFT JOIN albums a ON a.spotify_album_id = t.spotify_album_id
-		ORDER BY ranked.plays DESC, t.name COLLATE NOCASE
-	`), start, limit).all<TrackRow & { plays: number; listeningTimeMs: number }>();
+		ORDER BY ${options.byListeningTime ? "ranked.listeningTimeMs DESC, " : ""}ranked.plays DESC, t.name COLLATE NOCASE, t.spotify_track_id
+	`), start, ...(options.end ? [options.end] : []), limit).all<TrackRow & { plays: number; listeningTimeMs: number }>();
 
 	return (result.results ?? []).map((row) => ({
 		track: mapTrack(row),

@@ -42,6 +42,23 @@ function harness() {
 }
 
 describe("public statistics cache", () => {
+	it("separates trends selections, normalizes months, and expires historical imports", async () => {
+		vi.useFakeTimers(); vi.setSystemTime(new Date("2026-10-13T12:00:00Z"));
+		const h = harness();
+		const year = await h.fetch("/api/spotify/trends?year=2025");
+		expect(year.headers.get("Cache-Control")).toContain("s-maxage=21600");
+		expect((await h.fetch("/api/spotify/trends?year=2025&tracking=ignored")).headers.get("X-Spotify-Cache")).toBe("HIT");
+		expect((await h.fetch("/api/spotify/trends?year=2025&month=03")).headers.get("X-Spotify-Cache")).toBe("MISS");
+		expect((await h.fetch("/api/spotify/trends?month=3&year=2025")).headers.get("X-Spotify-Cache")).toBe("HIT");
+		expect((await h.fetch("/api/spotify/trends?year=2025&month=4")).headers.get("X-Spotify-Cache")).toBe("MISS");
+		expect((await h.fetch("/api/spotify/trends")).headers.get("Cache-Control")).toContain("s-maxage=3600");
+		const writes = h.cache.put.mock.calls.length;
+		expect((await h.fetch("/api/spotify/trends?year=bad")).status).toBe(400);
+		expect((await h.fetch("/api/spotify/trends?month=0")).status).toBe(400);
+		expect(h.cache.put).toHaveBeenCalledTimes(writes);
+		vi.advanceTimersByTime(21601000);
+		expect((await h.fetch("/api/spotify/trends?year=2025")).headers.get("X-Spotify-Cache")).toBe("MISS");
+	});
 	it("keeps expensive history summaries cached within the free D1 budget", async () => {
 		const h = harness();
 		for (const [path, seconds] of [

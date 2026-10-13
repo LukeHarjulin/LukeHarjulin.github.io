@@ -1,0 +1,88 @@
+---
+import ListeningAccess from "../../components/ListeningAccess.astro";
+import { profile } from "../../data/cv";
+import "../../styles/global.css";
+import "../../styles/listening-trends.css";
+
+const apiBase = import.meta.env.PUBLIC_SPOTIFY_API_BASE_URL ?? "";
+const title = `Listening trends | ${profile.name}`;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>{title}</title>
+		<meta name="description" content={`Yearly and monthly listening trends for ${profile.name}.`} />
+		<meta name="robots" content="noindex" />
+		<meta name="theme-color" content="#111417" />
+		<link rel="canonical" href="https://www.lukeharjulin.com/listening/trends/" />
+	</head>
+	<body class="listening-page trends-page">
+		<a class="skip-link" href="#mainContent">Skip to content</a>
+		<header class="listening-page-header">
+			<a class="listening-page-brand" href="/">{profile.name}</a>
+			<button id="listening-lock" class="listening-access-button" type="button" hidden>Lock</button>
+			<a class="listening-back" href="/listening/">Back to listening</a>
+		</header>
+		<main id="mainContent">
+			<ListeningAccess description="Unlock the years, months, artists, and tracks in my listening history." />
+			<div id="listening-dashboard" hidden>
+				<section id="listening-section" class="listening-section section-band" data-api-base={apiBase} aria-labelledby="trends-heading">
+					<div class="section-heading listening-heading">
+						<div>
+							<div class="eyebrow">Listening trends</div>
+							<h1 id="trends-heading">A year in rotation.</h1>
+							<p>The artists and tracks that shaped each month.</p>
+						</div>
+						<p id="trends-status" class="listening-status" role="status">Loading listening trends…</p>
+					</div>
+					<div class="trends-controls">
+						<div><label for="trends-year">Year</label><select id="trends-year" disabled aria-controls="trends-chart trends-detail"><option>Loading…</option></select></div>
+						<button id="trends-whole-year" type="button" aria-pressed="true" disabled>Whole year</button>
+						<button id="trends-retry" type="button" hidden>Try again</button>
+					</div>
+					<section class="trends-chart-panel" aria-labelledby="trends-chart-heading">
+						<div class="panel-heading">
+							<div><h2 id="trends-chart-heading">Listening time by month</h2><p>Select a month to explore its rankings.</p></div>
+							<span class="trends-chart-unit">Recorded + estimated hours</span>
+						</div>
+						<div id="trends-chart" class="trends-chart" role="group" aria-label="Select a listening month"></div>
+						<p class="trends-note">Based on recorded history. Empty months mean no recorded plays; historical imports may still be incomplete. Calendar periods use UK time.</p>
+					</section>
+					<section aria-labelledby="trends-highlights-heading">
+						<div class="panel-heading"><div><h2 id="trends-highlights-heading">The year’s changing favourites</h2><p>Each month’s leading artist and top identified genre.</p></div></div>
+						<div id="trends-highlights" class="trends-highlights" role="group" aria-label="Explore monthly favourites"></div>
+					</section>
+					<section id="trends-detail" class="trends-detail" aria-labelledby="trends-period-heading" aria-busy="true">
+						<div class="panel-heading"><h2 id="trends-period-heading">Whole year</h2><span id="trends-period-note" class="trends-note"></span></div>
+						<p id="trends-empty" class="inline-message" hidden></p>
+						<div class="trends-totals" aria-label="Selected period totals">
+							<div><span>Plays</span><strong data-trend-total="plays">—</strong></div>
+							<div><span>Listening time</span><strong data-trend-total="listeningTimeMs">—</strong></div>
+							<div><span>Artists</span><strong data-trend-total="uniqueArtists">—</strong></div>
+							<div><span>Tracks</span><strong data-trend-total="uniqueTracks">—</strong></div>
+						</div>
+						<p id="trends-duration-note" class="trends-note"></p>
+						<div class="listening-columns trends-rankings">
+							<section class="ranking-panel" aria-labelledby="trends-genres-heading">
+								<div class="panel-heading"><h2 id="trends-genres-heading">Top genres</h2><span class="trends-note">By attributed listening time</span></div>
+								<p id="trends-genre-leader" class="trends-genre-leader"></p>
+								<p id="trends-genre-coverage" class="trends-note"></p>
+								<ol id="trends-genres" class="ranking-list"></ol>
+								<p class="trends-note">Time is split evenly across the primary artist’s Spotify genres. Unknown has no identified genre; Other combines known genres outside the top ten. Tags reflect cached artist classifications, rather than tags recorded at the time of listening.</p>
+							</section>
+							<section class="ranking-panel" aria-labelledby="trends-artists-heading"><div class="panel-heading"><h2 id="trends-artists-heading">Top artists</h2><span class="trends-note">By listening time</span></div><ol id="trends-artists" class="ranking-list"></ol></section>
+							<section class="ranking-panel" aria-labelledby="trends-tracks-heading"><div class="panel-heading"><h2 id="trends-tracks-heading">Top tracks</h2><span class="trends-note">By listening time</span></div><ol id="trends-tracks" class="ranking-list"></ol></section>
+						</div>
+						<p class="trends-note">Artist rankings credit each artist on a track. Music via Spotify.</p>
+					</section>
+					<p><a class="listening-back trends-return" href="/listening/">← Back to listening</a></p>
+				</section>
+			</div>
+		</main>
+		<footer><span>{profile.name}</span><a href="/">Portfolio</a></footer>
+		<script src="../../scripts/listening-trends.ts"></script>
+	</body>
+</html>

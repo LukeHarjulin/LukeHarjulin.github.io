@@ -3,6 +3,7 @@ export type RankingPeriod = "7d" | "30d" | "year" | "all";
 export type ActivityPeriod = "30d" | "year" | "all";
 
 export const REPORTING_TIME_ZONE = "Europe/London";
+export const EARLIEST_TRENDS_YEAR = 2006;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 const dateFormatter = new Intl.DateTimeFormat("en-GB", {
@@ -61,6 +62,30 @@ function reportingMidnightUtc(year: number, month: number, day: number): Date {
 	}
 
 	return new Date(candidate);
+}
+
+export function parseTrendsYear(value: string | null, now = new Date()): number | null {
+	const currentYear = partsInReportingTimeZone(now).year;
+	if (value === null) return currentYear;
+	if (!/^\d{4}$/.test(value)) return null;
+	const year = Number(value);
+	return year >= EARLIEST_TRENDS_YEAR && year <= currentYear ? year : null;
+}
+
+export function parseTrendsMonth(value: string | null): number | null {
+	if (value === null || !/^\d{1,2}$/.test(value)) return null;
+	const month = Number(value);
+	return month >= 1 && month <= 12 ? month : null;
+}
+
+/** Half-open calendar range: start <= played_at < end. */
+export function calendarRange(year: number, month: number | null = null) {
+	return {
+		start: reportingMidnightUtc(year, month ?? 1, 1).toISOString(),
+		end: month === null || month === 12
+			? reportingMidnightUtc(year + 1, 1, 1).toISOString()
+			: reportingMidnightUtc(year, month + 1, 1).toISOString(),
+	};
 }
 
 export function parseSummaryPeriod(value: string | null): SummaryPeriod | null {
