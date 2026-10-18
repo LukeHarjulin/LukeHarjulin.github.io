@@ -5,6 +5,7 @@ import type { D1PreparedStatement, Env } from "../src/runtime";
 afterEach(() => { vi.useRealTimers(); vi.restoreAllMocks(); });
 
 function harness() {
+	const genreRows: { month: number; key: string | null; name: string | null; listeningTimeMs: number }[] = [];
 	const first = vi.fn(async () => ({ plays: 42 }));
 	const statement = {
 		bind() { return this; }, first,
@@ -12,7 +13,10 @@ function harness() {
 		run: async () => ({ success: true }),
 	} as D1PreparedStatement;
 	const env: Env = {
-		DB: { prepare: vi.fn(() => statement), batch: async () => [] },
+		DB: { prepare: vi.fn((sql: string) => ({
+			...statement,
+			all: async () => ({ success: true, results: sql.includes("effective_tags") ? genreRows : [] }),
+		})), batch: async () => [] },
 		SPOTIFY_CLIENT_ID: "test", SPOTIFY_CLIENT_SECRET: "test", SPOTIFY_REFRESH_TOKEN: "test",
 		PUBLIC_SITE_ORIGIN: "https://www.example.com",
 	};
@@ -38,7 +42,7 @@ function harness() {
 		await Promise.all(pending.splice(0));
 		return response;
 	}
-	return { fetch, env, first, cache, storage };
+	return { fetch, env, first, cache, storage, genreRows };
 }
 
 describe("public statistics cache", () => {
@@ -46,7 +50,7 @@ describe("public statistics cache", () => {
 		vi.useFakeTimers(); vi.setSystemTime(new Date("2026-10-13T12:00:00Z"));
 		const h = harness();
 		const year = await h.fetch("/api/spotify/trends?year=2025");
-		expect(new URL((h.cache.put.mock.calls[0][0] as Request).url).searchParams.get("_taste")).toBe("2");
+		expect(new URL((h.cache.put.mock.calls[0][0] as Request).url).searchParams.get("_taste")).toBe("3");
 		expect(year.headers.get("Cache-Control")).toContain("s-maxage=21600");
 		expect((await h.fetch("/api/spotify/trends?year=2025&tracking=ignored")).headers.get("X-Spotify-Cache")).toBe("HIT");
 		expect((await h.fetch("/api/spotify/trends?year=2025&month=03")).headers.get("X-Spotify-Cache")).toBe("MISS");
@@ -59,6 +63,21 @@ describe("public statistics cache", () => {
 		expect(h.cache.put).toHaveBeenCalledTimes(writes);
 		vi.advanceTimersByTime(21601000);
 		expect((await h.fetch("/api/spotify/trends?year=2025")).headers.get("X-Spotify-Cache")).toBe("MISS");
+	});
+	it("refreshes all-Unknown trends after one minute so newly enriched genres become visible", async () => {
+		vi.useFakeTimers(); vi.setSystemTime(new Date("2026-10-18T11:00:00Z"));
+		const h = harness();
+		h.genreRows.push({ month: 1, key: null, name: null, listeningTimeMs: 100 });
+		const initial = await h.fetch("/api/spotify/trends?year=2025");
+		expect(initial.headers.get("Cache-Control")).toContain("s-maxage=60");
+		expect((await initial.json()).data.genreCoverage.percentage).toBe(0);
+		h.genreRows.splice(0, 1, { month: 1, key: "rock", name: "Rock", listeningTimeMs: 100 });
+		expect((await h.fetch("/api/spotify/trends?year=2025")).headers.get("X-Spotify-Cache")).toBe("HIT");
+		vi.advanceTimersByTime(61000);
+		const refreshed = await h.fetch("/api/spotify/trends?year=2025");
+		expect(refreshed.headers.get("X-Spotify-Cache")).toBe("MISS");
+		expect((await refreshed.json()).data.genreCoverage.percentage).toBe(100);
+		expect(refreshed.headers.get("Cache-Control")).toContain("s-maxage=21600");
 	});
 	it("keeps expensive history summaries cached within the free D1 budget", async () => {
 		const h = harness();

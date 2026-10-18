@@ -24,7 +24,7 @@ function cachePolicy(request: Request, env: Env): { key: Request; seconds: numbe
 			const month = parseTrendsMonth(rawMonth);
 			if (year === null || (rawMonth !== null && month === null)) return null;
 			key.searchParams.set("year", String(year));
-			key.searchParams.set("_taste", "2");
+			key.searchParams.set("_taste", "3");
 			if (month !== null) key.searchParams.set("month", String(month));
 			// Even historical periods change during imports. Bound their staleness.
 			seconds = year === Number(reportingDate(new Date()).slice(0, 4)) ? 3600 : 21600;
@@ -101,6 +101,14 @@ export async function cachedRouteRequest(
 	}
 	const response = await routeRequest(request, env);
 	if (response.status !== 200) return response;
+	if (new URL(request.url).pathname === "/api/spotify/trends") {
+		const payload = await response.clone().json() as {
+			data?: { genreCoverage?: { identifiedTimeMs: number; totalTimeMs: number } };
+		};
+		const coverage = payload.data?.genreCoverage;
+		// Initial enrichment must not leave an all-Unknown response cached for hours.
+		if (coverage && coverage.totalTimeMs > 0 && coverage.identifiedTimeMs === 0) policy.seconds = 60;
+	}
 	response.headers.set("X-Spotify-Cache", "MISS");
 	response.headers.append("Cache-Control", `s-maxage=${policy.seconds}`);
 	if (cache) {
