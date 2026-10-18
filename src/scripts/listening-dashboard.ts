@@ -211,6 +211,7 @@ export function startListeningDashboard(signal: AbortSignal, onUnauthorized: () 
 			progressTimer = undefined;
 		}
 
+		document.querySelector<HTMLElement>(".now-playing")?.setAttribute("data-playing", String(Boolean(data?.isPlaying)));
 		const artwork = document.getElementById("now-playing-artwork");
 		if (artwork) {
 			artwork.replaceChildren();
@@ -240,6 +241,7 @@ export function startListeningDashboard(signal: AbortSignal, onUnauthorized: () 
 			const image = document.createElement("img");
 			image.src = artworkUrl;
 			image.alt = "";
+			image.onerror = () => image.remove();
 			image.width = 280;
 			image.height = 280;
 			artwork.append(image);

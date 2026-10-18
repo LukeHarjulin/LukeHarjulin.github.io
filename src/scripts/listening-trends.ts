@@ -1,3 +1,4 @@
+import { sleeveTransition } from "./listening-motion";
 import { initializeListeningAccess } from "./listening-access";
 
 interface Totals {
@@ -127,6 +128,17 @@ function startTrends(signal: AbortSignal, onUnauthorized: () => void): void {
 		root!.querySelectorAll<HTMLButtonElement>("button[data-month]").forEach((button) => button.setAttribute("aria-pressed", String(Number(button.dataset.month) === selection.month)));
 	}
 	function renderChart(data: Trends) {
+		text("#trends-year-display", String(data.year));
+		text("#trends-year-summary", `${number.format(data.totals.plays)} plays · ${duration(data.totals.listeningTimeMs)} in ${data.year}`);
+		text("#trends-year-leader", data.artists[0] ? `Leading artist: ${data.artists[0].name}` : "Your next chapter is waiting to be recorded.");
+		const recorded = (data.months ?? []).filter((month) => month.plays > 0 && !month.isUpcoming);
+		const peak = Math.max(0, ...recorded.map((month) => month.listeningTimeMs));
+		const busiest = recorded.filter((month) => month.listeningTimeMs === peak).map((month) => months[month.month - 1]);
+		const leads = new Map<string, number>();
+		recorded.forEach((month) => { if (month.topArtist) leads.set(month.topArtist.name, (leads.get(month.topArtist.name) ?? 0) + 1); });
+		const most = Math.max(0, ...leads.values());
+		const leaders = [...leads].filter(([, count]) => count === most).map(([name]) => name);
+		text("#trends-year-highlights", [busiest.length ? `Busiest recorded ${busiest.length > 1 ? "months (tied)" : "month"}: ${busiest.join(", ")}.` : "", leaders.length ? `Most monthly leads in recorded data: ${leaders.join(" / ")} (${most}${leaders.length > 1 ? ", tied" : ""}).` : ""].join(" "));
 		const maximum = Math.max(0, ...(data.months ?? []).map((entry) => entry.listeningTimeMs));
 		const fragment = document.createDocumentFragment();
 		for (const entry of data.months ?? []) {
@@ -159,6 +171,15 @@ function startTrends(signal: AbortSignal, onUnauthorized: () => void): void {
 			fragment.append(button);
 		}
 		chart.replaceChildren(fragment);
+		if (document.body.dataset.motion === "on" && !document.hidden) {
+			chart.querySelectorAll<HTMLElement>(".trends-month__bar").forEach((bar) => {
+				const animation = bar.animate([{ transform: "scaleY(0)" }, { transform: "scaleY(1)" }], { duration: 280, easing: "ease-out" });
+				bar.style.transformOrigin = "bottom";
+				const cancel = () => animation.cancel();
+				signal.addEventListener("abort", cancel, { once: true });
+				animation.finished.catch(() => {}).finally(() => signal.removeEventListener("abort", cancel));
+			});
+		}
 		highlights.replaceChildren();
 		for (const entry of data.months ?? []) {
 			const button = document.createElement("button");
@@ -219,13 +240,25 @@ function startTrends(signal: AbortSignal, onUnauthorized: () => void): void {
 		empty.textContent = data.isUpcoming ? "This month is still ahead." : data.importCoverage === "incomplete" ? "History for this period is still being imported. No plays are recorded yet." : "No recorded plays for this period.";
 		renderRankings("#trends-artists", data.artists.map((artist) => ({ ...artist, url: artist.spotifyUrl })));
 		renderRankings("#trends-tracks", data.tracks.map((entry) => ({ name: entry.track.name, url: entry.track.spotifyUrl, subtitle: `${entry.track.artists.map((artist) => artist.name).join(", ")} · ${number.format(entry.plays)} plays`, plays: entry.plays, listeningTimeMs: entry.listeningTimeMs })));
+		sleeveTransition(detail, signal);
+		const bands = root!.querySelector<HTMLElement>("#trends-genre-bands")!;
+		bands.replaceChildren();
+		const identified = (data.genres ?? []).some((entry) => entry.kind !== "unknown" && entry.listeningTimeMs > 0);
+		const genreEmpty = root!.querySelector<HTMLElement>("#trends-genre-empty")!;
+		genreEmpty.hidden = identified;
+		genreEmpty.textContent = data.totals.plays === 0 ? "No listening history for a genre breakdown yet." : "Genre breakdown unavailable for this period. Your artists and tracks are still available below.";
+		bands.hidden = !identified;
 		const list = root!.querySelector<HTMLOListElement>("#trends-genres")!;
 		list.replaceChildren();
 		text("#trends-genre-coverage", data.genreCoverage
 			? data.genreCoverage.totalTimeMs > 0 ? `Genres identified for ${hours.format(data.genreCoverage.percentage)}% of listening time.` : "No listening time recorded for this period."
 			: "Genre classifications are not available yet.");
 		text("#trends-genre-leader", data.topGenre ? `Top identified genre: ${data.topGenre.name}` : "No identified genre for this period.");
-		(data.genres ?? []).forEach((entry, index) => {
+		(identified ? data.genres ?? [] : []).forEach((entry, index) => {
+			const band = document.createElement("span");
+			band.style.setProperty("--share", `${Math.max(0, Math.min(100, entry.sharePercent))}%`);
+			band.style.setProperty("--genre-color", entry.kind === "unknown" ? "#bcb7a4" : ["#c7532e", "#707c35", "#c2a044", "#6d7b81", "#a35d69"][index % 5]);
+			bands.append(band);
 			const row = document.createElement("li");
 			const rank = document.createElement("span");
 			rank.textContent = entry.kind === "genre" ? String(index + 1).padStart(2, "0") : "—";
@@ -267,8 +300,9 @@ function startTrends(signal: AbortSignal, onUnauthorized: () => void): void {
 		retry.hidden = true;
 		detail.setAttribute("aria-busy", "true");
 		root!.querySelectorAll<HTMLElement>("[data-trend-total]").forEach((element) => element.textContent = "—");
-		for (const selector of ["#trends-artists", "#trends-tracks", "#trends-genres", "#trends-genre-coverage", "#trends-genre-leader", "#trends-duration-note", "#trends-period-note"]) text(selector, "");
+		for (const selector of ["#trends-artists", "#trends-tracks", "#trends-genres", "#trends-genre-coverage", "#trends-genre-leader", "#trends-duration-note", "#trends-period-note", "#trends-genre-bands"]) text(selector, "");
 		empty.hidden = true;
+		root!.querySelector<HTMLElement>("#trends-genre-empty")!.hidden = true;
 		if (annual?.year !== next.year) { annual = undefined; chart.replaceChildren(); highlights.replaceChildren(); }
 		try {
 			if (!annual) {

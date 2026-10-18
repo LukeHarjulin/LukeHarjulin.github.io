@@ -4,6 +4,8 @@ import ListeningAccess from "../components/ListeningAccess.astro";
 import { profile } from "../data/cv";
 import "../styles/global.css";
 
+import "../styles/listening-records.css";
+
 const spotifyApiBaseUrl = import.meta.env.PUBLIC_SPOTIFY_API_BASE_URL ?? "";
 const pageTitle = `Listening | ${profile.name}`;
 const pageDescription = `Private Spotify listening statistics for ${profile.name}.`;
@@ -30,6 +32,7 @@ const pageDescription = `Private Spotify listening statistics for ${profile.name
 		<a class="skip-link" href="#mainContent">Skip to content</a>
 		<header class="listening-page-header">
 			<a class="listening-page-brand" href="/">{profile.name}</a>
+			<button class="motion-control" type="button" data-motion-toggle aria-pressed="true">Motion on</button>
 			<button id="listening-lock" class="listening-access-button" type="button" hidden>Lock</button>
 			<a class="listening-back" href="/">Back to portfolio</a>
 		</header>
@@ -47,5 +50,6 @@ const pageDescription = `Private Spotify listening statistics for ${profile.name
 		</footer>
 
 		<script src="../scripts/site.ts"></script>
+	<script src="../scripts/listening-motion.ts"></script>
 	</body>
 </html>

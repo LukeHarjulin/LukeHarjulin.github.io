@@ -1,3 +1,4 @@
+import { sleeveTransition } from "./listening-motion";
 import type { AlbumRecommendations } from "../data/album-recommendation";
 
 export function restoreRecommendationIndex(raw: string | null, data: AlbumRecommendations): number {
@@ -26,8 +27,11 @@ export async function initializeAlbumRecommendations(load: () => Promise<AlbumRe
 		try { localStorage.setItem(storageKey, JSON.stringify({ date: data.date, generatedAt: data.generatedAt, id: data.items[index]?.id })); }
 		catch { /* Browsing and skipping still work when storage is disabled. */ }
 	};
+	let renderedId: string | undefined;
 	const render = () => {
 		const item = data.items[index];
+		if (item && renderedId !== item.id) sleeveTransition(content, signal);
+		renderedId = item?.id;
 		content.hidden = !item;
 		skip.disabled = !item || index >= data.items.length - 1;
 		reset.hidden = index === 0;

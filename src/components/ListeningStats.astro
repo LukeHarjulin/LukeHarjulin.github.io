@@ -21,7 +21,7 @@ const { apiBase } = Astro.props;
 	</div>
 
 	<div class="now-playing" aria-live="polite">
-		<div class="now-playing__artwork" id="now-playing-artwork" aria-hidden="true"></div>
+		<div class="record-deck" aria-hidden="true"><div class="record-vinyl"></div><div class="now-playing__artwork" id="now-playing-artwork"></div></div>
 		<div class="now-playing__details">
 			<span id="now-playing-label" class="now-playing__label">Now playing</span>
 			<h2 id="now-playing-track">Loading...</h2>
@@ -47,7 +47,7 @@ const { apiBase } = Astro.props;
 		</div>
 		<p data-recommendation-status role="status">Loading an album suggestion...</p>
 		<div class="album-recommendations__content" data-recommendation-content hidden>
-			<img data-recommendation-artwork width="200" height="200" alt="" hidden />
+			<div class="recommendation-sleeve"><span aria-hidden="true">SIDE B</span><img data-recommendation-artwork width="200" height="200" alt="" hidden /></div>
 			<div>
 				<p class="album-recommendations__kind" data-recommendation-kind></p>
 				<h3 data-recommendation-name></h3>

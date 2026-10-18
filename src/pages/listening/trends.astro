@@ -4,6 +4,8 @@ import { profile } from "../../data/cv";
 import "../../styles/global.css";
 import "../../styles/listening-trends.css";
 
+import "../../styles/listening-records.css";
+
 const apiBase = import.meta.env.PUBLIC_SPOTIFY_API_BASE_URL ?? "";
 const title = `Listening trends | ${profile.name}`;
 ---
@@ -25,6 +27,7 @@ const title = `Listening trends | ${profile.name}`;
 		<a class="skip-link" href="#mainContent">Skip to content</a>
 		<header class="listening-page-header">
 			<a class="listening-page-brand" href="/">{profile.name}</a>
+			<button class="motion-control" type="button" data-motion-toggle aria-pressed="true">Motion on</button>
 			<button id="listening-lock" class="listening-access-button" type="button" hidden>Lock</button>
 			<a class="listening-back" href="/listening/">Back to listening</a>
 		</header>
@@ -40,6 +43,7 @@ const title = `Listening trends | ${profile.name}`;
 						</div>
 						<p id="trends-status" class="listening-status" role="status">Loading listening trends…</p>
 					</div>
+					<div class="trends-year-cover"><div id="trends-year-display" class="trends-year-display" aria-hidden="true">—</div><div class="trends-year-story"><p id="trends-year-summary"></p><p id="trends-year-leader"></p><p id="trends-year-highlights" class="trends-note"></p></div></div>
 					<div class="trends-controls">
 						<div><label for="trends-year">Year</label><select id="trends-year" disabled aria-controls="trends-chart trends-detail"><option>Loading…</option></select></div>
 						<button id="trends-whole-year" type="button" aria-pressed="true" disabled>Whole year</button>
@@ -72,8 +76,9 @@ const title = `Listening trends | ${profile.name}`;
 								<div class="panel-heading"><h2 id="trends-genres-heading">Top genres</h2><span class="trends-note">By attributed listening time</span></div>
 								<p id="trends-genre-leader" class="trends-genre-leader"></p>
 								<p id="trends-genre-coverage" class="trends-note"></p>
+								<div id="trends-genre-bands" class="genre-bands" aria-hidden="true"></div><p id="trends-genre-empty" class="genre-empty" hidden></p>
 								<ol id="trends-genres" class="ranking-list"></ol>
-								<p class="trends-note">Time is split evenly across the primary artist’s Spotify genres. Unknown has no identified genre; Other combines known genres outside the top ten. Tags reflect cached artist classifications, rather than tags recorded at the time of listening.</p>
+								<details><summary>How genre shares are calculated</summary><p class="trends-note">Time is split evenly across the primary artist’s identified genres. Unknown has no identified genre; Other combines known genres outside the top ten. Tags reflect cached Spotify or Last.fm artist classifications, rather than tags recorded at the time of listening.</p></details>
 							</section>
 							<section class="ranking-panel" aria-labelledby="trends-artists-heading"><div class="panel-heading"><h2 id="trends-artists-heading">Top artists</h2><span class="trends-note">By listening time</span></div><ol id="trends-artists" class="ranking-list"></ol></section>
 							<section class="ranking-panel" aria-labelledby="trends-tracks-heading"><div class="panel-heading"><h2 id="trends-tracks-heading">Top tracks</h2><span class="trends-note">By listening time</span></div><ol id="trends-tracks" class="ranking-list"></ol></section>
@@ -86,5 +91,6 @@ const title = `Listening trends | ${profile.name}`;
 		</main>
 		<footer><span>{profile.name}</span><a href="/">Portfolio</a></footer>
 		<script src="../../scripts/listening-trends.ts"></script>
+	<script src="../../scripts/listening-motion.ts"></script>
 	</body>
 </html>

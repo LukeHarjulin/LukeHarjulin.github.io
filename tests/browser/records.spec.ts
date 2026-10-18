@@ -1,0 +1,38 @@
+import { test, expect } from "@playwright/test";
+const api = "http://127.0.0.1:8788";
+test("record playback pauses and fits mobile", async ({ page }, testInfo) => {
+	const errors: string[] = [];
+	page.on("pageerror", (error) => errors.push(error.message));
+
+	const date = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/London" }).format(new Date());
+	await page.route(`${api}/api/spotify/recommendations`, (route) => route.fulfill({ json: { data: { date, generatedAt: "test", stale: false, items: [0, 1].map((index) => ({ id: String(index), name: index ? "Another direction" : "The evening sessions", artist: "A favourite artist", artworkUrl: null, spotifyUrl: "https://open.spotify.com/", kind: "rediscovery", reason: "An old favourite for the next spin." })) }, meta: {} } }));
+	let playing = true;
+	await page.route(`${api}/api/spotify/now-playing`, (route) => route.fulfill({ json: { data: { isPlaying: playing, progressMs: 60000, checkedAt: new Date().toISOString(), track: { id: "test", name: "Into the collection", artists: [{ id: "artist", name: "A favourite artist" }], album: { id: "album", name: "The evening sessions", artworkUrl: null }, durationMs: 240000, spotifyUrl: null } }, meta: {} } }));
+	await page.goto("/listening/");
+	await expect(page.getByRole("button", { name: "Unlock", exact: true })).toBeEnabled();
+	await page.getByLabel("Shared passphrase").fill("test listening phrase");
+	await page.getByRole("button", { name: "Unlock", exact: true }).click();
+	await expect(page.locator(".now-playing")).toHaveAttribute("data-playing", "true");
+	await expect(page.locator(".record-vinyl")).toHaveCSS("animation-play-state", "running");
+	await page.addStyleTag({ content: "astro-dev-toolbar { display: none !important; }" });
+	await expect(page.locator("[data-recommendation-name]")).toHaveText("The evening sessions");
+	await page.screenshot({ path: testInfo.outputPath("collection-desktop.png"), fullPage: true });
+	await page.getByRole("button", { name: "Suggest another" }).click();
+	await expect(page.locator("[data-recommendation-name]")).toHaveText("Another direction");
+	await page.getByRole("button", { name: "Motion on" }).click();
+	await expect(page.locator(".record-vinyl")).toHaveCSS("animation-play-state", "paused");
+	await page.getByRole("button", { name: "Motion off" }).click();
+	playing = false;
+	await page.reload();
+	await expect(page.locator(".now-playing")).toHaveAttribute("data-playing", "false");
+	await expect(page.locator("[data-recommendation-name]")).toHaveText("Another direction");
+	await page.getByRole("button", { name: "Back to today's pick" }).click();
+	await expect(page.locator("[data-recommendation-name]")).toHaveText("The evening sessions");
+	await expect(page.locator(".record-vinyl")).toHaveCSS("animation-play-state", "paused");
+	await page.setViewportSize({ width: 390, height: 844 });
+	await page.screenshot({ path: testInfo.outputPath("collection-mobile.png"), fullPage: true });
+	expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+	await page.emulateMedia({ reducedMotion: "reduce" });
+	await expect(page.locator(".record-vinyl")).toHaveCSS("animation-name", "none");
+	expect(errors).toEqual([]);
+});

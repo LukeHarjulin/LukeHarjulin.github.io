@@ -188,3 +188,28 @@ test("late month responses cannot replace a newer selection or restore locked da
 	await expect(page.locator("#listening-dashboard")).toBeHidden();
 	await expect(page.locator("#listening-dashboard")).not.toContainText(`Month artist ${previousYear}`);
 });
+
+
+test("record collection respects motion preferences and handles unclassified history", async ({ page }, testInfo) => {
+	await mockAccess(page);
+	await page.route(`${api}/api/spotify/trends?*`, (route) => {
+		const data = fixture(previousYear, null);
+		data.data.genres = [{ kind: "unknown", name: "Unknown", listeningTimeMs: data.data.totals.listeningTimeMs, sharePercent: 100 }];
+		data.data.topGenre = null;
+		data.data.genreCoverage.percentage = 0;
+		data.data.genreCoverage.identifiedTimeMs = 0;
+		return route.fulfill({ json: data });
+	});
+	await page.goto(`/listening/trends/?year=${previousYear}`);
+	await expect(page.locator("#trends-genre-empty")).toBeVisible();
+	await expect(page.locator("#trends-genres")).toBeEmpty();
+	await expect(page.locator('#trends-chart button[data-month="2"] .trends-month__bar')).toHaveCSS("height", "0px");
+	await page.getByRole("button", { name: "Motion on" }).click();
+	await expect(page.locator("body")).toHaveAttribute("data-motion", "off");
+	await page.reload();
+	await expect(page.getByRole("button", { name: "Motion off" })).toHaveAttribute("aria-pressed", "false");
+	await page.emulateMedia({ reducedMotion: "reduce" });
+	await expect(page.getByRole("button", { name: "Motion off" })).toBeDisabled();
+	await expect(page.locator("#trends-detail")).toHaveAttribute("aria-busy", "false");
+	await page.screenshot({ path: testInfo.outputPath("genre-empty.png"), fullPage: true });
+});
