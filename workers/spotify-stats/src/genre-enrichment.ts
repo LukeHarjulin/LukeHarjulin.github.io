@@ -1,6 +1,7 @@
 import { pauseCatalogue, reserveCatalogueRequest, retrySeconds } from "./catalogue-budget";
 import { getAccessToken, SpotifyApiError } from "./spotify";
 import type { Env } from "./runtime";
+import { enrichLastfmGenres } from "./lastfm-genres";
 
 export function normalizeGenres(value: unknown): { key: string; name: string }[] {
 	if (!Array.isArray(value) || !value.every((item) => typeof item === "string")) throw new Error("Invalid genre response");
@@ -14,6 +15,11 @@ export function normalizeGenres(value: unknown): { key: string; name: string }[]
 }
 
 export async function enrichArtistGenres(env: Env, now = new Date(), fetcher: typeof fetch = fetch): Promise<void> {
+	try { await enrichSpotifyGenres(env, now, fetcher); }
+	finally { await enrichLastfmGenres(env, now, fetcher); }
+}
+
+async function enrichSpotifyGenres(env: Env, now: Date, fetcher: typeof fetch): Promise<void> {
 	if (env.GENRE_ENRICHMENT_ENABLED !== "true") return;
 	const day = now.toISOString().slice(0, 10);
 	// Persist an hourly lease before scanning or fetching; duplicate Cron runs stop here.
@@ -61,10 +67,18 @@ export async function enrichArtistGenres(env: Env, now = new Date(), fetcher: ty
 			env.DB.prepare("DELETE FROM artist_genres WHERE spotify_artist_id = ?").bind(artist.id),
 			...genres.map(({ key, name }) => env.DB.prepare("INSERT INTO artist_genres(spotify_artist_id, genre_key, name) VALUES (?, ?, ?)").bind(artist.id, key, name)),
 			env.DB.prepare("UPDATE artists SET genres_checked_at = ?, genres_retry_after_ms = 0 WHERE spotify_artist_id = ?").bind(now.toISOString(), artist.id),
+			env.DB.prepare(`INSERT INTO genre_provider_state(artist_id, provider, status, attempted_at, classified_at)
+				VALUES (?, 'spotify', ?, ?, ?) ON CONFLICT(artist_id, provider) DO UPDATE SET
+				status = excluded.status, attempted_at = excluded.attempted_at, classified_at = excluded.classified_at,
+				retry_after_ms = 0, failures = 0`).bind(artist.id, genres.length ? "success" : "empty", now.toISOString(), genres.length ? now.toISOString() : null),
 		]);
 	} catch (error) {
 		const seconds = error instanceof SpotifyApiError && error.status === 429 ? retrySeconds(error.retryAfter, now) : 86400;
 		await env.DB.prepare("UPDATE artists SET genres_retry_after_ms = ? WHERE spotify_artist_id = ?").bind(now.getTime() + seconds * 1000, artist.id).run();
+		await env.DB.prepare(`INSERT INTO genre_provider_state(artist_id, provider, status, attempted_at, retry_after_ms, failures)
+			VALUES (?, 'spotify', 'error', ?, ?, 1) ON CONFLICT(artist_id, provider) DO UPDATE SET
+			status = 'error', attempted_at = excluded.attempted_at, retry_after_ms = excluded.retry_after_ms, failures = failures + 1`)
+			.bind(artist.id, now.toISOString(), now.getTime() + seconds * 1000).run();
 		if (error instanceof SpotifyApiError && [401, 403, 429].includes(error.status)) await pauseCatalogue(env.DB, seconds, now);
 		console.warn(JSON.stringify({ event: "artist_genres_unavailable", status: error instanceof SpotifyApiError ? error.status : 503 }));
 	}

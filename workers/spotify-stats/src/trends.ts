@@ -41,7 +41,7 @@ export async function getTrends(db: D1Database, year: number, month: number | nu
 		getTopArtists(db, range.start, 10, { end: range.end, byListeningTime: true }),
 		getTopTracks(db, range.start, 10, { end: range.end, byListeningTime: true }),
 		db.prepare("SELECT played_at AS firstPlayed FROM plays ORDER BY played_at LIMIT 1").first<{ firstPlayed: string }>(),
-		getTasteTrends(db, year, month),
+		getTasteTrends(db, year, month, now),
 		getImportCoverage(db, year, month),
 	]);
 	const firstYear = earliest?.firstPlayed ? Number(reportingDate(earliest.firstPlayed).slice(0, 4)) : currentYear;

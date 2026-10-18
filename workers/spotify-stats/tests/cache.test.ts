@@ -46,6 +46,7 @@ describe("public statistics cache", () => {
 		vi.useFakeTimers(); vi.setSystemTime(new Date("2026-10-13T12:00:00Z"));
 		const h = harness();
 		const year = await h.fetch("/api/spotify/trends?year=2025");
+		expect(new URL((h.cache.put.mock.calls[0][0] as Request).url).searchParams.get("_taste")).toBe("2");
 		expect(year.headers.get("Cache-Control")).toContain("s-maxage=21600");
 		expect((await h.fetch("/api/spotify/trends?year=2025&tracking=ignored")).headers.get("X-Spotify-Cache")).toBe("HIT");
 		expect((await h.fetch("/api/spotify/trends?year=2025&month=03")).headers.get("X-Spotify-Cache")).toBe("MISS");

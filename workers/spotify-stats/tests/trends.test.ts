@@ -5,6 +5,7 @@ import { calendarRange, parseTrendsMonth, parseTrendsYear } from "../src/periods
 import { routeRequest } from "../src/router";
 import { getTrends } from "../src/trends";
 import type { D1Database, Env } from "../src/runtime";
+import { enrichLastfmGenres } from "../src/lastfm-genres";
 
 const require = createRequire(import.meta.url);
 const { Miniflare, convertV4MiniflareOptions } = createRequire(require.resolve("wrangler/package.json"))("miniflare");
@@ -47,7 +48,7 @@ describe("D1 calendar trends", () => {
 		}));
 		try {
 			const nativeDb = await mf.getD1Database("DB");
-			for (const file of ["0001_initial.sql", "0002_history_import.sql", "0003_history_import_progress.sql", "0004_history_metadata_fallback.sql", "0005_artist_lookup_index.sql", "0006_artist_genres.sql"]) {
+			for (const file of ["0001_initial.sql", "0002_history_import.sql", "0003_history_import_progress.sql", "0004_history_metadata_fallback.sql", "0005_artist_lookup_index.sql", "0006_artist_genres.sql", "0007_lastfm_genres.sql"]) {
 				const sql = await readFile(`workers/spotify-stats/migrations/${file}`, "utf8");
 				await nativeDb.exec(sql.split("\n").filter((line) => !line.trim().startsWith("--")).join(" "));
 			}
@@ -111,6 +112,20 @@ describe("D1 calendar trends", () => {
 			expect(await response.json()).toMatchObject({ data: { year: 2025, month: 3, timeZone: 'Europe/London', totals: march.totals }, meta: { period: '2025-03', generatedAt: expect.any(String) } });
 			const serialized = JSON.stringify(annual);
 			for (const privateField of ['played_at', 'source_event_key', 'context_uri', '2025-03-31T23:00:00']) expect(serialized).not.toContain(privateField);
+			// Exercise the new queue, atomic reservations and provider writes against actual D1.
+			const fetcher = vi.fn<typeof fetch>(async (input) => {
+				const url = new URL(String(input));
+				const name = url.searchParams.get("artist");
+				return Response.json(url.searchParams.get("method") === "artist.getInfo"
+					? { artist: { name, mbid: "5182c1d9-c7d2-4dad-afa0-ccfeada921a8", bio: { content: "A recording artist." } } }
+					: { toptags: { "@attr": { artist: name }, tag: [{ name: "folk", count: 100 }] } });
+			});
+			await enrichLastfmGenres({ DB: db, GENRE_ENRICHMENT_ENABLED: "true", LASTFM_API_KEY: "test" } as Env, now, fetcher);
+			expect(fetcher).toHaveBeenCalledTimes(2);
+			const enriched = await getTrends(db, 2025, null, now);
+			expect(enriched.genreCoverage.percentage).toBe(100);
+			expect(enriched.genreMetadata.sources).toEqual([{ source: "spotify", listeningTimeMs: 184000 }, { source: "lastfm", listeningTimeMs: 25000 }]);
+			expect(enriched.months!.reduce((sum, month) => sum + month.genreMetadata.sources[1].listeningTimeMs, 0)).toBe(25000);
 		} finally { await mf.dispose(); }
 	}, 60_000);
 });

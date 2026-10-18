@@ -24,7 +24,7 @@ function cachePolicy(request: Request, env: Env): { key: Request; seconds: numbe
 			const month = parseTrendsMonth(rawMonth);
 			if (year === null || (rawMonth !== null && month === null)) return null;
 			key.searchParams.set("year", String(year));
-			key.searchParams.set("_taste", "1");
+			key.searchParams.set("_taste", "2");
 			if (month !== null) key.searchParams.set("month", String(month));
 			// Even historical periods change during imports. Bound their staleness.
 			seconds = year === Number(reportingDate(new Date()).slice(0, 4)) ? 3600 : 21600;
